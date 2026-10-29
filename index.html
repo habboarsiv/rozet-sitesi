@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Habbo Rozetleri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f6f9;--surface:#fff;--surface2:#f0f3f8;--line:#e2e6ed;--ink:#161a22;--mute:#667085;--acc:#2858d8;--accD:#1e44ab;--accS:#e9effd;--accT:#fff;--red:#d92d20;--tile:#eef1f6;--shadow:0 1px 2px rgba(16,24,40,.06);--r:12px}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1218;--surface:#171b24;--surface2:#1f2430;--line:#2a3040;--ink:#eef1f6;--mute:#98a2b3;--acc:#6b93ff;--accD:#8aa9ff;--accS:#1d2a4d;--accT:#0b1020;--red:#f97066;--tile:#232938;--shadow:none}}
+*{box-sizing:border-box}
+body{margin:0;color:var(--ink);font:400 15px/1.55 Manrope,system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg)}
+button{font:inherit;color:inherit}
+.hero{background:var(--surface);border-bottom:1px solid var(--line)}
+.hero-in{max-width:1180px;margin:0 auto;padding:34px 20px 26px}
+h1{margin:0;font:800 clamp(1.7rem,4.5vw,2.4rem)/1.1 Manrope,system-ui,sans-serif;letter-spacing:-.02em}
+.sub{margin:8px 0 0;color:var(--mute);max-width:60ch}
+.wrap{max-width:1180px;margin:0 auto;padding:24px 20px 32px}
+.layout{display:grid;grid-template-columns:260px 1fr;gap:24px;align-items:start}
+.side,.abr,.b,.usr{background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow)}
+.side{border-radius:var(--r);padding:0 0 14px;position:sticky;top:16px;max-height:calc(100vh - 32px);overflow:auto}
+.side summary{display:none}
+.side h2{margin:0 0 8px;padding:16px 16px 0;font:700 .8rem/1.3 Manrope,sans-serif;color:var(--mute);letter-spacing:.02em}
+#fh{padding:0 8px}
+.opt{all:unset;box-sizing:border-box;width:100%;display:flex;align-items:center;gap:10px;padding:7px 8px;margin:1px 0;border-radius:8px;cursor:pointer;font-size:.92rem}
+.opt:hover{background:var(--surface2)}
+.opt[aria-pressed="true"]{background:var(--accS);color:var(--acc);font-weight:700}
+.opt .n{margin-left:auto;font-size:.8rem;color:var(--mute);font-variant-numeric:tabular-nums}
+.chk{display:flex;gap:8px;align-items:center;padding:5px 16px;cursor:pointer;font-size:.92rem}
+.chk input{accent-color:var(--acc);width:16px;height:16px}
+select,input[type=search]{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%}
+select:hover,input[type=search]:hover{border-color:#b9c1d0}
+.side select{width:calc(100% - 32px);margin:0 16px}
+.opt:focus-visible,.ab:focus-visible,.chip:focus-visible,.b:focus-visible,.tg:focus-visible,.more:focus-visible,#close:focus-visible,#ug:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,.fb:focus-visible,.pn:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.tools{display:flex;gap:10px;margin-bottom:12px}
+.seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface);flex:none}
+.tg{all:unset;box-sizing:border-box;padding:0 16px;display:grid;place-items:center;cursor:pointer;color:var(--mute);font-weight:600;font-size:.92rem}
+.tg:hover{color:var(--ink)}
+.tg[aria-pressed="true"]{background:var(--acc);color:var(--accT)}
+.abr{display:flex;gap:2px;overflow-x:auto;padding:5px;border-radius:10px;margin-bottom:14px}
+.ab{all:unset;box-sizing:border-box;min-width:30px;height:30px;padding:0 6px;display:grid;place-items:center;border-radius:6px;cursor:pointer;font:600 .85rem Manrope,sans-serif;color:var(--mute)}
+.ab:hover{background:var(--surface2);color:var(--ink)}
+.ab[aria-pressed="true"]{background:var(--acc);color:var(--accT)}
+.stat{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px;min-height:30px}
+.chip{all:unset;box-sizing:border-box;cursor:pointer;font:600 .82rem Manrope,sans-serif;padding:3px 12px;border-radius:99px;background:var(--accS);color:var(--acc)}
+.chip:hover{filter:brightness(.96)}
+.clr{color:var(--mute);font-size:.85rem;cursor:pointer;background:none;border:0;padding:3px 4px;text-decoration:underline}
+.out.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.out.rows{display:flex;flex-direction:column;gap:8px}
+.b{all:unset;box-sizing:border-box;cursor:pointer;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:10px;box-shadow:var(--shadow);transition:border-color .12s,box-shadow .12s}
+.b:hover{border-color:var(--acc);box-shadow:0 4px 14px rgba(16,24,40,.08)}
+.tile{position:relative;aspect-ratio:1;background:var(--tile);border-radius:8px;display:grid;place-items:center;overflow:hidden}
+.tile img{width:40px;height:40px;image-rendering:pixelated}
+.nw{position:absolute;top:6px;left:6px;z-index:1;background:var(--red);color:#fff;font:700 .65rem/1 Manrope,sans-serif;padding:4px 7px;border-radius:99px}
+.tile .yok{font-size:.75rem;color:var(--mute);padding:2px 6px}
+.nm{font-weight:600;line-height:1.3;overflow-wrap:anywhere}
+.cd{color:var(--mute);font-size:.8rem;overflow-wrap:anywhere}
+.d{display:none}
+.rows .b{flex-direction:row;align-items:center;flex-wrap:wrap}
+.rows .tile{width:64px;flex:none}
+.rows .info{flex:1;min-width:200px}
+.rows .d{display:block;color:var(--mute);font-size:.85rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rows .fs{margin-left:auto}
+.fs{display:flex;gap:4px;flex-wrap:wrap;align-items:center;margin-top:auto}
+.fl{width:28px;height:19px;border-radius:3px;box-shadow:0 0 0 1px rgba(16,24,40,.18);flex:none;display:block}
+.fg{width:28px;height:19px;color:var(--mute);flex:none;display:block}
+.fs .fl{width:18px;height:12px;border-radius:2px}
+.grid .fs .fl:nth-child(n+6){display:none}
+.pl{font-size:.75rem;color:var(--mute)}
+.rows .pl{display:none}
+.more,#close,#ug{display:block;background:var(--acc);color:var(--accT);border:0;border-radius:10px;padding:10px 24px;cursor:pointer;font:700 .95rem Manrope,sans-serif}
+.more{margin:26px auto 0}
+.more:hover,#close:hover,#ug:hover{background:var(--accD)}
+.more[hidden]{display:none}
+.empty{color:var(--mute);padding:32px 0}
+dialog{color:var(--ink);background:var(--surface);border:1px solid var(--line);padding:0 0 20px;max-width:400px;width:calc(100% - 40px);border-radius:16px;overflow:hidden;box-shadow:0 24px 60px rgba(16,24,40,.28)}
+dialog::before{content:"Rozet";display:block;margin:0 0 4px;padding:14px 20px;border-bottom:1px solid var(--line);font:700 .9rem Manrope,sans-serif;color:var(--mute)}
+dialog::backdrop{background:rgba(15,18,24,.55)}
+dialog>*{margin-inline:20px}
+dialog .tile{width:120px;margin-top:18px;margin-bottom:14px}
+dialog .tile img{width:64px;height:64px}
+dialog h2{margin:0 20px 2px;font:800 1.3rem/1.25 Manrope,sans-serif}
+dialog p{margin:0 20px 12px;color:var(--mute)}
+.own{display:flex;align-items:baseline;justify-content:space-between}
+.ol{color:var(--mute)}
+.ov{font:800 2rem/1.1 Manrope,sans-serif;font-variant-numeric:tabular-nums}
+.oh{font-size:.85rem;color:var(--mute);margin-bottom:14px}
+.fbr{display:flex;flex-wrap:wrap;gap:8px}
+.fb{all:unset;box-sizing:border-box;cursor:pointer;padding:5px;border:1px solid var(--line);border-radius:8px;background:var(--surface);display:grid;place-items:center}
+.fb:hover{background:var(--surface2)}
+.fb[aria-pressed="true"]{border-color:var(--acc);background:var(--accS)}
+.nt{margin:10px 0 0;font-size:.75rem;line-height:1.4}
+#close{margin-top:14px}
+.ft{background:var(--surface);border-top:1px solid var(--line);margin-top:24px}
+.ft-in{max-width:1180px;margin:0 auto;padding:32px 20px calc(36px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:22px}
+.by{display:flex;align-items:center;gap:16px;align-self:flex-start;max-width:100%}
+.av{width:72px;height:72px;border-radius:14px;background:var(--accS);overflow:hidden;flex:none;display:grid;place-items:center}
+.av img{max-width:100%;max-height:100%}
+.av.bd{width:96px;height:96px;display:block;border-radius:16px}
+.av.bd img{display:block;width:96px;max-width:none;max-height:none;height:auto;image-rendering:pixelated}
+.by-t{display:flex;flex-direction:column;line-height:1.25;min-width:0}
+.by-l{font-size:.8rem;color:var(--mute)}
+.by-h{font-size:.85rem;color:var(--mute)}
+.by-n{font:800 1.35rem Manrope,sans-serif;margin:1px 0}
+.legal{margin:0;color:var(--mute);font-size:.82rem;max-width:78ch;line-height:1.65;border-top:1px solid var(--line);padding-top:20px}
+.usr{margin-bottom:20px;border-radius:var(--r)}
+.usr summary{cursor:pointer;padding:12px 16px;font-weight:700}
+.usr[open] summary{border-bottom:1px solid var(--line)}
+.usr-f{display:flex;gap:10px;flex-wrap:wrap;padding:14px 16px}
+.usr-f input{flex:1 1 200px;width:auto}
+.usr-f select,.us select{width:auto}
+#ug{margin:0}
+.ud:not(:empty){padding:16px}
+.uk{display:flex;gap:14px;align-items:center;margin-bottom:12px}
+.uk .av{width:64px;height:64px}
+.uk h3{margin:0;font:800 1.3rem Manrope,sans-serif}
+.uk p{margin:0;color:var(--mute)}
+.ud .msg,.ud .err{margin:0;color:var(--mute)}
+.ud .err{color:var(--red)}
+.us{display:flex;gap:10px;align-items:center;margin:8px 0 12px}
+.ust{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.ust span{background:var(--surface2);border-radius:99px;padding:4px 12px;font-size:.82rem;color:var(--mute)}
+.ust b{color:var(--ink);font-weight:700}
+.ust .on b{color:#12a150}
+.pnb{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:14px;overflow-x:auto}
+.pn{all:unset;box-sizing:border-box;cursor:pointer;padding:8px 14px;font-weight:600;font-size:.92rem;color:var(--mute);border-bottom:2px solid transparent;white-space:nowrap}
+.pn:hover{color:var(--ink)}
+.pn[aria-pressed="true"]{color:var(--acc);border-color:var(--acc)}
+.lst{display:flex;flex-direction:column;gap:8px}
+.li{display:flex;gap:12px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.li .gi{width:40px;height:40px;flex:none;border-radius:8px;background:var(--tile);display:grid;place-items:center;overflow:hidden}
+.li .gi img{max-width:100%;max-height:100%}
+.li .lt{min-width:0;flex:1}
+.li .ln{font-weight:600;overflow-wrap:anywhere}
+.li .ls{color:var(--mute);font-size:.82rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.li .lr{margin-left:auto;font-weight:700;font-variant-numeric:tabular-nums;color:var(--acc);white-space:nowrap}
+@media (max-width:860px){.layout{grid-template-columns:1fr}.side{position:static;max-height:none}.side summary{display:block;cursor:pointer;padding:12px 16px;font-weight:700}.hero-in{padding-top:26px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+[hidden]{display:none!important}
+.modes{margin-bottom:18px;height:40px;width:max-content;max-width:100%}
+.tools input{flex:1;min-width:0}
+.tools select{width:auto;flex:none;max-width:40%}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.pc .ptile{position:relative;aspect-ratio:2/1;background:var(--tile);border-radius:8px;display:grid;place-items:center;overflow:hidden}
+.pc .ptile img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.pc.rd .ptile{aspect-ratio:1/1;padding:0}
+.pc.rd .ptile img{inset:8px;width:calc(100% - 16px);height:calc(100% - 16px)}
+.pgrid.pk{grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}
+.pc .ptile .yok{font-size:.75rem;color:var(--mute)}
+.pt{display:flex;flex-wrap:wrap;gap:4px;margin-top:auto}
+.pt span{font:600 .72rem Manrope,sans-serif;background:var(--surface2);color:var(--mute);padding:2px 8px;border-radius:99px}
+.ptur{margin-bottom:12px;width:max-content;max-width:100%;height:40px;overflow-x:auto}
+.ptur .tg{white-space:nowrap}
+#pdlg{max-width:760px}
+#pdlg::before{content:"Promo"}
+#pdlg .pimg{display:block;width:calc(100% - 40px);max-height:60vh;object-fit:contain;background:var(--tile);border-radius:8px;margin-top:18px;margin-bottom:14px}
+#pdlg a{color:var(--acc)}
+#pclose{margin-top:14px}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="hero-in"><h1 class="sn">Habbo Rozetleri</h1><p class="sub">Tüm otellerdeki rozetleri ve promo görsellerini ara, filtrele, sahip sayılarına bak.</p></div>
+</header>
+<div class="wrap">
+  <div class="seg modes" role="group" aria-label="Bölüm"><button class="tg" id="mR" type="button" aria-pressed="true">Rozetler</button><button class="tg" id="mP" type="button" aria-pressed="false">Promolar</button></div>
+  <details class="usr" id="usr">
+    <summary>Oyuncu rozetlerini sorgula</summary>
+    <div class="usr-f">
+      <input id="un" type="search" placeholder="Kullanıcı adı" aria-label="Kullanıcı adı" autocomplete="off">
+      <select id="uh" aria-label="Otel"></select>
+      <button class="more" id="ug" type="button">Sorgula</button>
+    </div>
+    <div class="ud" id="ud" aria-live="polite"></div>
+  </details>
+  <div class="layout">
+    <details class="side" id="side">
+      <summary>Filtreler</summary>
+      <h2>Otel</h2><div id="fh"></div>
+      <h2>Seçenekler</h2>
+      <label class="chk"><input type="checkbox" id="fd"> Açıklaması olanlar</label>
+      <label class="chk"><input type="checkbox" id="fo"> Yalnızca tek otelde olanlar</label>
+      <h2>Sıralama</h2>
+      <select id="fs" aria-label="Sıralama">
+        <option value="yeni">Yeniden eskiye</option>
+        <option value="kod">Koda göre (A–Z)</option>
+        <option value="ad">Ada göre (A–Z)</option>
+        <option value="otel">En çok otelde olan</option>
+      </select>
+    </details>
+    <main>
+      <div class="tools">
+        <input id="q" type="search" placeholder="Ad, kod veya açıklamada ara" aria-label="Rozet ara">
+        <div class="seg">
+          <button class="tg" id="vg" aria-pressed="true">Galeri</button>
+          <button class="tg" id="vr" aria-pressed="false">Liste</button>
+        </div>
+      </div>
+      <div class="abr" id="abr" aria-label="Harfe göre git"></div>
+      <div class="stat" id="stat"></div>
+      <div class="out grid" id="out"></div>
+      <button class="more" id="more" hidden></button>
+    </main>
+  </div>
+  <section id="ps" hidden>
+    <div class="seg ptur" id="pk" role="group" aria-label="Tür"></div>
+    <div class="tools">
+      <input id="pq" type="search" placeholder="Promo adında ara" aria-label="Promo ara">
+      <select id="ph" aria-label="Otel"></select>
+    </div>
+    <div class="stat" id="pstat"></div>
+    <div class="out pgrid" id="pout"></div>
+    <button class="more" id="pmore" type="button" hidden></button>
+  </section>
+</div>
+
+<footer class="ft">
+  <div class="ft-in">
+    <div class="by">
+      <span class="av bd"><img alt="katenai’nin Habbo avatarı" src="https://www.habbo.com.tr/habbo-imaging/avatarimage?user=katenai&action=std&direction=2&head_direction=3&gesture=sml&size=l&img_format=png" onerror="this.parentNode.style.display='none'"></span>
+      <div class="by-t">
+        <span class="by-l">Hazırlayan</span>
+        <strong class="by-n">katenai</strong>
+        <span class="by-h">habbo.com.tr</span>
+      </div>
+    </div>
+    <p class="legal"><span class="sn">Habbo Rozetleri</span>, Sulake Corporation Oy veya bağlı ortaklıkları tarafından işletilmemekte, desteklenmemekte veya onaylanmamaktadır. Sitemizde yer alan markalar, logolar ve fikri mülkiyet ögeleri Sulake Corporation Oy’a ait olup, kullanım Habbo Fan Site Politikası şartlarına uygundur. <span class="sn">Habbo Rozetleri</span> üzerinde sunulan içerikler tamamen topluluk amaçlıdır ve resmi Habbo hizmetleriyle karıştırılmamalıdır.</p>
+  </div>
+</footer>
+
+<dialog id="dlg">
+  <div class="tile" id="dtile"></div>
+  <h2 id="dname"></h2>
+  <p id="dcode"></p>
+  <p id="ddesc"></p>
+  <p id="ddate" hidden></p>
+  <div id="dhot"></div>
+  <button id="close">Kapat</button>
+</dialog>
+
+<dialog id="pdlg">
+  <img class="pimg" id="pimg" alt="">
+  <h2 id="pname"></h2>
+  <p id="pmeta"></p>
+  <p><a id="plink" target="_blank" rel="noopener noreferrer">Görseli yeni sekmede aç</a></p>
+  <button class="more" id="pclose" type="button">Kapat</button>
+</dialog>
+
+<script src="promolar.js"></script>
+<script src="rozetler.js"></script>
+<script src="rozet_sahipler.js"></script>
+<script>
+var SITE_ADI="Habbo Rozetleri";   // Site adını yalnızca buradan değiştirmeniz yeterli (başlık, sekme adı ve alt yazı)
+document.title=SITE_ADI;
+document.querySelectorAll(".sn").forEach(function(e){e.textContent=SITE_ADI});
+var FLAG_SVG={
+ it:"<rect width=\"10\" height=\"20\" fill=\"#009246\"/><rect x=\"10\" width=\"10\" height=\"20\" fill=\"#fff\"/><rect x=\"20\" width=\"10\" height=\"20\" fill=\"#ce2b37\"/>",
+ fr:"<rect width=\"10\" height=\"20\" fill=\"#0055a4\"/><rect x=\"10\" width=\"10\" height=\"20\" fill=\"#fff\"/><rect x=\"20\" width=\"10\" height=\"20\" fill=\"#ef4135\"/>",
+ de:"<rect width=\"30\" height=\"6.67\" fill=\"#000\"/><rect y=\"6.67\" width=\"30\" height=\"6.67\" fill=\"#dd0000\"/><rect y=\"13.33\" width=\"30\" height=\"6.67\" fill=\"#ffce00\"/>",
+ nl:"<rect width=\"30\" height=\"6.67\" fill=\"#ae1c28\"/><rect y=\"6.67\" width=\"30\" height=\"6.67\" fill=\"#fff\"/><rect y=\"13.33\" width=\"30\" height=\"6.67\" fill=\"#21468b\"/>",
+ es:"<rect width=\"30\" height=\"20\" fill=\"#aa151b\"/><rect y=\"5\" width=\"30\" height=\"10\" fill=\"#f1bf00\"/><rect x=\"7.4\" y=\"7.8\" width=\"3.2\" height=\"4.4\" rx=\".7\" fill=\"#ad1519\"/>",
+ fi:"<rect width=\"30\" height=\"20\" fill=\"#fff\"/><rect x=\"7.5\" width=\"4.5\" height=\"20\" fill=\"#003580\"/><rect y=\"7.75\" width=\"30\" height=\"4.5\" fill=\"#003580\"/>",
+ tr:"<rect width=\"30\" height=\"20\" fill=\"#e30a17\"/><circle cx=\"10.6\" cy=\"10\" r=\"5.2\" fill=\"#fff\"/><circle cx=\"12\" cy=\"10\" r=\"4.2\" fill=\"#e30a17\"/><polygon points=\"13.30,10.00 15.05,9.38 15.10,7.53 16.22,9.00 18.00,8.47 16.95,10.00 18.00,11.53 16.22,11.00 15.10,12.47 15.05,10.62\" fill=\"#fff\"/>",
+ br:"<rect width=\"30\" height=\"20\" fill=\"#009c3b\"/><polygon points=\"15,2.2 27.2,10 15,17.8 2.8,10\" fill=\"#ffdf00\"/><circle cx=\"15\" cy=\"10\" r=\"4.6\" fill=\"#002776\"/><path d=\"M10.5 9.1Q15 7.6 19.5 10.9\" stroke=\"#fff\" stroke-width=\".9\" fill=\"none\"/>",
+ com:"<rect y=\"0.000\" width=\"30\" height=\"1.539\" fill=\"#b22234\"/><rect y=\"1.538\" width=\"30\" height=\"1.539\" fill=\"#fff\"/><rect y=\"3.077\" width=\"30\" height=\"1.539\" fill=\"#b22234\"/><rect y=\"4.615\" width=\"30\" height=\"1.539\" fill=\"#fff\"/><rect y=\"6.154\" width=\"30\" height=\"1.539\" fill=\"#b22234\"/><rect y=\"7.692\" width=\"30\" height=\"1.539\" fill=\"#fff\"/><rect y=\"9.231\" width=\"30\" height=\"1.539\" fill=\"#b22234\"/><rect y=\"10.769\" width=\"30\" height=\"1.539\" fill=\"#fff\"/><rect y=\"12.308\" width=\"30\" height=\"1.539\" fill=\"#b22234\"/><rect y=\"13.846\" width=\"30\" height=\"1.539\" fill=\"#fff\"/><rect y=\"15.385\" width=\"30\" height=\"1.539\" fill=\"#b22234\"/><rect y=\"16.923\" width=\"30\" height=\"1.539\" fill=\"#fff\"/><rect y=\"18.462\" width=\"30\" height=\"1.539\" fill=\"#b22234\"/><rect width=\"12.5\" height=\"10.77\" fill=\"#3c3b6e\"/><circle cx=\"1.40\" cy=\"1.30\" r=\".42\" fill=\"#fff\"/><circle cx=\"3.65\" cy=\"1.30\" r=\".42\" fill=\"#fff\"/><circle cx=\"5.90\" cy=\"1.30\" r=\".42\" fill=\"#fff\"/><circle cx=\"8.15\" cy=\"1.30\" r=\".42\" fill=\"#fff\"/><circle cx=\"10.40\" cy=\"1.30\" r=\".42\" fill=\"#fff\"/><circle cx=\"1.40\" cy=\"3.50\" r=\".42\" fill=\"#fff\"/><circle cx=\"3.65\" cy=\"3.50\" r=\".42\" fill=\"#fff\"/><circle cx=\"5.90\" cy=\"3.50\" r=\".42\" fill=\"#fff\"/><circle cx=\"8.15\" cy=\"3.50\" r=\".42\" fill=\"#fff\"/><circle cx=\"10.40\" cy=\"3.50\" r=\".42\" fill=\"#fff\"/><circle cx=\"1.40\" cy=\"5.70\" r=\".42\" fill=\"#fff\"/><circle cx=\"3.65\" cy=\"5.70\" r=\".42\" fill=\"#fff\"/><circle cx=\"5.90\" cy=\"5.70\" r=\".42\" fill=\"#fff\"/><circle cx=\"8.15\" cy=\"5.70\" r=\".42\" fill=\"#fff\"/><circle cx=\"10.40\" cy=\"5.70\" r=\".42\" fill=\"#fff\"/><circle cx=\"1.40\" cy=\"7.90\" r=\".42\" fill=\"#fff\"/><circle cx=\"3.65\" cy=\"7.90\" r=\".42\" fill=\"#fff\"/><circle cx=\"5.90\" cy=\"7.90\" r=\".42\" fill=\"#fff\"/><circle cx=\"8.15\" cy=\"7.90\" r=\".42\" fill=\"#fff\"/><circle cx=\"10.40\" cy=\"7.90\" r=\".42\" fill=\"#fff\"/>"
+};
+function flag(k){
+  if(!k)return '<svg class="fg" viewBox="0 0 30 20" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="15" cy="10" r="8.5"/><ellipse cx="15" cy="10" rx="3.8" ry="8.5"/><path d="M6.5 10h17"/></svg>';
+  return '<svg class="fl" viewBox="0 0 30 20"><title>'+NAMES[k]+'</title>'+FLAG_SVG[k]+'</svg>';
+}
+var IMG="https://images.habbo.com/c_images/album1584/",PAGE=120;
+var HOTELS=[["tr","habbo.com.tr"],["com","habbo.com"],["de","habbo.de"],["es","habbo.es"],["fr","habbo.fr"],["it","habbo.it"],["nl","habbo.nl"],["fi","habbo.fi"],["br","habbo.com.br"]];
+var NAMES={};HOTELS.forEach(function(h){NAMES[h[0]]=h[1]});
+// rozetler.js "yeniden eskiye" sıralı geldiyse (BUILD.sira) varsayılan sıralama odur
+var SIRALI=typeof BUILD!=="undefined"&&BUILD.sira==="yeni";
+var S={hotel:"",harf:"",q:"",desc:false,tek:false,sort:SIRALI?"yeni":"kod",view:"grid"};
+if(!SIRALI){var oy=document.querySelector('#fs option[value="yeni"]');if(oy)oy.remove()}
+var $=function(id){return document.getElementById(id)};
+var coll=new Intl.Collator("tr",{numeric:true,sensitivity:"base"});
+var list=[],shown=0;
+
+// Her rozete aramayı ve suzmeyi hızlandıracak alanlar ekle
+var cnt={"":BADGES.length},tcnt={"":BADGES.length};
+BADGES.forEach(function(b){
+  var c=b.code,f=c.charAt(0).toUpperCase();
+  b._s=(c+" "+b.name+" "+(b.desc||"")).toLocaleLowerCase("tr");
+  b._k=c.toLowerCase();
+  b._t=/^ach_/i.test(c)?"ach":/^\d/.test(c)?"num":"diger";
+  b._h=/\d/.test(f)?"0-9":/[A-Z]/.test(f)?f:"#";
+  tcnt[b._t]=(tcnt[b._t]||0)+1;
+  b.hotels.forEach(function(h){cnt[h]=(cnt[h]||0)+1});
+});
+function tarih(t){var d=new Date(t+"T00:00:00");return isNaN(d)?"":d.toLocaleDateString("tr-TR",{day:"numeric",month:"long",year:"numeric"})}
+// rozet_sahipler.js varsa rozetin otel başına sahip sayılarını verir: {tr:125, com:3} ya da null
+function sahipler(kod){
+  if(typeof OWNERS==="undefined"||typeof SAHIP_SIRA==="undefined")return null;
+  var a=OWNERS[kod];if(!a)return null;
+  var m={},var_=false;
+  SAHIP_SIRA.forEach(function(o,i){if(a[i]!=null){m[o]=a[i];var_=true}});
+  return var_?m:null;
+}
+function sayiYaz(n){return n.toLocaleString("tr-TR")}
+
+// ---- Canlı sahip sayısı ----
+// rozet_sahipler.js'te sayısı olmayan oteller için, rozete tıklanınca tarayıcıdan doğrudan Habbo'ya sorulur.
+var CANLI_SAHIP=true;   // false yapılırsa yalnızca rozet_sahipler.js'teki sayılar gösterilir
+var HABBO_ADRES={tr:"https://www.habbo.com.tr",com:"https://www.habbo.com",de:"https://www.habbo.de",es:"https://www.habbo.es",fr:"https://www.habbo.fr",it:"https://www.habbo.it",nl:"https://www.habbo.nl",fi:"https://www.habbo.fi",br:"https://www.habbo.com.br"};
+var canli={};           // başarıyla alınan sayılar: "KOD|otel" -> sayı (oturum boyunca saklanır)
+var aktifKod="";        // pencerede şu an açık olan rozet (eski cevaplar yanlış rozete yazılmasın)
+function sayiBul(v,d){
+  d=d||0;
+  if(typeof v==="number"&&isFinite(v))return v;
+  if(v&&typeof v==="object"&&d<3){
+    var an=["count","owners","ownerCount","owner_count","badgeOwners","total","amount","value"];
+    for(var i=0;i<an.length;i++){if(an[i] in v){var s=sayiBul(v[an[i]],d+1);if(s!=null)return s}}
+  }
+  return null;
+}
+function canliSor(kod,otel,bitince){
+  var ctl=typeof AbortController!=="undefined"?new AbortController():null;
+  var zaman=setTimeout(function(){if(ctl)ctl.abort()},20000);
+  fetch(HABBO_ADRES[otel]+"/api/public/badge/owners/"+encodeURIComponent(kod),{credentials:"omit",signal:ctl?ctl.signal:undefined})
+    .then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.text()})
+    .then(function(t){
+      var v;try{v=JSON.parse(t)}catch(e){v=parseInt(t,10)}
+      var n=sayiBul(v);if(n==null)throw new Error("tanınmayan yanıt");
+      canli[kod+"|"+otel]=n;
+    })
+    .catch(function(e){if(window.console)console.warn("Canlı sahip sayısı alınamadı:",kod,otel,e&&e.message)})
+    .then(function(){clearTimeout(zaman);bitince()});
+}
+// Detay penceresi: seçili otelin sahip sayısı + altında otel bayrakları (tıklayınca o otel gösterilir)
+var secili="",aktifB=null;
+function sahipCiz(b,sec,durum){
+  var sy=sahipler(b.code)||{};
+  var n=sy[sec]!=null?sy[sec]:(canli[b.code+"|"+sec]!=null?canli[b.code+"|"+sec]:null);
+  var deger=n!=null?sayiYaz(n):(durum==="bekliyor"?"…":"–");
+  var bay=b.hotels.map(function(h){return '<button class="fb" data-h="'+h+'" aria-pressed="'+(h===sec)+'" aria-label="'+NAMES[h]+'" title="'+NAMES[h]+'">'+flag(h)+"</button>"}).join("");
+  $("dhot").innerHTML='<div class="own"><span class="ol">Sahipler</span><strong class="ov">'+deger+'</strong></div><div class="oh">'+NAMES[sec]+'</div><div class="fbr">'+bay+"</div>"+(n==null&&durum==="yok"?'<p class="nt">Sahip sayısı şu an alınamadı.</p>':"");
+}
+// Seçilen otelin sayısını gösterir; kayıtlı değilse yalnızca o otel için Habbo'ya sorar
+function sahipAc(b,h){
+  secili=h;
+  var sy=sahipler(b.code)||{};
+  var hazir=sy[h]!=null||canli[b.code+"|"+h]!=null;
+  if(hazir||!CANLI_SAHIP||!HABBO_ADRES[h]){sahipCiz(b,h,hazir?"tamam":"yok");return}
+  sahipCiz(b,h,"bekliyor");
+  canliSor(b.code,h,function(){
+    if(aktifKod!==b.code||secili!==h)return;
+    sahipCiz(b,h,canli[b.code+"|"+h]!=null?"tamam":"yok");
+  });
+}
+$("dhot").addEventListener("click",function(e){var t=e.target.closest(".fb");if(t&&aktifB)sahipAc(aktifB,t.dataset.h)});
+$("dlg").addEventListener("close",function(){aktifKod="";aktifB=null});
+function yeniMi(b){return !!b.t&&(Date.now()-new Date(b.t+"T00:00:00"))/864e5<=14}
+
+// Yan paneldeki seçenek listelerini kur
+function opts(box,key,items){
+  items.forEach(function(it){
+    var b=document.createElement("button");b.className="opt";b.dataset.k=key;b.dataset.v=it[0];
+    b.innerHTML=it[2]+"<span>"+it[1]+'</span><span class="n">'+(it[3]||0).toLocaleString("tr-TR")+"</span>";
+    b.onclick=function(){S[key]=it[0];go()};
+    box.appendChild(b);
+  });
+}
+opts($("fh"),"hotel",[["","Tüm oteller",flag(""),cnt[""]]].concat(HOTELS.map(function(h){return [h[0],h[1],flag(h[0]),cnt[h[0]]]})));
+// Harf şeridi
+[["","Tümü"],["0-9","0–9"]].concat("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map(function(c){return [c,c]})).concat([["#","#"]]).forEach(function(a){
+  var b=document.createElement("button");b.className="ab";b.dataset.v=a[0];b.textContent=a[1];
+  b.onclick=function(){S.harf=a[0];go()};$("abr").appendChild(b);
+});
+
+function div(c,t){var d=document.createElement("div");d.className=c;d.textContent=t;return d}
+// Rozet resmi: önce .png, olmazsa .gif, o da olmazsa "Görsel yok"
+function tile(b){
+  var img=new Image(),yol=IMG+encodeURIComponent(b.code),denendi=false;
+  img.alt="";img.loading="lazy";img.src=yol+".png";
+  img.onerror=function(){
+    if(!denendi){denendi=true;img.src=yol+".gif";return}
+    var s=document.createElement("span");s.className="yok";s.textContent="Görsel yok";img.replaceWith(s);
+  };
+  return img;
+}
+function item(b){
+  var el=document.createElement("button");el.className="b";
+  var t=div("tile","");t.appendChild(tile(b));
+  if(yeniMi(b)){var nw=document.createElement("span");nw.className="nw";nw.textContent="YENİ";t.appendChild(nw)}
+  var i=div("info","");i.append(div("nm",b.name),div("cd",b.code),div("d",b.desc||"Açıklama yok"));
+  var f=div("fs","");
+  f.innerHTML=b.hotels.map(flag).join("")+(b.hotels.length>5?'<span class="pl">+'+(b.hotels.length-5)+"</span>":"");
+  el.append(t,i,f);
+  el.onclick=function(){
+    var d=$("dtile");d.innerHTML="";d.appendChild(tile(b));
+    $("dname").textContent=b.name;$("dcode").textContent=b.code;
+    $("ddesc").textContent=b.desc||"Bu rozet için açıklama yok.";
+    $("ddate").hidden=!b.t;$("ddate").textContent=b.t?"İlk görülme: "+tarih(b.t):"";
+    aktifKod=b.code;aktifB=b;
+    // Varsayılan otel: filtrelenmiş otel (rozette varsa), yoksa Türkiye, yoksa ilk otel
+    sahipAc(b,S.hotel&&b.hotels.indexOf(S.hotel)>=0?S.hotel:(b.hotels.indexOf("tr")>=0?"tr":b.hotels[0]));
+    $("dlg").showModal();
+  };
+  return el;
+}
+function suz(){
+  var q=S.q.trim().toLocaleLowerCase("tr");
+  var l=BADGES.filter(function(b){
+    return (!S.hotel||b.hotels.includes(S.hotel))&&(!S.harf||b._h===S.harf)&&
+      (!S.desc||b.desc)&&(!S.tek||b.hotels.length===1)&&(!q||b._s.includes(q));
+  });
+  // "yeni": BADGES dizisi zaten yeniden eskiye sıralı, olduğu gibi bırakılır
+  if(S.sort==="kod")l.sort(function(a,b){return a._k<b._k?-1:a._k>b._k?1:0});
+  if(S.sort==="ad")l.sort(function(a,b){return coll.compare(a.name,b.name)});
+  if(S.sort==="otel")l.sort(function(a,b){return b.hotels.length-a.hotels.length||coll.compare(a.code,b.code)});
+  return l;
+}
+var BOS={hotel:"",harf:"",q:"",desc:false,tek:false};
+function go(){
+  document.querySelectorAll(".opt").forEach(function(x){x.setAttribute("aria-pressed",S[x.dataset.k]===x.dataset.v)});
+  document.querySelectorAll(".ab").forEach(function(x){x.setAttribute("aria-pressed",S.harf===x.dataset.v)});
+  $("fd").checked=S.desc;$("fo").checked=S.tek;$("q").value=S.q;$("fs").value=S.sort;
+  $("vg").setAttribute("aria-pressed",S.view==="grid");$("vr").setAttribute("aria-pressed",S.view==="rows");
+  list=suz();
+  // Seçili filtreleri küçük etiketler olarak göster
+  var st=$("stat");st.innerHTML="";
+  var n=document.createElement("strong");n.textContent=list.length.toLocaleString("tr-TR")+" rozet";st.appendChild(n);
+  var ch=[];
+  if(S.hotel)ch.push(["Otel: "+NAMES[S.hotel],"hotel"]);
+  if(S.harf)ch.push(["Harf: "+S.harf,"harf"]);
+  if(S.desc)ch.push(["Açıklaması olanlar","desc"]);
+  if(S.tek)ch.push(["Tek otelde","tek"]);
+  if(S.q.trim())ch.push(["Arama: "+S.q.trim(),"q"]);
+  ch.forEach(function(c){
+    var b=document.createElement("button");b.className="chip";b.textContent=c[0]+" ×";
+    b.onclick=function(){S[c[1]]=BOS[c[1]];go()};st.appendChild(b);
+  });
+  if(ch.length>1){
+    var t=document.createElement("button");t.className="clr";t.textContent="Hepsini temizle";
+    t.onclick=function(){Object.assign(S,BOS);go()};st.appendChild(t);
+  }
+  var o=$("out");o.className="out "+S.view;o.innerHTML="";shown=0;
+  if(!list.length){o.className="out";o.innerHTML='<p class="empty">Sonuç yok. Bir filtreyi kaldırmayı ya da aramayı kısaltmayı dene.</p>';$("more").hidden=true;return}
+  daha();
+}
+function daha(){
+  var next=Math.min(shown+PAGE,list.length),o=$("out");
+  list.slice(shown,next).forEach(function(b){o.appendChild(item(b))});
+  shown=next;
+  var left=list.length-shown;$("more").hidden=left<=0;
+  $("more").textContent="Daha fazla göster ("+left.toLocaleString("tr-TR")+" kaldı)";
+}
+var tm;
+$("q").oninput=function(){clearTimeout(tm);var v=this.value;tm=setTimeout(function(){S.q=v;go()},150)};
+$("fd").onchange=function(){S.desc=this.checked;go()};
+$("fo").onchange=function(){S.tek=this.checked;go()};
+$("fs").onchange=function(){S.sort=this.value;go()};
+$("vg").onclick=function(){S.view="grid";go()};
+$("vr").onclick=function(){S.view="rows";go()};
+$("more").onclick=daha;
+$("close").onclick=function(){$("dlg").close()};
+$("dlg").addEventListener("click",function(e){if(e.target===$("dlg"))$("dlg").close()});
+// Geniş ekranda filtre paneli açık, telefonda kapalı başlasın
+var mq=matchMedia("(min-width:861px)");
+function sigdir(){$("side").open=mq.matches}sigdir();mq.addEventListener("change",sigdir);
+// ---- Oyuncu sorgusu: kullanıcı adı + otel ile Habbo'nun herkese açık servisinden (profil, rozet, grup, oda, başarım) ----
+var KULLANICI_SORGU=true;   // false yapılırsa bu bölüm gizlenir
+(function(){
+  if(!KULLANICI_SORGU){$("usr").hidden=true;return}
+  HOTELS.forEach(function(x){var o=document.createElement("option");o.value=x[0];o.textContent=x[1];$("uh").appendChild(o)});
+  var arsiv={},sira={};
+  BADGES.forEach(function(b,i){var k=b.code.toLowerCase();arsiv[k]=b;sira[k]=i});
+  function iste(url){return fetch(url,{credentials:"omit"}).then(function(r){if(!r.ok){throw {kod:r.status}}return r.json()})}
+  function mesaj(t,s){var p=document.createElement("p");p.className=s||"msg";p.textContent=t;$("ud").innerHTML="";$("ud").appendChild(p)}
+  function liste(v,anahtar){return Array.isArray(v)?v:((v&&Array.isArray(v[anahtar]))?v[anahtar]:[])}
+  function gun(t){var s=t?String(t).slice(0,10):"";return s&&tarih(s)?tarih(s):""}
+  function sorgula(){
+    var ad=$("un").value.trim(),otel=$("uh").value;
+    if(!ad){mesaj("Bir kullanıcı adı yazın.");return}
+    var taban=HABBO_ADRES[otel]+"/api/public/users";
+    mesaj("Sorgulanıyor…");
+    iste(taban+"?name="+encodeURIComponent(ad)).then(function(u){
+      if(!u||!u.uniqueId)throw {kod:404};
+      if(u.profileVisible===false){ciz(u,otel,null,null);return}
+      var id=encodeURIComponent(u.uniqueId);
+      var pr=iste(taban+"/"+id+"/profile").catch(function(){return null});
+      var bd=iste(taban+"/"+id+"/badges").catch(function(){return null});
+      return Promise.all([pr,bd]).then(function(s){
+        var p=s[0],rozetler=s[1]!=null?liste(s[1],"badges"):(p?liste(p.badges,"badges"):[]);
+        ciz(u,otel,rozetler,p);
+      });
+    }).catch(function(e){
+      if(e&&e.kod===404)mesaj("Bu otelde “"+ad+"” adında bir oyuncu bulunamadı. Adı ve oteli kontrol edin.","err");
+      else if(e&&(e.kod===401||e.kod===403))mesaj("Bu oyuncunun profili gizli, bilgileri görüntülenemiyor.","err");
+      else mesaj("Habbo’ya ulaşılamadı. Biraz sonra tekrar deneyin.","err");
+      if(window.console)console.warn("Oyuncu sorgusu başarısız:",e);
+    });
+  }
+  function ozet(u,p){
+    var k=(p&&p.user)||u,a=[];
+    function e(t,v,c){if(v!=null&&v!==""){var s=document.createElement("span");if(c)s.className=c;s.innerHTML=t+" <b></b>";s.querySelector("b").textContent=v;a.push(s)}}
+    if(typeof k.online==="boolean")e("Durum",k.online?"Çevrimiçi":"Çevrimdışı",k.online?"on":"");
+    e("Seviye",k.currentLevel);
+    e("Yıldız taşı",k.starGemCount!=null?sayiYaz(k.starGemCount):null);
+    e("Deneyim",k.totalExperience!=null?sayiYaz(k.totalExperience):null);
+    e("Üyelik",gun(k.memberSince));
+    e("Son giriş",gun(k.lastAccessTime));
+    if(p){e("Arkadaş",liste(p.friends,"friends").length.toLocaleString("tr-TR"))}
+    var w=div("ust","");a.forEach(function(x){w.appendChild(x)});return w;
+  }
+  function gorselli(src,ad){var g=div("gi","");if(src){var i=new Image();i.alt="";i.loading="lazy";i.src=src;i.onerror=function(){i.remove()};g.appendChild(i)}return g}
+  function satir(src,ad,alt,sag){
+    var el=div("li","");el.appendChild(gorselli(src));
+    var t=div("lt","");t.append(div("ln",ad),div("ls",alt||""));el.appendChild(t);
+    if(sag!=null&&sag!=="")el.appendChild(div("lr",sag));return el;
+  }
+  function bos(t){var p=document.createElement("p");p.className="msg";p.textContent=t;return p}
+  function ciz(u,otel,rozetler,p){
+    var ud=$("ud");ud.innerHTML="";
+    var ust=div("uk",""),av=div("av",""),im=new Image();
+    im.alt="";im.src=HABBO_ADRES[otel]+"/habbo-imaging/avatarimage?figure="+encodeURIComponent(u.figureString||"")+"&size=l&direction=2&head_direction=3&headonly=1";
+    im.onerror=function(){av.remove()};av.appendChild(im);
+    var m=div("",""),h3=document.createElement("h3"),p1=document.createElement("p");
+    h3.textContent=u.name;p1.textContent=u.motto||"";
+    m.append(h3,p1);ust.append(av,m);ud.appendChild(ust);
+    if(!rozetler){ud.appendChild(bos("Bu oyuncunun profili gizli, bilgileri görüntülenemiyor."));return}
+    ud.appendChild(ozet(u,p));
+    var gruplar=p?liste(p.groups,"groups"):[],odalar=p?liste(p.rooms,"rooms"):[];
+    var sekmeler=[["r","Rozetler ("+rozetler.length.toLocaleString("tr-TR")+")"]];
+    if(p){sekmeler.push(["g","Gruplar ("+gruplar.length+")"],["o","Odalar ("+odalar.length+")"])}
+    sekmeler.push(["b","Başarımlar"]);
+    var nav=div("pnb",""),alan=div("",""),aktif="r",basarimYuklendi=false;
+    function sekme(){
+      nav.querySelectorAll(".pn").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.s===aktif)});
+      alan.innerHTML="";
+      if(aktif==="r")rozetCiz(alan);
+      if(aktif==="g")grupCiz(alan);
+      if(aktif==="o")odaCiz(alan);
+      if(aktif==="b")basarimCiz(alan);
+    }
+    sekmeler.forEach(function(s){var b=document.createElement("button");b.type="button";b.className="pn";b.dataset.s=s[0];b.textContent=s[1];b.onclick=function(){aktif=s[0];sekme()};nav.appendChild(b)});
+    ud.append(nav,alan);
+    function rozetCiz(kok){
+      if(!rozetler.length){kok.appendChild(bos("Rozeti yok."));return}
+      var l=rozetler.map(function(x){var k=String(x.code).toLowerCase();
+        return arsiv[k]||{code:x.code,name:x.name||x.code,desc:x.description||"",hotels:[otel],_k:k}});
+      var bar=div("us",""),sel=document.createElement("select"),kap=div("out grid",""),dm=div("",""),gor=120;
+      sel.setAttribute("aria-label","Sıralama");
+      [["yeni","Yeniden eskiye"],["kod","Koda göre (A–Z)"],["ad","Ada göre (A–Z)"]].forEach(function(x){var o=document.createElement("option");o.value=x[0];o.textContent=x[1];sel.appendChild(o)});
+      bar.appendChild(sel);kok.append(bar,kap,dm);
+      function goster(){
+        var s=l.slice(),t=sel.value;
+        if(t==="yeni")s.sort(function(a,b){var x=sira[a.code.toLowerCase()],y=sira[b.code.toLowerCase()];return (x==null?1e9:x)-(y==null?1e9:y)});
+        if(t==="kod")s.sort(function(a,b){var x=a.code.toLowerCase(),y=b.code.toLowerCase();return x<y?-1:x>y?1:0});
+        if(t==="ad")s.sort(function(a,b){return coll.compare(a.name,b.name)});
+        kap.innerHTML="";dm.innerHTML="";
+        s.slice(0,gor).forEach(function(b){kap.appendChild(item(b))});
+        if(s.length>gor){var d=document.createElement("button");d.type="button";d.className="more";d.textContent="Daha fazla göster ("+(s.length-gor).toLocaleString("tr-TR")+" kaldı)";d.onclick=function(){gor+=120;goster()};dm.appendChild(d)}
+      }
+      sel.onchange=function(){gor=120;goster()};
+      goster();
+    }
+    function grupCiz(kok){
+      if(!gruplar.length){kok.appendChild(bos("Grubu yok."));return}
+      var w=div("lst","");
+      gruplar.forEach(function(g){
+        var rozet=g.badgeCode?HABBO_ADRES[otel]+"/habbo-imaging/badge/"+encodeURIComponent(g.badgeCode)+".gif":"";
+        w.appendChild(satir(rozet,g.name||"Adsız grup",g.description||"",g.isAdmin?"Yönetici":""));
+      });
+      kok.appendChild(w);
+    }
+    function odaCiz(kok){
+      if(!odalar.length){kok.appendChild(bos("Odası yok."));return}
+      var w=div("lst","");
+      odalar.forEach(function(o){
+        var alt=[];if(o.description)alt.push(o.description);
+        if(o.maximumVisitors)alt.push("Kapasite "+o.maximumVisitors);
+        if(o.creationTime&&gun(o.creationTime))alt.push(gun(o.creationTime));
+        w.appendChild(satir(o.imageUrl||"",o.name||"Adsız oda",alt.join(" · "),o.rating!=null?"★ "+o.rating:""));
+      });
+      kok.appendChild(w);
+    }
+    function basarimCiz(kok){
+      var yer=div("",""),yuk=bos("Yükleniyor…");kok.append(yer);yer.appendChild(yuk);
+      iste(HABBO_ADRES[otel]+"/api/public/achievements/"+encodeURIComponent(u.uniqueId)).then(function(v){
+        var l=liste(v,"achievements");yer.innerHTML="";
+        if(!l.length){yer.appendChild(bos("Başarım bilgisi yok."));return}
+        var topla=0,w=div("lst","");
+        l.forEach(function(x){
+          var a=x.achievement||x,ad=a.name||a.title||x.name||x.achievementName||"Başarım";
+          ad=String(ad).replace(/([a-z])([A-Z])/g,"$1 $2");
+          var skor=x.score!=null?x.score:(a.score!=null?a.score:null);
+          if(typeof skor==="number")topla+=skor;
+          var alt=x.level!=null?"Seviye "+x.level:(a.level!=null?"Seviye "+a.level:"");
+          w.appendChild(satir("",ad,alt,skor!=null?sayiYaz(skor):""));
+        });
+        if(topla){var t=div("msg","");t.textContent="Toplam başarım puanı: "+sayiYaz(topla);t.style.marginBottom="10px";yer.appendChild(t)}
+        yer.appendChild(w);
+      }).catch(function(){yer.innerHTML="";yer.appendChild(bos("Başarımlar şu an alınamadı."))});
+    }
+    sekme();
+  }
+  $("ug").onclick=sorgula;
+  $("un").addEventListener("keydown",function(e){if(e.key==="Enter")sorgula()});
+})();
+// ---- Promolar sekmesi ----
+(function(){
+  var P=typeof PROMOS!=="undefined"?PROMOS:[],PP=48,pl=[],ps=0,kuruldu=false;
+  var PS={q:"",k:"web",h:""};
+  var TUR={web:"Web promosu",kucuk:"Küçük promo",diger:"Eski promo"};
+  var OTL={com:"habbo.com",br:"habbo.com.br",es:"habbo.es",fi:"habbo.fi",fr:"habbo.fr",de:"habbo.de",it:"habbo.it",nl:"habbo.nl",tr:"habbo.com.tr",sandbox:"sandbox"};
+  P.forEach(function(p){p._s=p.n.toLocaleLowerCase("tr")});
+  function sec(){
+    var q=PS.q.trim().toLocaleLowerCase("tr");
+    return P.filter(function(p){return (!PS.k||p.k===PS.k)&&(!PS.h||p.h.indexOf(PS.h)>=0)&&(!q||p._s.indexOf(q)>=0)});
+  }
+  function gorsel(p){
+    var im=new Image(),denendi=false;im.alt="";im.loading="lazy";im.src=p.u;
+    im.onerror=function(){
+      if(!denendi&&p.f){denendi=true;im.src=p.f;return}
+      var s=document.createElement("span");s.className="yok";s.textContent="Görsel yok";im.replaceWith(s);
+    };
+    return im;
+  }
+  function etiketler(p){
+    var t=div("pt","");
+    p.h.forEach(function(h){var s=document.createElement("span");s.textContent=(OTL[h]||h);t.appendChild(s)});
+    return t;
+  }
+  function kart(p){
+    var el=document.createElement("button");el.className="b pc"+(p.k==="kucuk"?" rd":"");el.type="button";
+    var t=div("ptile","");t.appendChild(gorsel(p));
+    var i=div("info","");i.append(div("nm",p.n),div("cd",(TUR[p.k]||"")+(p.t&&tarih(p.t)?" · "+tarih(p.t):"")));
+    el.append(t,i,etiketler(p));
+    el.onclick=function(){
+      var d=$("pimg");d.onerror=null;d.src=p.u;
+      d.onerror=function(){if(p.f&&d.src!==p.f){d.src=p.f}};
+      $("pname").textContent=p.n;
+      $("pmeta").textContent=(TUR[p.k]||"")+(p.t&&tarih(p.t)?" · İlk görülme: "+tarih(p.t):"")+" · "+p.h.map(function(h){return OTL[h]||h}).join(", ");
+      $("plink").href=p.u;
+      $("pdlg").showModal();
+    };
+    return el;
+  }
+  function daha(){
+    var son=Math.min(ps+PP,pl.length),o=$("pout");
+    pl.slice(ps,son).forEach(function(p){o.appendChild(kart(p))});
+    ps=son;var kalan=pl.length-ps;$("pmore").hidden=kalan<=0;
+    $("pmore").textContent="Daha fazla göster ("+kalan.toLocaleString("tr-TR")+" kaldı)";
+  }
+  function ciz(){
+    pl=sec();ps=0;
+    document.querySelectorAll("#pk .tg").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.k===PS.k)});
+    var st=$("pstat");st.innerHTML="";
+    var n=document.createElement("strong");n.textContent=pl.length.toLocaleString("tr-TR")+" promo";st.appendChild(n);
+    [["Otel: "+(OTL[PS.h]||PS.h),"h"],["Arama: "+PS.q.trim(),"q"]].forEach(function(c){
+      if(!PS[c[1]]||(c[1]==="q"&&!PS.q.trim()))return;
+      var b=document.createElement("button");b.className="chip";b.type="button";b.textContent=c[0]+" ×";
+      b.onclick=function(){PS[c[1]]="";$("pq").value=PS.q;$("ph").value=PS.h;ciz()};st.appendChild(b);
+    });
+    var o=$("pout");o.innerHTML="";
+    if(!P.length){o.className="out";o.innerHTML='<p class="empty">Promo listesi bulunamadı. guncelle.bat dosyasını çalıştırıp promolar.js dosyasını oluşturun.</p>';$("pmore").hidden=true;return}
+    if(!pl.length){o.className="out";o.innerHTML='<p class="empty">Sonuç yok. Bir filtreyi kaldırmayı ya da aramayı kısaltmayı dene.</p>';$("pmore").hidden=true;return}
+    o.className="out pgrid"+(PS.k==="kucuk"?" pk":"");daha();
+  }
+  function kur(){
+    var k=$("pk"),h=$("ph"),kc={},hc={};
+    P.forEach(function(p){kc[p.k]=(kc[p.k]||0)+1;p.h.forEach(function(x){hc[x]=(hc[x]||0)+1})});
+    function opt(s,v,t){var o=document.createElement("option");o.value=v;o.textContent=t;s.appendChild(o)}
+    if(!kc.web)PS.k="";
+    [["web","Web promoları"],["kucuk","Küçük promolar (yuvarlak)"],["diger","Eski promolar"],["","Tümü"]].forEach(function(x){
+      var n=x[0]?kc[x[0]]:P.length;if(!n)return;
+      var b=document.createElement("button");b.type="button";b.className="tg";b.dataset.k=x[0];
+      b.textContent=x[1]+" ("+n.toLocaleString("tr-TR")+")";
+      b.onclick=function(){PS.k=x[0];ciz()};k.appendChild(b);
+    });
+    opt(h,"","Tüm oteller");Object.keys(hc).sort().forEach(function(x){opt(h,x,(OTL[x]||x)+" ("+hc[x].toLocaleString("tr-TR")+")")});
+    h.onchange=function(){PS.h=this.value;ciz()};
+    var tm;$("pq").oninput=function(){clearTimeout(tm);var v=this.value;tm=setTimeout(function(){PS.q=v;ciz()},150)};
+    $("pmore").onclick=daha;
+    $("pclose").onclick=function(){$("pdlg").close()};
+    $("pdlg").addEventListener("click",function(e){if(e.target===$("pdlg"))$("pdlg").close()});
+    $("pdlg").addEventListener("close",function(){$("pimg").removeAttribute("src")});
+  }
+  function mod(promo){
+    $("usr").hidden=promo||!KULLANICI_SORGU;
+    document.querySelector(".layout").hidden=promo;
+    $("ps").hidden=!promo;
+    $("mR").setAttribute("aria-pressed",!promo);$("mP").setAttribute("aria-pressed",promo);
+    if(promo&&!kuruldu){kuruldu=true;kur();ciz()}
+  }
+  $("mR").onclick=function(){mod(false)};
+  $("mP").onclick=function(){mod(true)};
+})();
+go();
+</script>
+</body>
+</html>
