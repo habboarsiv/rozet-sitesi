@@ -464,6 +464,9 @@ var mq=matchMedia("(min-width:861px)");
 function sigdir(){$("side").open=mq.matches}sigdir();mq.addEventListener("change",sigdir);
 // ---- Oyuncu sorgusu: kullanıcı adı + otel ile Habbo'nun herkese açık servisinden (profil, rozet, grup, oda, başarım) ----
 var KULLANICI_SORGU=true;   // false yapılırsa bu bölüm gizlenir
+// Oyuncu geçmişi (ad / motto / görünüş) servisinin adresi. Boş bırakılırsa "Geçmiş" sekmesi görünmez.
+// Cloudflare Worker'ı kurunca buraya adresini yazın, örn: "https://habbo-gecmis.hesabiniz.workers.dev/"
+var GECMIS_API="https://habbo-gecmis.habboarsiv-api.workers.dev/";
 (function(){
   if(!KULLANICI_SORGU){$("usr").hidden=true;return}
   HOTELS.forEach(function(x){var o=document.createElement("option");o.value=x[0];o.textContent=x[1];$("uh").appendChild(o)});
@@ -473,26 +476,48 @@ var KULLANICI_SORGU=true;   // false yapılırsa bu bölüm gizlenir
   function mesaj(t,s){var p=document.createElement("p");p.className=s||"msg";p.textContent=t;$("ud").innerHTML="";$("ud").appendChild(p)}
   function liste(v,anahtar){return Array.isArray(v)?v:((v&&Array.isArray(v[anahtar]))?v[anahtar]:[])}
   function gun(t){var s=t?String(t).slice(0,10):"";return s&&tarih(s)?tarih(s):""}
+  // Geçmiş servisi: oyuncuyu kaydeder ve kayıtlı ad / motto / görünüş geçmişini getirir. Ulaşılamazsa sessizce null döner.
+  function gecmisAl(ad,otel){
+    if(!GECMIS_API)return Promise.resolve(null);
+    var c=window.AbortController?new AbortController():null,z=setTimeout(function(){if(c)c.abort()},8000);
+    return fetch(GECMIS_API+"?otel="+encodeURIComponent(otel)+"&ad="+encodeURIComponent(ad),{credentials:"omit",signal:c?c.signal:undefined})
+      .then(function(r){return r.ok?r.json():null})
+      .catch(function(){return null})
+      .then(function(g){clearTimeout(z);return g&&g.ok?g:null});
+  }
+  function eskiAd(eski,yeni){
+    var ud=$("ud");ud.innerHTML="";
+    var p=document.createElement("p");p.className="msg";
+    p.textContent="“"+eski+"” adı artık kullanılmıyor. Bu ad daha önce şu oyuncuya aitti: “"+yeni+"”.";
+    var b=document.createElement("button");b.type="button";b.className="more";b.style.marginTop="12px";
+    b.textContent="“"+yeni+"” adını sorgula";
+    b.onclick=function(){$("un").value=yeni;sorgula()};
+    ud.append(p,b);
+  }
   function sorgula(){
     var ad=$("un").value.trim(),otel=$("uh").value;
     if(!ad){mesaj("Bir kullanıcı adı yazın.");return}
     var taban=HABBO_ADRES[otel]+"/api/public/users";
     mesaj("Sorgulanıyor…");
+    var gp=gecmisAl(ad,otel);
     iste(taban+"?name="+encodeURIComponent(ad)).then(function(u){
       if(!u||!u.uniqueId)throw {kod:404};
-      if(u.profileVisible===false){ciz(u,otel,null,null);return}
+      if(u.profileVisible===false){ciz(u,otel,null,null,null);return}
       var id=encodeURIComponent(u.uniqueId);
       var pr=iste(taban+"/"+id+"/profile").catch(function(){return null});
       var bd=iste(taban+"/"+id+"/badges").catch(function(){return null});
-      return Promise.all([pr,bd]).then(function(s){
+      return Promise.all([pr,bd,gp]).then(function(s){
         var p=s[0],rozetler=s[1]!=null?liste(s[1],"badges"):(p?liste(p.badges,"badges"):[]);
-        ciz(u,otel,rozetler,p);
+        ciz(u,otel,rozetler,p,s[2]&&s[2].gecmis?s[2]:null);
       });
     }).catch(function(e){
-      if(e&&e.kod===404)mesaj("Bu otelde “"+ad+"” adında bir oyuncu bulunamadı. Adı ve oteli kontrol edin.","err");
-      else if(e&&(e.kod===401||e.kod===403))mesaj("Bu oyuncunun profili gizli, bilgileri görüntülenemiyor.","err");
-      else mesaj("Habbo’ya ulaşılamadı. Biraz sonra tekrar deneyin.","err");
       if(window.console)console.warn("Oyuncu sorgusu başarısız:",e);
+      if(e&&e.kod===404)return gp.then(function(g){
+        if(g&&g.eski_ad)eskiAd(ad,g.guncel_ad);
+        else mesaj("Bu otelde “"+ad+"” adında bir oyuncu bulunamadı. Adı ve oteli kontrol edin.","err");
+      });
+      if(e&&(e.kod===401||e.kod===403))mesaj("Bu oyuncunun profili gizli, bilgileri görüntülenemiyor.","err");
+      else mesaj("Habbo’ya ulaşılamadı. Biraz sonra tekrar deneyin.","err");
     });
   }
   function ozet(u,p){
@@ -514,7 +539,7 @@ var KULLANICI_SORGU=true;   // false yapılırsa bu bölüm gizlenir
     if(sag!=null&&sag!=="")el.appendChild(div("lr",sag));return el;
   }
   function bos(t){var p=document.createElement("p");p.className="msg";p.textContent=t;return p}
-  function ciz(u,otel,rozetler,p){
+  function ciz(u,otel,rozetler,p,g){
     var ud=$("ud");ud.innerHTML="";
     var ust=div("uk",""),av=div("av",""),im=new Image();
     im.alt="";im.src=HABBO_ADRES[otel]+"/habbo-imaging/avatarimage?figure="+encodeURIComponent(u.figureString||"")+"&size=l&direction=2&head_direction=3&headonly=1";
@@ -526,6 +551,7 @@ var KULLANICI_SORGU=true;   // false yapılırsa bu bölüm gizlenir
     ud.appendChild(ozet(u,p));
     var gruplar=p?liste(p.groups,"groups"):[],odalar=p?liste(p.rooms,"rooms"):[];
     var sekmeler=[["r","Rozetler ("+rozetler.length.toLocaleString("tr-TR")+")"]];
+    if(g)sekmeler.push(["h","Geçmiş"]);
     if(p){sekmeler.push(["g","Gruplar ("+gruplar.length+")"],["o","Odalar ("+odalar.length+")"])}
     sekmeler.push(["b","Başarımlar"]);
     var nav=div("pnb",""),alan=div("",""),aktif="r",basarimYuklendi=false;
@@ -533,6 +559,7 @@ var KULLANICI_SORGU=true;   // false yapılırsa bu bölüm gizlenir
       nav.querySelectorAll(".pn").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.s===aktif)});
       alan.innerHTML="";
       if(aktif==="r")rozetCiz(alan);
+      if(aktif==="h")gecmisCiz(alan);
       if(aktif==="g")grupCiz(alan);
       if(aktif==="o")odaCiz(alan);
       if(aktif==="b")basarimCiz(alan);
@@ -558,6 +585,30 @@ var KULLANICI_SORGU=true;   // false yapılırsa bu bölüm gizlenir
       }
       sel.onchange=function(){gor=120;goster()};
       goster();
+    }
+    function gecmisCiz(kok){
+      var gm=g.gecmis||{},ad=gm.ad||[],mt=gm.motto||[],fg=gm.figur||[];
+      function sn(t){return new Date(t*1000).toLocaleDateString("tr-TR",{day:"numeric",month:"long",year:"numeric"})}
+      if(ad.length+mt.length+fg.length<=3){
+        var n=bos("Henüz kayıtlı bir değişiklik yok"+(g.ilk_gorulme?" (kayıt "+sn(g.ilk_gorulme)+" tarihinde başladı)":"")+". Bu oyuncunun bundan sonraki ad, motto ve görünüş değişiklikleri burada birikecek.");
+        n.style.marginBottom="6px";kok.appendChild(n);
+      }
+      function bolum(baslik,kayitlar,cizici){
+        var b=div("",""),h=document.createElement("h4");
+        h.textContent=baslik+" ("+kayitlar.length+")";h.style.margin="16px 0 8px";b.appendChild(h);
+        var w=div("lst","");kayitlar.forEach(function(k,i){w.appendChild(cizici(k,i))});b.appendChild(w);return b;
+      }
+      function metinSatir(k,i,bosMetin){
+        var el=div("li",""),t=div("lt","");
+        t.append(div("ln",k.deger||bosMetin),div("ls",sn(k.tarih)));el.appendChild(t);
+        if(i===0)el.appendChild(div("lr","Şimdiki"));return el;
+      }
+      kok.appendChild(bolum("Adlar",ad,function(k,i){return metinSatir(k,i,"(boş)")}));
+      kok.appendChild(bolum("Mottolar",mt,function(k,i){return metinSatir(k,i,"(boş)")}));
+      kok.appendChild(bolum("Görünüşler",fg,function(k,i){
+        var src=HABBO_ADRES[otel]+"/habbo-imaging/avatarimage?figure="+encodeURIComponent(k.deger||"")+"&size=l&direction=2&head_direction=3&headonly=1";
+        return satir(src,"Görünüş",sn(k.tarih),i===0?"Şimdiki":"");
+      }));
     }
     function grupCiz(kok){
       if(!gruplar.length){kok.appendChild(bos("Grubu yok."));return}
