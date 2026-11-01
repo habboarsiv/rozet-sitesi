@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Haber paneli – Habbo Arşiv</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css">
+<style>
+:root{--bg:#f4f6f9;--surface:#fff;--line:#e2e6ed;--ink:#161a22;--mute:#667085;--acc:#2858d8;--accS:#e9effd;--accT:#fff;--red:#d92d20;--ok:#067647}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1218;--surface:#171b24;--line:#2a3040;--ink:#eef1f6;--mute:#98a2b3;--acc:#6b93ff;--accS:#1d2a4d;--accT:#0b1020;--red:#f97066;--ok:#47cd89}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.55 Manrope,system-ui,sans-serif}
+main{max-width:860px;margin:0 auto;padding:24px 16px 60px}
+a{color:var(--acc)}
+h1{margin:6px 0 16px;font:800 1.7rem/1.1 Manrope,sans-serif;letter-spacing:-.02em}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px}
+label{display:block;font-weight:600;font-size:.85rem;margin:12px 0 4px}
+input[type=text],textarea,select{width:100%;font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+textarea{min-height:64px;resize:vertical}
+.btn{padding:9px 16px;border:1.5px solid var(--acc);border-radius:10px;background:var(--acc);color:var(--accT);font:700 .92rem Manrope,sans-serif;cursor:pointer}
+.btn.ik{background:transparent;color:var(--acc)}.btn.kz{border-color:var(--red);background:transparent;color:var(--red)}
+.btn:disabled{opacity:.6;cursor:wait}
+.sat{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:14px}
+.hb{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 0;border-top:1px solid var(--line)}
+.hb small{color:var(--mute)}
+.rozet{font:700 .72rem Manrope,sans-serif;padding:2px 9px;border-radius:99px;background:var(--accS);color:var(--acc)}
+.msg{margin-top:10px;font-size:.9rem;color:var(--ok)}.msg.h{color:var(--red)}
+#kapakOn{max-width:240px;border-radius:10px;margin-top:8px;display:block}
+.ql-toolbar.ql-snow,.ql-container.ql-snow{border-color:var(--line)}
+.ql-container{font:400 16px/1.6 Manrope,sans-serif;min-height:340px;background:var(--surface);color:var(--ink)}
+.ql-editor img{max-width:100%;height:auto;margin:2px}
+.ql-snow .ql-stroke{stroke:var(--ink)}.ql-snow .ql-fill{fill:var(--ink)}.ql-snow .ql-picker{color:var(--ink)}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+<a href="index.html">← Habbo Arşiv'e dön</a>
+<h1>Haber paneli</h1>
+<div class="card" id="kilit" hidden></div>
+
+<div id="liste" hidden>
+  <div class="sat" style="margin:0 0 12px"><button class="btn" id="yeniBtn" type="button">Yeni haber</button></div>
+  <div class="card" id="hl">Yükleniyor...</div>
+</div>
+
+<div id="editor" hidden>
+  <div class="card">
+    <label for="baslik">Başlık</label><input type="text" id="baslik" maxlength="200">
+    <label for="ozet">Kısa özet (haber kartında görünür)</label><textarea id="ozet" maxlength="400"></textarea>
+    <label for="etiket">Etiketler (virgülle ayır: EVENTS, AVAILABLE)</label><input type="text" id="etiket">
+    <label><input type="checkbox" id="sicak"> HOT işareti ekle</label>
+    <label>Önizleme (kapak) görseli</label>
+    <input type="file" id="kapakSec" accept="image/*">
+    <img id="kapakOn" alt="" hidden>
+  </div>
+  <div class="card">
+    <div class="sat" style="margin:0 0 10px"><label style="margin:0">Eklenecek görsel boyutu:</label>
+      <select id="boy" style="width:auto"><option value="">Geniş (tam)</option><option value="480">Orta</option><option value="240">Küçük</option><option value="120">Çok küçük</option></select>
+      <small style="color:var(--mute)">Araç çubuğundaki görsel düğmesiyle birden çok görsel seçebilirsin.</small></div>
+    <div id="ed"></div>
+    <input type="file" id="gorselSec" accept="image/*" multiple hidden>
+  </div>
+  <div class="sat">
+    <button class="btn ik" id="taslakBtn" type="button">Taslak kaydet</button>
+    <button class="btn" id="yayinBtn" type="button">Yayınla</button>
+    <button class="btn ik" id="geriBtn" type="button">← Listeye dön</button>
+  </div>
+  <div class="msg" id="msg" role="status" aria-live="polite"></div>
+</div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+<script src="hesap.js"></script>
+<script>
+const CLOUD = "md4etvsz", PRESET = "habboarsiv_haber";
+const $ = id => document.getElementById(id);
+let q, duzenlenen = null, kapak = null;
+
+function durum(t, h) { $("msg").textContent = t || ""; $("msg").className = "msg" + (h ? " h" : ""); }
+
+// Küçük görselleri (piksel sanat dahil) olduğu gibi yükler, büyükleri küçültüp WebP yapar
+async function kucult(f) {
+  if (f.type === "image/gif" || f.size < 400 * 1024) return f;
+  const b = await createImageBitmap(f), s = Math.min(1, 1600 / b.width);
+  const c = document.createElement("canvas"); c.width = Math.round(b.width * s); c.height = Math.round(b.height * s);
+  c.getContext("2d").drawImage(b, 0, 0, c.width, c.height);
+  return await new Promise(r => c.toBlob(r, "image/webp", 0.88));
+}
+async function yukle(f) {
+  const d = new FormData(); d.append("file", await kucult(f)); d.append("upload_preset", PRESET);
+  const r = await fetch("https://api.cloudinary.com/v1_1/" + CLOUD + "/image/upload", { method: "POST", body: d });
+  const v = await r.json();
+  if (!r.ok) throw new Error((v.error && v.error.message) || "Yükleme hatası");
+  return v.secure_url.replace("/upload/", "/upload/f_auto,q_auto/");
+}
+
+function kurEditor() {
+  q = new Quill("#ed", { theme: "snow", placeholder: "Haberi buraya yaz...", modules: { toolbar: {
+    container: [[{ header: [2, 3, false] }], [{ font: ["", "serif", "monospace"] }], ["bold", "italic", "underline", "strike"],
+      [{ color: [] }, { background: [] }], [{ align: [] }], [{ list: "ordered" }, { list: "bullet" }], ["link", "image"], ["clean"]],
+    handlers: { image: () => $("gorselSec").click() } } } });
+}
+
+$("gorselSec").onchange = async e => {
+  const dosyalar = [...e.target.files]; e.target.value = "";
+  let i = (q.getSelection(true) || { index: q.getLength() - 1 }).index, n = 0;
+  for (const f of dosyalar) {
+    durum("Görsel yükleniyor: " + (++n) + "/" + dosyalar.length);
+    try {
+      const u = await yukle(f); q.insertEmbed(i, "image", u, "user");
+      if ($("boy").value) q.formatText(i, 1, "width", $("boy").value, "user");
+      i++;
+    } catch (x) { durum("Hata: " + x.message, true); }
+  }
+  q.setSelection(i, 0); if (n) durum("Görseller eklendi (" + n + ").");
+};
+
+$("kapakSec").onchange = async e => {
+  const f = e.target.files[0]; if (!f) return;
+  durum("Kapak yükleniyor...");
+  try { kapak = await yukle(f); $("kapakOn").src = kapak.replace("/upload/", "/upload/w_480/"); $("kapakOn").hidden = false; durum("Kapak eklendi."); }
+  catch (x) { durum("Hata: " + x.message, true); }
+};
+
+function goster(gorunum) { ["liste", "editor"].forEach(k => $(k).hidden = k !== gorunum); }
+
+function bosEditor() {
+  duzenlenen = null; kapak = null; q.setText(""); durum("");
+  ["baslik", "ozet", "etiket"].forEach(k => $(k).value = ""); $("sicak").checked = false; $("kapakOn").hidden = true;
+}
+
+async function listele() {
+  const h = HESAP.oku(), kendi = h.rol === "yonetici" ? "" : "&yazar_id=eq." + h.id;
+  const r = await HESAP.rest("haberler?select=id,baslik,durum,guncelleme&order=guncelleme.desc" + kendi);
+  const kutu = $("hl"); kutu.textContent = "";
+  if (!r.ok) { kutu.textContent = "Haberler okunamadı."; return; }
+  if (!r.v.length) { kutu.textContent = "Henüz haber yok. \"Yeni haber\" ile başla."; return; }
+  for (const n of r.v) {
+    const sat = document.createElement("div"); sat.className = "hb";
+    const sol = document.createElement("div");
+    const ad = document.createElement("strong"); ad.textContent = n.baslik;
+    const alt = document.createElement("small"); alt.textContent = " " + new Date(n.guncelleme).toLocaleDateString("tr-TR");
+    const rz = document.createElement("span"); rz.className = "rozet"; rz.textContent = n.durum === "yayinda" ? "Yayında" : "Taslak";
+    sol.append(ad, " ", rz, alt);
+    const sag = document.createElement("div"); sag.className = "sat"; sag.style.margin = 0;
+    const d = document.createElement("button"); d.className = "btn ik"; d.type = "button"; d.textContent = "Düzenle"; d.onclick = () => ac(n.id);
+    const s = document.createElement("button"); s.className = "btn kz"; s.type = "button"; s.textContent = "Sil"; s.onclick = () => sil(n.id);
+    sag.append(d, s); sat.append(sol, sag); kutu.append(sat);
+  }
+}
+
+async function ac(id) {
+  const r = await HESAP.rest("haberler?id=eq." + id + "&select=*");
+  if (!r.ok || !r.v[0]) return alert("Haber açılamadı.");
+  const n = r.v[0]; bosEditor(); duzenlenen = n.id; kapak = n.kapak;
+  $("baslik").value = n.baslik; $("ozet").value = n.ozet; $("etiket").value = (n.etiketler || []).join(", "); $("sicak").checked = n.sicak;
+  if (kapak) { $("kapakOn").src = kapak.replace("/upload/", "/upload/w_480/"); $("kapakOn").hidden = false; }
+  q.clipboard.dangerouslyPasteHTML(n.icerik || "");
+  goster("editor");
+}
+
+async function sil(id) {
+  if (!confirm("Bu haber kalıcı olarak silinsin mi?")) return;
+  const r = await HESAP.rest("haberler?id=eq." + id, { method: "DELETE" });
+  if (!r.ok) return alert("Silinemedi."); listele();
+}
+
+async function kaydet(d) {
+  const baslik = $("baslik").value.trim(); if (!baslik) return durum("Başlık yaz.", true);
+  const govde = { baslik, ozet: $("ozet").value.trim().slice(0, 400), kapak: kapak || null, icerik: q.root.innerHTML,
+    etiketler: $("etiket").value.split(",").map(s => s.trim()).filter(Boolean), sicak: $("sicak").checked, durum: d };
+  const ust = { Prefer: "return=representation" };
+  $("taslakBtn").disabled = $("yayinBtn").disabled = true;
+  const r = duzenlenen
+    ? await HESAP.rest("haberler?id=eq." + duzenlenen, { method: "PATCH", body: JSON.stringify(govde), headers: ust })
+    : await HESAP.rest("haberler", { method: "POST", body: JSON.stringify({ ...govde, yazar_id: HESAP.oku().id }), headers: ust });
+  $("taslakBtn").disabled = $("yayinBtn").disabled = false;
+  if (!r.ok) return durum("Kaydedilemedi: " + ((r.v && r.v.message) || "yetkin olmayabilir"), true);
+  duzenlenen = r.v[0].id; durum(d === "yayinda" ? "Yayınlandı." : "Taslak kaydedildi.");
+}
+
+$("yeniBtn").onclick = () => { bosEditor(); goster("editor"); };
+$("taslakBtn").onclick = () => kaydet("taslak");
+$("yayinBtn").onclick = () => kaydet("yayinda");
+$("geriBtn").onclick = () => { goster("liste"); listele(); };
+
+(function baslat() {
+  const h = HESAP.oku(), k = $("kilit");
+  if (!h) { k.hidden = false; k.innerHTML = 'Haber yazmak için <a href="hesap.html">giriş yapmalısın</a>.'; return; }
+  if (h.rol !== "yazar" && h.rol !== "yonetici") { k.hidden = false; k.textContent = "Bu sayfa sadece yazarlar ve yöneticiler içindir."; return; }
+  kurEditor(); goster("liste"); listele();
+})();
+</script>
+</body>
+</html>

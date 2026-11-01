@@ -47,6 +47,29 @@ const HESAP = (() => {
     if (a && h) a.textContent = h.ad + " (" + h.otel.toUpperCase() + ")";
   }
 
-  return { OTELLER, fn, giris, cikis, oku, baglanti };
+  // Geçerli oturum belirteci (süresi dolduysa yeniler)
+  async function token() {
+    const h = oku(); if (!h) return null;
+    if (Date.now() < h.bitis - 60000) return h.token;
+    const { ok, v } = await istek("/auth/v1/token?grant_type=refresh_token", { refresh_token: h.yenile });
+    if (!ok) { cikis(); return null; }
+    Object.assign(h, { token: v.access_token, yenile: v.refresh_token, bitis: Date.now() + v.expires_in * 1000 });
+    localStorage.setItem("hesap", JSON.stringify(h));
+    return h.token;
+  }
+
+  // Veritabanı isteği (giriş yapmışsa kişinin yetkisiyle)
+  async function rest(yol, secenek = {}) {
+    const t = await token();
+    const r = await fetch(URL + "/rest/v1/" + yol, {
+      ...secenek,
+      headers: { apikey: KEY, Authorization: "Bearer " + (t || KEY), "Content-Type": "application/json", ...(secenek.headers || {}) },
+    });
+    const txt = await r.text(); let v = null;
+    try { v = txt ? JSON.parse(txt) : null; } catch { /* boş cevap */ }
+    return { ok: r.ok, v };
+  }
+
+  return { OTELLER, fn, giris, cikis, oku, baglanti, token, rest };
 })();
 HESAP.baglanti();
