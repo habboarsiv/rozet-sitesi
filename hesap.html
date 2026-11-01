@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hesap – Habbo Arşiv</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f6f9;--surface:#fff;--line:#e2e6ed;--ink:#161a22;--mute:#667085;--acc:#2858d8;--accS:#e9effd;--accT:#fff;--red:#d92d20;--ok:#067647;--gol:rgba(16,24,40,.14)}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1218;--surface:#171b24;--line:#232938;--ink:#eef1f6;--mute:#98a2b3;--acc:#6b93ff;--accS:#1d2a4d;--accT:#0b1020;--red:#f97066;--ok:#47cd89;--gol:rgba(0,0,0,.5)}}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:var(--ink);font:400 15px/1.55 Manrope,system-ui,sans-serif;
+  background:
+   radial-gradient(900px 440px at 90% -8%,color-mix(in srgb,var(--acc) 26%,transparent),transparent 70%),
+   radial-gradient(760px 420px at -8% 108%,color-mix(in srgb,var(--acc) 16%,transparent),transparent 70%),
+   linear-gradient(var(--line) 1px,transparent 1px) 0 0/28px 28px,
+   linear-gradient(90deg,var(--line) 1px,transparent 1px) 0 0/28px 28px,
+   var(--bg)}
+main{max-width:440px;margin:0 auto;padding:34px 16px 48px}
+a{color:var(--acc)}
+.geri{display:inline-block;margin-bottom:18px;font-size:.88rem;font-weight:600;text-decoration:none}
+.marka{margin:0 0 18px}
+.marka strong{display:block;font:800 2rem/1.05 Manrope,sans-serif;letter-spacing:-.03em}
+.marka span{display:block;margin-top:6px;color:var(--mute)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:24px;box-shadow:0 14px 40px var(--gol)}
+h1{margin:0 0 4px;font:800 1.3rem/1.2 Manrope,sans-serif;letter-spacing:-.01em}
+label{display:block;font-weight:600;font-size:.85rem;margin:14px 0 4px}
+input,select{width:100%;font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.btn{width:100%;padding:11px;border:1.5px solid var(--acc);border-radius:10px;background:var(--acc);color:var(--accT);font:700 1rem Manrope,sans-serif;cursor:pointer}
+.btn:disabled{opacity:.6;cursor:wait}
+.ikinci{background:transparent;color:var(--acc)}
+.satir{display:flex;gap:10px;margin-top:20px}.satir .btn{flex:1}
+.alt{margin-top:12px;text-align:center;font-size:.8rem}
+.alt a{color:var(--mute);text-decoration:underline}
+.msg{margin-top:12px;font-size:.9rem}.msg.h{color:var(--red)}.msg.o{color:var(--ok)}
+.kod{margin:16px 0 0;padding:14px;border-radius:10px;background:var(--accS);text-align:center}
+.kod b{display:block;font:800 1.7rem/1.2 ui-monospace,Consolas,monospace;letter-spacing:.06em;color:var(--acc);user-select:all}
+.kod span{display:block;margin-top:6px;font-size:.85rem;color:var(--mute)}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+<a class="geri" href="index.html">← Habbo Arşiv'e dön</a>
+<div class="marka"><strong>Habbo Arşiv</strong><span>Her otelin rozeti, her promonun görseli: hepsi tek arşivde.</span></div>
+<div class="card">
+  <h1 id="baslik">Giriş yap</h1>
+
+  <div id="girisli" hidden>
+    <p id="merhaba"></p>
+    <button class="btn" id="cik" type="button">Çıkış yap</button>
+  </div>
+
+  <form id="f" autocomplete="off">
+    <label for="otel">Otel</label>
+    <select id="otel"></select>
+    <label for="nick">Habbo adın</label>
+    <input id="nick" maxlength="30" autocapitalize="off" spellcheck="false">
+
+    <div id="kodKutu" hidden>
+      <div class="kod"><b id="kod"></b><span>Bu kodu oyunda mottona yaz, kaydet ve 1-2 dakika bekle. Kod <span id="dk" style="display:inline"></span> dakika geçerli.</span></div>
+    </div>
+
+    <div id="sifreAlani">
+      <label for="sifre" id="sifreEt">Şifre</label>
+      <input id="sifre" type="password" autocomplete="new-password">
+    </div>
+    <div id="sifre2Alani" hidden>
+      <label for="sifre2">Şifre (tekrar)</label>
+      <input id="sifre2" type="password" autocomplete="new-password">
+    </div>
+
+    <div class="satir">
+      <button class="btn" id="btn" type="submit">Giriş yap</button>
+      <button class="btn ikinci" id="kayitBtn" type="button">Kayıt ol</button>
+    </div>
+    <div class="alt"><a href="#" id="unuttum">Şifremi unuttum</a><a href="#" id="geriDon" hidden>← Girişe dön</a></div>
+    <div class="msg" id="msg" role="status" aria-live="polite"></div>
+  </form>
+</div>
+</main>
+
+<script src="hesap.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const ROL = { uye: "Üye", yazar: "Yazar", yonetici: "Yönetici" };
+let mod = "giris", kodAlindi = false;
+
+for (const [k, v] of Object.entries(HESAP.OTELLER)) $("otel").add(new Option(v, k));
+
+function msg(t, c) { $("msg").textContent = t || ""; $("msg").className = "msg " + (c || ""); }
+
+function goster() {
+  const g = mod === "giris";
+  $("sifreAlani").hidden = !(g || kodAlindi);
+  $("sifre2Alani").hidden = g || !kodAlindi;
+  $("kodKutu").hidden = g || !kodAlindi;
+  $("kayitBtn").hidden = !g;
+  $("unuttum").hidden = !g;
+  $("geriDon").hidden = g;
+  $("otel").disabled = $("nick").disabled = kodAlindi && !g;
+  $("sifreEt").textContent = mod === "sifre" ? "Yeni şifre" : "Şifre";
+  $("btn").textContent = g ? "Giriş yap"
+    : !kodAlindi ? "Doğrulama kodu al"
+    : mod === "kayit" ? "Doğrula ve kaydol" : "Doğrula ve şifreyi yenile";
+  $("baslik").textContent = g ? "Giriş yap" : mod === "kayit" ? "Kayıt ol" : "Şifreni yenile";
+}
+function gec(m) { mod = m; kodAlindi = false; msg(""); goster(); }
+
+$("kayitBtn").onclick = () => gec("kayit");
+$("unuttum").onclick = e => { e.preventDefault(); gec("sifre"); };
+$("geriDon").onclick = e => { e.preventDefault(); gec("giris"); };
+
+$("f").onsubmit = async e => {
+  e.preventDefault(); msg("");
+  const otel = $("otel").value, nick = $("nick").value.trim(), sifre = $("sifre").value;
+  if (!nick) return msg("Habbo adını yaz.", "h");
+  if (mod === "giris" && !sifre) return msg("Şifreni yaz.", "h");
+  if (kodAlindi && sifre.length < 8) return msg("Şifre en az 8 karakter olmalı.", "h");
+  if (kodAlindi && sifre !== $("sifre2").value) return msg("Şifreler aynı değil.", "h");
+
+  $("btn").disabled = true;
+  try {
+    if (mod === "giris") {
+      const r = await HESAP.giris(otel, nick, sifre);
+      if (r.hata) msg(r.hata, "h"); else location.href = "index.html";
+    } else if (!kodAlindi) {
+      const { ok, v } = await HESAP.fn({ islem: "kod", otel, nick, amac: mod });
+      if (!ok) msg(v.hata || "Bir hata oluştu.", "h");
+      else { kodAlindi = true; $("kod").textContent = v.kod; $("dk").textContent = v.dakika; goster(); }
+    } else {
+      const { ok, v } = await HESAP.fn({ islem: "dogrula", otel, nick, amac: mod, sifre });
+      if (!ok) msg(v.hata || "Bir hata oluştu.", "h");
+      else {
+        const r = await HESAP.giris(otel, nick, sifre);
+        if (r.tamam) location.href = "index.html";
+        else { gec("giris"); msg("Hesabın hazır. Şimdi giriş yapabilirsin.", "o"); }
+      }
+    }
+  } catch { msg("Bağlantı kurulamadı. İnternetini kontrol edip tekrar dene.", "h"); }
+  $("btn").disabled = false;
+};
+
+$("cik").onclick = () => { HESAP.cikis(); location.reload(); };
+
+const h = HESAP.oku();
+if (h) {
+  $("f").hidden = true; $("girisli").hidden = false; $("baslik").textContent = "Hesabım";
+  $("merhaba").textContent = h.ad + " (" + h.otel.toUpperCase() + ") olarak giriş yaptın. Rol: " + (ROL[h.rol] || "Üye") + ".";
+}
+goster();
+</script>
+</body>
+</html>

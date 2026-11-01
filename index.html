@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Habbo Rozetleri</title>
+<title>Habbo Arşiv</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -157,11 +157,12 @@ dialog p{margin:0 20px 12px;color:var(--mute)}
 #pdlg .pimg{display:block;width:calc(100% - 40px);max-height:60vh;object-fit:contain;background:var(--tile);border-radius:8px;margin-top:18px;margin-bottom:14px}
 #pdlg a{color:var(--acc)}
 #pclose{margin-top:14px}
+.hero-in{position:relative}.hesap-link{position:absolute;top:14px;right:20px;padding:7px 14px;border:1px solid var(--line);border-radius:99px;background:var(--surface2);color:var(--ink);text-decoration:none;font:600 .85rem Manrope,sans-serif}.hesap-link:hover{border-color:var(--acc)}
 </style>
 </head>
 <body>
 <header class="hero">
-  <div class="hero-in"><h1 class="sn">Habbo Rozetleri</h1><p class="sub">Tüm otellerdeki rozetleri ve promo görsellerini ara, filtrele, sahip sayılarına bak.</p></div>
+  <div class="hero-in"><a class="hesap-link" id="hesapLink" href="hesap.html">Giriş / Kayıt</a><h1 class="sn">Habbo Arşiv</h1><p class="sub">Her otelin rozeti, her promonun görseli: hepsi tek arşivde.</p></div>
 </header>
 <div class="wrap">
   <div class="seg modes" role="group" aria-label="Bölüm"><button class="tg" id="mR" type="button" aria-pressed="true">Rozetler</button><button class="tg" id="mP" type="button" aria-pressed="false">Promolar</button></div>
@@ -225,7 +226,7 @@ dialog p{margin:0 20px 12px;color:var(--mute)}
         <span class="by-h">habbo.com.tr</span>
       </div>
     </div>
-    <p class="legal">Bu Fan Sitesi, Sulake Oy veya İştirakleri tarafından doğrulanmamış, onaylanmamış ve desteklenmemiştir ve bunlar ile bağlı değildir. Bu Fan Sitesi, Habbo Fan Sitesi Poliçesi altında izin verilen ticaret markalarını ve diğer Habbo fikrî mülkiyetlerini kullanabilir. Sitemizde yer alan markalar, logolar ve fikri mülkiyet ögeleri Sulake Oy’a ve bağlı ortaklıklarına aittir. <span class="sn">Habbo Rozetleri</span> üzerinde sunulan içerikler tamamen topluluk amaçlıdır ve resmi Habbo hizmetleriyle karıştırılmamalıdır.</p>
+    <p class="legal">Habbo Arşiv, Sulake Oy veya İştirakleri tarafından doğrulanmamış, onaylanmamış ve desteklenmemiştir ve bunlar ile bağlı değildir. Habbo Arşiv, Habbo Fan Sitesi Poliçesi altında izin verilen ticaret markalarını ve diğer Habbo fikrî mülkiyetlerini kullanabilir. Sitemizde yer alan markalar, logolar ve fikri mülkiyet ögeleri Sulake Oy’a ve bağlı ortaklıklarına aittir. <span class="sn">Habbo Arşiv</span> üzerinde sunulan içerikler tamamen topluluk amaçlıdır ve resmi Habbo hizmetleriyle karıştırılmamalıdır.</p>
   </div>
 </footer>
 
@@ -247,11 +248,12 @@ dialog p{margin:0 20px 12px;color:var(--mute)}
   <button class="more" id="pclose" type="button">Kapat</button>
 </dialog>
 
+<script src="hesap.js"></script>
 <script src="promolar.js"></script>
 <script src="rozetler.js"></script>
 <script src="rozet_sahipler.js"></script>
 <script>
-var SITE_ADI="Habbo Rozetleri";   // Site adını yalnızca buradan değiştirmeniz yeterli (başlık, sekme adı ve alt yazı)
+var SITE_ADI="Habbo Arşiv";   // Site adını yalnızca buradan değiştirmeniz yeterli (başlık, sekme adı ve alt yazı)
 document.title=SITE_ADI;
 document.querySelectorAll(".sn").forEach(function(e){e.textContent=SITE_ADI});
 var FLAG_SVG={
