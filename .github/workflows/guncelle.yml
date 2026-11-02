@@ -1,0 +1,51 @@
+# Habbo Arşiv - rozet ve promo listelerini otomatik günceller
+# Her 6 saatte bir çalışır. Yeni rozet ya da promo varsa dosyaları günceller ve siteyi yeniler.
+# Elle çalıştırmak için: GitHub > Actions > bu iş akışı > "Run workflow"
+name: Rozet ve promo verilerini güncelle
+
+on:
+  schedule:
+    - cron: "23 */6 * * *"   # saat UTC'dir; her 6 saatte bir
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+
+concurrency:
+  group: veri-guncelle
+  cancel-in-progress: false
+
+jobs:
+  guncelle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Rozet listesini çek
+        run: python rozetleri_cek.py
+
+      - name: Promo listesini çek
+        continue-on-error: true   # promo kaynağı yanıt vermese bile rozetler güncellensin
+        run: python promolari_cek.py
+
+      - name: Değişiklik varsa kaydet ve siteyi yenile
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "habboarsiv-bot"
+          git config user.email "habboarsiv-bot@users.noreply.github.com"
+          git add rozetler.js promolar.js rozet_tarihleri.json
+          if git diff --cached --quiet; then
+            echo "Yeni rozet ya da promo yok, değişiklik yapılmadı."
+            exit 0
+          fi
+          git commit -m "Otomatik güncelleme: rozet ve promo verileri"
+          git push
+          # GitHub, bot commit'lerinde siteyi kendiliğinden yenilemez; yenilemeyi biz isteriz
+          gh api -X POST "repos/${{ github.repository }}/pages/builds" || echo "Site yenileme isteği başarısız oldu"
