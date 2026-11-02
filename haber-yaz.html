@@ -81,7 +81,7 @@ details.nasil summary{cursor:pointer;font-weight:700}details.nasil ol{margin:8px
     <details class="nasil"><summary>Nasıl kullanılır?</summary><ol>
 <li>Yukarıdaki başlık, özet ve kapak görselini doldur.</li>
 <li>Metni aşağıdaki kutuya yaz. Bölüm başlığı için satıra tıkla ve soldaki <b>Normal yazı</b> menüsünden <b>Bölüm başlığı</b> seç.</li>
-<li>Görsel eklemek için imleci eklemek istediğin yere koy ve araç çubuğundaki <b>görsel</b> düğmesine bas. Birden çok görsel seçebilirsin, sırayla eklenir.</li>
+<li>Görsel eklemek için imleci eklemek istediğin yere koy ve araç çubuğundaki <b>görsel</b> düğmesine bas. Birden çok görsel seçebilirsin, sırayla eklenir. Görselleri kopyalayıp yapıştırabilirsin de, otomatik yüklenir.</li>
 <li>Düğmelerin üzerine gelirsen ne işe yaradığı yazar.</li>
 <li><b>Taslak kaydet</b> haberi sadece sana gösterir, <b>Yayınla</b> herkese açar.</li></ol></details>
 <div id="ed"></div>
@@ -121,11 +121,41 @@ async function yukle(f) {
   return v.secure_url.replace("/upload/", "/upload/f_auto,q_auto/");
 }
 
+// Yapıştırılan / sürüklenen görselleri (data: ya da dış adres) Cloudinary'ye taşır
+const CLD = "https://res.cloudinary.com/" + CLOUD + "/";
+const disGorsel = () => [...q.root.querySelectorAll("img")].filter(i => !(i.getAttribute("src") || "").startsWith(CLD));
+let tarama = false;
+async function kaynakYukle(src) {
+  if (src.startsWith("data:")) {
+    const b = await (await fetch(src)).blob();
+    return yukle(new File([b], "yapistirilan", { type: b.type || "image/png" }));
+  }
+  if (!/^https?:\/\//i.test(src)) throw new Error("desteklenmeyen görsel");
+  const d = new FormData(); d.append("file", src); d.append("upload_preset", PRESET);
+  const r = await fetch("https://api.cloudinary.com/v1_1/" + CLOUD + "/image/upload", { method: "POST", body: d });
+  const v = await r.json();
+  if (!r.ok) throw new Error((v.error && v.error.message) || "Yükleme hatası");
+  return v.secure_url.replace("/upload/", "/upload/f_auto,q_auto/");
+}
+async function disGorselleriYukle() {
+  if (tarama) return; tarama = true;
+  try {
+    let g;
+    while ((g = disGorsel()).length) {
+      durum("Yapıştırılan görseller yükleniyor (" + g.length + " kaldı)...");
+      try { g[0].setAttribute("src", await kaynakYukle(g[0].getAttribute("src") || "")); }
+      catch (x) { g[0].remove(); durum("Bir görsel yüklenemedi ve kaldırıldı: " + x.message, true); }
+    }
+    if (!$("msg").classList.contains("h")) durum("Görseller hazır.");
+  } finally { tarama = false; }
+}
+
 function kurEditor() {
   q = new Quill("#ed", { theme: "snow", placeholder: "Haberi buraya yaz...", modules: { toolbar: {
     container: [[{ header: [2, 3, false] }], [{ font: ["", "serif", "monospace"] }], ["bold", "italic", "underline", "strike"],
       [{ color: [] }, { background: [] }], [{ align: [] }], [{ list: "ordered" }, { list: "bullet" }], ["link", "image"], ["clean"]],
     handlers: { image: () => $("gorselSec").click() } } } });
+  q.on("text-change", () => { if (disGorsel().length) disGorselleriYukle(); });
 }
 
 function ipuclari() {
@@ -214,6 +244,7 @@ async function sil(id) {
 }
 
 async function kaydet(d) {
+  if (tarama || disGorsel().length) return durum("Yapıştırılan görseller hâlâ yükleniyor, birkaç saniye sonra tekrar dene.", true);
   const baslik = $("baslik").value.trim(); if (!baslik) return durum("Başlık yaz.", true);
   const govde = { baslik, ozet: $("ozet").value.trim().slice(0, 400), kapak: kapak || null, icerik: q.root.innerHTML,
     etiketler: $("etiket").value.split(",").map(s => s.trim()).filter(Boolean), sicak: $("sicak").checked, durum: d };
