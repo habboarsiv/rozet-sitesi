@@ -25,6 +25,16 @@ h1{margin:0 0 8px;font:800 1.9rem/1.2 Manrope,sans-serif;letter-spacing:-.02em}
 .ql-editor a{color:var(--acc)}
 .ql-editor img{max-width:100%;height:auto;margin:3px;border-radius:4px;vertical-align:middle;cursor:zoom-in}
 .ql-editor h2,.ql-editor h3{font-family:Manrope,sans-serif;font-weight:800;margin:1.2em 0 .4em}
+.yrm{margin-top:18px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px 24px}
+.yrm h2{margin:0 0 12px;font:800 1.2rem Manrope,sans-serif}
+.yrm textarea{width:100%;min-height:76px;font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;resize:vertical}
+.yrm .btn{margin-top:8px;padding:8px 16px;border:0;border-radius:10px;background:var(--acc);color:var(--bg);font:700 .9rem Manrope,sans-serif;cursor:pointer}
+.yrm .btn:disabled{opacity:.6}
+.yo{display:flex;gap:10px;padding:12px 0;border-top:1px solid var(--line)}
+.yo img{width:40px;height:40px;border-radius:8px;background:var(--accS);flex:none;image-rendering:pixelated;object-fit:none;object-position:center}
+.yo b{font-weight:700}.yo small{color:var(--mute)}.yo p{margin:2px 0 0;white-space:pre-wrap;word-break:break-word}
+.yo .sil{margin-left:8px;background:none;border:0;color:var(--mute);text-decoration:underline;cursor:pointer;font:inherit;font-size:.8rem}
+.ym{font-size:.88rem;margin-top:6px;color:var(--mute)}.ym.h{color:#d92d20}
 #lb{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;cursor:zoom-out}
 #lb img{max-width:96vw;max-height:94vh}
 [hidden]{display:none!important}
@@ -34,6 +44,7 @@ h1{margin:0 0 8px;font:800 1.9rem/1.2 Manrope,sans-serif;letter-spacing:-.02em}
 <main>
 <a class="geri" href="haberler.html">← Tüm haberler</a>
 <article id="haber"><div class="govde">Yükleniyor...</div></article>
+<section class="yrm" id="yrm" hidden><h2 id="yb">Yorumlar</h2><div id="yform"></div><div id="yliste"></div></section>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
 <script src="hesap.js"></script>
@@ -51,6 +62,47 @@ DOMPurify.addHook("afterSanitizeAttributes", n => {
   }
 });
 
+
+async function yorumlariKur(n) {
+  $("yrm").hidden = false;
+  const h = HESAP.oku(), liste = $("yliste"), form = $("yform");
+  async function yukle() {
+    const r = await HESAP.rest("yorumlar?haber_id=eq." + n.id + "&select=id,metin,olusturma,yazar_id,profiller(habbo_ad,otel)&order=olusturma.desc&limit=200");
+    liste.textContent = "";
+    if (!r.ok) { liste.textContent = "Yorumlar yüklenemedi."; return; }
+    $("yb").textContent = "Yorumlar (" + r.v.length + ")";
+    for (const c of r.v) {
+      const p = c.profiller || {}, d = document.createElement("div"); d.className = "yo";
+      const im = document.createElement("img"); im.alt = ""; im.loading = "lazy";
+      if (p.habbo_ad && HESAP.OTELLER[p.otel]) im.src = "https://www.habbo" + HESAP.OTELLER[p.otel] + "/habbo-imaging/avatarimage?user=" + encodeURIComponent(p.habbo_ad) + "&headonly=1&size=m&direction=2&head_direction=3&gesture=sml";
+      const k = document.createElement("div");
+      const ad = document.createElement("b"); ad.textContent = p.habbo_ad || "?";
+      const al = document.createElement("small"); al.textContent = " (" + (HESAP.OTELLER[p.otel] || "") + ") · " + new Date(c.olusturma).toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
+      k.append(ad, al);
+      if (h && (h.id === c.yazar_id || h.rol === "yonetici")) {
+        const s = document.createElement("button"); s.className = "sil"; s.type = "button"; s.textContent = "Sil";
+        s.onclick = async () => { if (!confirm("Yorum silinsin mi?")) return; const x = await HESAP.rest("yorumlar?id=eq." + c.id, { method: "DELETE" }); if (x.ok) yukle(); };
+        k.append(s);
+      }
+      const t = document.createElement("p"); t.textContent = c.metin; k.append(t);
+      d.append(im, k); liste.append(d);
+    }
+  }
+  if (!h) form.innerHTML = '<p>Yorum yazmak için <a href="hesap.html" style="color:var(--acc)">giriş yap</a>.</p>';
+  else if (n.durum !== "yayinda") form.textContent = "Taslağa yorum yazılamaz.";
+  else {
+    form.innerHTML = '<textarea id="ym" maxlength="1000" placeholder="Yorumunu yaz..."></textarea><button class="btn" id="yg" type="button">Gönder</button><div class="ym" id="yi"></div>';
+    $("yg").onclick = async () => {
+      const metin = $("ym").value.trim(); if (!metin) return;
+      $("yg").disabled = true;
+      const r = await HESAP.rest("yorumlar", { method: "POST", body: JSON.stringify({ haber_id: n.id, yazar_id: h.id, metin }) });
+      $("yg").disabled = false;
+      if (!r.ok) { $("yi").className = "ym h"; $("yi").textContent = (r.v && r.v.message) || "Yorum gönderilemedi."; return; }
+      $("ym").value = ""; $("yi").textContent = ""; yukle();
+    };
+  }
+  yukle();
+}
 (async () => {
   const id = new URLSearchParams(location.search).get("id");
   if (!/^\d+$/.test(id || "")) return hata("Haber bulunamadı.");
@@ -82,6 +134,7 @@ DOMPurify.addHook("afterSanitizeAttributes", n => {
   lb.onclick = () => lb.hidden = true;
   addEventListener("keydown", e => { if (e.key === "Escape") lb.hidden = true; });
   ic.addEventListener("click", e => { if (e.target.tagName === "IMG") { lb.firstChild.src = e.target.src; lb.hidden = false; } });
+  yorumlariKur(n);
 })();
 </script>
 </body>
