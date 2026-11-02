@@ -45,11 +45,15 @@ const HESAP = (() => {
   function baglanti() {
     const a = document.getElementById("hesapLink"), h = oku();
     if (a && h) a.textContent = h.ad + " (" + h.otel.toUpperCase() + ")";
-    if (a && !document.getElementById("haberLink")) {
-      const n = document.createElement("a");
-      n.id = "haberLink"; n.className = a.className; n.href = "haberler.html"; n.textContent = "Haberler";
-      n.style.cssText = "right:auto;left:20px"; a.before(n);
-    }
+  }
+
+  // Ana sayfada Rozetler / Promolar sekmelerinin yanına "Haberler" sekmesini ekler
+  function haberSekmesi() {
+    const m = document.querySelector(".modes");
+    if (!m || document.getElementById("haberSek")) return;
+    const n = document.createElement("a");
+    n.id = "haberSek"; n.className = "tg"; n.href = "haberler.html"; n.textContent = "Haberler";
+    m.append(n);
   }
 
   // Geçerli oturum belirteci (süresi dolduysa yeniler)
@@ -75,6 +79,7 @@ const HESAP = (() => {
     return { ok: r.ok, v };
   }
 
-  return { OTELLER, fn, giris, cikis, oku, baglanti, token, rest };
+  return { OTELLER, fn, giris, cikis, oku, baglanti, haberSekmesi, token, rest };
 })();
 HESAP.baglanti();
+HESAP.haberSekmesi();
