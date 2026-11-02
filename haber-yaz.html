@@ -41,6 +41,15 @@ textarea{min-height:64px;resize:vertical}
 .ql-snow .ql-tooltip{background:var(--surface);color:var(--ink);border-color:var(--line);box-shadow:0 8px 24px rgba(0,0,0,.3)}
 .ql-snow .ql-tooltip input[type=text]{background:var(--bg);color:var(--ink);border:1px solid var(--line)}
 .ql-snow .ql-tooltip a.ql-action,.ql-snow .ql-tooltip a.ql-remove{color:var(--acc)}
+.ip{display:block;color:var(--mute);font-size:.8rem;margin-top:3px}
+details.nasil{margin:0 0 12px;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--accS)}
+details.nasil summary{cursor:pointer;font-weight:700}details.nasil ol{margin:8px 0 0;padding-left:20px}
+.ql-snow .ql-picker.ql-header .ql-picker-label::before,.ql-snow .ql-picker.ql-header .ql-picker-item::before{content:'Normal yazı'}
+.ql-snow .ql-picker.ql-header .ql-picker-label[data-value="2"]::before,.ql-snow .ql-picker.ql-header .ql-picker-item[data-value="2"]::before{content:'Bölüm başlığı'}
+.ql-snow .ql-picker.ql-header .ql-picker-label[data-value="3"]::before,.ql-snow .ql-picker.ql-header .ql-picker-item[data-value="3"]::before{content:'Alt başlık'}
+.ql-snow .ql-picker.ql-font .ql-picker-label::before,.ql-snow .ql-picker.ql-font .ql-picker-item::before{content:'Normal'}
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value=serif]::before,.ql-snow .ql-picker.ql-font .ql-picker-item[data-value=serif]::before{content:'Klasik'}
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value=monospace]::before,.ql-snow .ql-picker.ql-font .ql-picker-item[data-value=monospace]::before{content:'Daktilo'}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -57,25 +66,31 @@ textarea{min-height:64px;resize:vertical}
 
 <div id="editor" hidden>
   <div class="card">
-    <label for="baslik">Başlık</label><input type="text" id="baslik" maxlength="200">
-    <label for="ozet">Kısa özet (haber kartında görünür)</label><textarea id="ozet" maxlength="400"></textarea>
-    <label for="etiket">Etiketler (virgülle ayır: EVENTS, AVAILABLE)</label><input type="text" id="etiket">
-    <label><input type="checkbox" id="sicak"> HOT işareti ekle</label>
+    <label for="baslik">Başlık</label><input type="text" id="baslik" maxlength="200"><small class="ip">Haber kartında ve haberin en üstünde görünür.</small>
+    <label for="ozet">Kısa özet (haber kartında görünür)</label><textarea id="ozet" maxlength="400"></textarea><small class="ip">1-2 cümle yeter. Haber listesinde başlığın altında görünür.</small>
+    <label for="etiket">Etiketler (virgülle ayır: EVENTS, AVAILABLE)</label><input type="text" id="etiket"><small class="ip">Haberin türünü gösteren küçük etiketler. Birden fazla yazarsan virgülle ayır.</small>
+    <label><input type="checkbox" id="sicak"> HOT işareti ekle</label><small class="ip">Haber kartının köşesine kırmızı bir HOT işareti koyar. Öne çıkarmak istediğin haberlerde kullan.</small>
     <label>Önizleme (kapak) görseli</label>
-    <input type="file" id="kapakSec" accept="image/*">
+    <input type="file" id="kapakSec" accept="image/*"><small class="ip">Haber listesindeki kartta görünen görsel. Seçince altında önizlemesi çıkar.</small>
     <img id="kapakOn" alt="" hidden>
   </div>
   <div class="card">
     <div class="sat" style="margin:0 0 10px"><label style="margin:0">Eklenecek görsel boyutu:</label>
       <select id="boy" style="width:auto"><option value="">Geniş (tam)</option><option value="480">Orta</option><option value="240">Küçük</option><option value="120">Çok küçük</option></select>
-      <small style="color:var(--mute)">Araç çubuğundaki görsel düğmesiyle birden çok görsel seçebilirsin.</small></div>
-    <div id="ed"></div>
+      <small style="color:var(--mute)">Metne eklediğin görselin ekrandaki boyutu. Sonradan ekleyeceklerin için geçerli.</small></div>
+    <details class="nasil"><summary>Nasıl kullanılır?</summary><ol>
+<li>Yukarıdaki başlık, özet ve kapak görselini doldur.</li>
+<li>Metni aşağıdaki kutuya yaz. Bölüm başlığı için satıra tıkla ve soldaki <b>Normal yazı</b> menüsünden <b>Bölüm başlığı</b> seç.</li>
+<li>Görsel eklemek için imleci eklemek istediğin yere koy ve araç çubuğundaki <b>görsel</b> düğmesine bas. Birden çok görsel seçebilirsin, sırayla eklenir.</li>
+<li>Düğmelerin üzerine gelirsen ne işe yaradığı yazar.</li>
+<li><b>Taslak kaydet</b> haberi sadece sana gösterir, <b>Yayınla</b> herkese açar.</li></ol></details>
+<div id="ed"></div>
     <input type="file" id="gorselSec" accept="image/*" multiple hidden>
   </div>
   <div class="sat">
-    <button class="btn ik" id="taslakBtn" type="button">Taslak kaydet</button>
-    <button class="btn" id="yayinBtn" type="button">Yayınla</button>
-    <button class="btn ik" id="geriBtn" type="button">← Listeye dön</button>
+    <button class="btn ik" id="taslakBtn" type="button" title="Haberi kaydeder, sadece sen ve yönetici görür">Taslak kaydet</button>
+    <button class="btn" id="yayinBtn" type="button" title="Haberi kaydeder ve herkese açar">Yayınla</button>
+    <button class="btn ik" id="geriBtn" type="button" title="Haber listesine döner (kaydetmediysen değişiklikler gider)">← Listeye dön</button>
   </div>
   <div class="msg" id="msg" role="status" aria-live="polite"></div>
 </div>
@@ -111,6 +126,27 @@ function kurEditor() {
     container: [[{ header: [2, 3, false] }], [{ font: ["", "serif", "monospace"] }], ["bold", "italic", "underline", "strike"],
       [{ color: [] }, { background: [] }], [{ align: [] }], [{ list: "ordered" }, { list: "bullet" }], ["link", "image"], ["clean"]],
     handlers: { image: () => $("gorselSec").click() } } } });
+}
+
+function ipuclari() {
+  const t = q.getModule("toolbar").container;
+  const T = [
+    [".ql-header", "Başlık: satırı bölüm başlığı ya da alt başlık yapar"],
+    [".ql-font", "Yazı tipi"],
+    ["button.ql-bold", "Kalın (Ctrl+B)"],
+    ["button.ql-italic", "Eğik yazı (Ctrl+I)"],
+    ["button.ql-underline", "Altı çizili (Ctrl+U)"],
+    ["button.ql-strike", "Üstü çizili"],
+    [".ql-color", "Yazı rengi: seçtiğin yazıyı renklendirir"],
+    [".ql-background", "Vurgu rengi: seçtiğin yazının arkasını boyar"],
+    [".ql-align", "Hizalama: sola, ortaya, sağa ya da iki yana yasla"],
+    ['button.ql-list[value="ordered"]', "Numaralı liste"],
+    ['button.ql-list[value="bullet"]', "Madde işaretli liste"],
+    ["button.ql-link", "Bağlantı ekle: önce yazıyı seç, sonra bu düğmeye bas"],
+    ["button.ql-image", "Görsel ekle: bilgisayarından bir ya da birden çok görsel seç"],
+    ["button.ql-clean", "Biçimi temizle: seçili yazının renk, kalınlık gibi ayarlarını kaldırır"],
+  ];
+  for (const [s, m] of T) t.querySelectorAll(s).forEach(e => { e.title = m; e.setAttribute("aria-label", m); });
 }
 
 $("gorselSec").onchange = async e => {
@@ -188,7 +224,9 @@ async function kaydet(d) {
     : await HESAP.rest("haberler", { method: "POST", body: JSON.stringify({ ...govde, yazar_id: HESAP.oku().id }), headers: ust });
   $("taslakBtn").disabled = $("yayinBtn").disabled = false;
   if (!r.ok) return durum("Kaydedilemedi: " + ((r.v && r.v.message) || "yetkin olmayabilir"), true);
-  duzenlenen = r.v[0].id; durum(d === "yayinda" ? "Yayınlandı." : "Taslak kaydedildi.");
+  duzenlenen = r.v[0].id;
+  durum(d === "yayinda" ? "Yayınlandı. Haber artık herkese açık. " : "Taslak kaydedildi. Sadece sen ve yönetici görebilirsin, hazır olunca Yayınla'ya bas. ");
+  const a = document.createElement("a"); a.href = "haber.html?id=" + duzenlenen; a.target = "_blank"; a.textContent = "Haberi gör"; $("msg").append(a);
 }
 
 $("yeniBtn").onclick = () => { bosEditor(); goster("editor"); };
@@ -200,7 +238,7 @@ $("geriBtn").onclick = () => { goster("liste"); listele(); };
   const h = HESAP.oku(), k = $("kilit");
   if (!h) { k.hidden = false; k.innerHTML = 'Haber yazmak için <a href="hesap.html">giriş yapmalısın</a>.'; return; }
   if (h.rol !== "yazar" && h.rol !== "yonetici") { k.hidden = false; k.textContent = "Bu sayfa sadece yazarlar ve yöneticiler içindir."; return; }
-  kurEditor(); goster("liste"); listele();
+  kurEditor(); ipuclari(); goster("liste"); listele();
 })();
 </script>
 </body>
