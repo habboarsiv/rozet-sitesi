@@ -45,6 +45,11 @@ const HESAP = (() => {
   function baglanti() {
     const a = document.getElementById("hesapLink"), h = oku();
     if (a && h) a.textContent = h.ad + " (" + h.otel.toUpperCase() + ")";
+    if (a && !document.getElementById("haberLink")) {
+      const n = document.createElement("a");
+      n.id = "haberLink"; n.className = a.className; n.href = "haberler.html"; n.textContent = "Haberler";
+      n.style.cssText = "right:auto;left:20px"; a.before(n);
+    }
   }
 
   // Geçerli oturum belirteci (süresi dolduysa yeniler)
@@ -63,7 +68,7 @@ const HESAP = (() => {
     const t = await token();
     const r = await fetch(URL + "/rest/v1/" + yol, {
       ...secenek,
-      headers: { apikey: KEY, Authorization: "Bearer " + (t || KEY), "Content-Type": "application/json", ...(secenek.headers || {}) },
+      headers: { apikey: KEY, ...(t ? { Authorization: "Bearer " + t } : {}), "Content-Type": "application/json", ...(secenek.headers || {}) },
     });
     const txt = await r.text(); let v = null;
     try { v = txt ? JSON.parse(txt) : null; } catch { /* boş cevap */ }

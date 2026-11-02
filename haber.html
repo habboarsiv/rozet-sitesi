@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Haber – Habbo Arşiv</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css">
+<style>
+:root{--bg:#f4f6f9;--surface:#fff;--line:#e2e6ed;--ink:#161a22;--mute:#667085;--acc:#2858d8;--accS:#e9effd;--hot:#e5484d}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1218;--surface:#171b24;--line:#2a3040;--ink:#eef1f6;--mute:#98a2b3;--acc:#6b93ff;--accS:#1d2a4d}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.55 Manrope,system-ui,sans-serif}
+main{max-width:820px;margin:0 auto;padding:24px 16px 70px}
+.geri{color:var(--acc);font-weight:600;font-size:.9rem;text-decoration:none}
+article{background:var(--surface);border:1px solid var(--line);border-radius:16px;margin-top:14px;overflow:hidden}
+.kapak{display:block;width:100%;max-height:380px;object-fit:cover}
+.govde{padding:22px 24px 28px}
+.et{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.et span{font:700 .7rem Manrope,sans-serif;padding:2px 10px;border-radius:99px;background:var(--accS);color:var(--acc);text-transform:uppercase}
+.et .hot{background:var(--hot);color:#fff}
+h1{margin:0 0 8px;font:800 1.9rem/1.2 Manrope,sans-serif;letter-spacing:-.02em}
+.meta{color:var(--mute);font-size:.88rem;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.ql-editor{padding:0;height:auto;min-height:0;overflow:visible;color:var(--ink);font:400 1.02rem/1.75 Manrope,sans-serif}
+.ql-editor a{color:var(--acc)}
+.ql-editor img{max-width:100%;height:auto;margin:3px;border-radius:4px;vertical-align:middle;cursor:zoom-in}
+.ql-editor h2,.ql-editor h3{font-family:Manrope,sans-serif;font-weight:800;margin:1.2em 0 .4em}
+#lb{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;cursor:zoom-out}
+#lb img{max-width:96vw;max-height:94vh}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+<a class="geri" href="haberler.html">← Tüm haberler</a>
+<article id="haber"><div class="govde">Yükleniyor...</div></article>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+<script src="hesap.js"></script>
+<script>
+const CLOUD = "md4etvsz";
+const $ = id => document.getElementById(id);
+const kutu = $("haber");
+function hata(t) { kutu.innerHTML = ""; const d = document.createElement("div"); d.className = "govde"; d.textContent = t; kutu.append(d); }
+
+DOMPurify.addHook("afterSanitizeAttributes", n => {
+  if (n.tagName === "A") { n.setAttribute("target", "_blank"); n.setAttribute("rel", "noopener noreferrer nofollow"); }
+  if (n.tagName === "IMG") {
+    if (!(n.getAttribute("src") || "").startsWith("https://res.cloudinary.com/" + CLOUD + "/")) n.remove();
+    else n.setAttribute("loading", "lazy");
+  }
+});
+
+(async () => {
+  const id = new URLSearchParams(location.search).get("id");
+  if (!/^\d+$/.test(id || "")) return hata("Haber bulunamadı.");
+  const r = await HESAP.rest("haberler?id=eq." + id + "&select=*,profiller(habbo_ad,otel)");
+  if (!r.ok || !r.v[0]) return hata("Haber bulunamadı ya da yayından kaldırıldı.");
+  const n = r.v[0], y = n.profiller || {};
+  document.title = n.baslik + " – Habbo Arşiv";
+  kutu.innerHTML = "";
+  if (n.kapak && n.kapak.startsWith("https://res.cloudinary.com/" + CLOUD + "/")) {
+    const k = document.createElement("img"); k.className = "kapak"; k.alt = ""; k.src = n.kapak.replace("/upload/", "/upload/w_1200/"); kutu.append(k);
+  }
+  const g = document.createElement("div"); g.className = "govde";
+  const et = document.createElement("div"); et.className = "et";
+  if (n.sicak) { const s = document.createElement("span"); s.className = "hot"; s.textContent = "HOT"; et.append(s); }
+  for (const t of n.etiketler || []) { const s = document.createElement("span"); s.textContent = t; et.append(s); }
+  if (et.children.length) g.append(et);
+  const h1 = document.createElement("h1"); h1.textContent = n.baslik; g.append(h1);
+  const m = document.createElement("div"); m.className = "meta";
+  m.textContent = (y.habbo_ad ? y.habbo_ad + " (" + (HESAP.OTELLER[y.otel] || "") + ") · " : "") +
+    new Date(n.yayin_tarihi || n.olusturma).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" }) +
+    (n.durum !== "yayinda" ? " · TASLAK (sadece sen görüyorsun)" : "");
+  g.append(m);
+  const wrap = document.createElement("div"); wrap.className = "ql-snow";
+  const ic = document.createElement("div"); ic.className = "ql-editor"; ic.id = "icerik";
+  ic.innerHTML = DOMPurify.sanitize(n.icerik || "");
+  wrap.append(ic); g.append(wrap); kutu.append(g);
+
+  const lb = document.createElement("div"); lb.id = "lb"; lb.hidden = true; lb.append(document.createElement("img")); document.body.append(lb);
+  lb.onclick = () => lb.hidden = true;
+  addEventListener("keydown", e => { if (e.key === "Escape") lb.hidden = true; });
+  ic.addEventListener("click", e => { if (e.target.tagName === "IMG") { lb.firstChild.src = e.target.src; lb.hidden = false; } });
+})();
+</script>
+</body>
+</html>

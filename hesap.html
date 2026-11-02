@@ -148,6 +148,10 @@ const h = HESAP.oku();
 if (h) {
   $("f").hidden = true; $("girisli").hidden = false; $("baslik").textContent = "Hesabım";
   $("merhaba").textContent = h.ad + " (" + h.otel.toUpperCase() + ") olarak giriş yaptın. Rol: " + (ROL[h.rol] || "Üye") + ".";
+  if (h.rol === "yazar" || h.rol === "yonetici") {
+    const l = document.createElement("a"); l.href = "haber-yaz.html"; l.textContent = "Haber paneline git";
+    l.style.cssText = "display:block;margin:0 0 14px"; $("merhaba").after(l);
+  }
 }
 goster();
 </script>
