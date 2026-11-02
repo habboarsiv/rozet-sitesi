@@ -236,6 +236,66 @@ def rapor(liste, tarihler):
         print("   %s  %s - %s" % (tarihler.get(b["code"]) or "?", b["code"], b["name"]))
 
 
+# ---------------------------------------------------------------- görseli olmayanları gizle
+
+GIZLEME_GUN = 60   # Yeni eklenen rozetlerin görseli bu kadar gün boyunca tekrar tekrar kontrol edilir
+
+
+def gorsel_var(kod):
+    """Rozet görseli Habbo'da var mı? True: var, False: yok (404), None: geçici hata."""
+    for uzanti in (".png", ".gif"):
+        adres = GORSEL + urllib.parse.quote(kod, safe="") + uzanti
+        istek = urllib.request.Request(adres, method="HEAD", headers=UA)
+        try:
+            with urllib.request.urlopen(istek, timeout=20):
+                return True
+        except urllib.error.HTTPError as hata:
+            if hata.code == 404:
+                continue  # .png yoksa .gif dene
+            return None
+        except Exception:
+            return None
+    return False
+
+
+def gorselleri_denetle(veri, eski_liste, tarihler, bugun):
+    """Görseli henüz olmayan rozetleri listeden çıkarır.
+    Her çalıştırmada şunların görseli sorulur:
+      - listede olmayanlar (yeni gelenler ve daha önce gizlenenler): görsel gelince listeye girer
+      - listede olup tarihi/görseli bulunamayanlar
+      - son %d günde eklenenler (henüz görseli yüklenmemiş olabilir)
+    Geçici hatada eski durum korunur. Dosyada tutulan bir durum yoktur; her seferinde baştan bakılır.""" % GIZLEME_GUN
+    if eski_liste is None:
+        return veri
+    eski_set = {b["code"] for b in eski_liste}
+    eski_t = {b["code"]: (b.get("t") or "") for b in eski_liste}
+    sinir = (datetime.date.fromisoformat(bugun) - datetime.timedelta(days=GIZLEME_GUN)).isoformat()
+
+    sorulacak = []
+    for kod in veri:
+        if kod not in eski_set:
+            sorulacak.append(kod)
+        elif tarihler.get(kod) == "" or (eski_t[kod] and eski_t[kod] >= sinir):
+            sorulacak.append(kod)
+    if not sorulacak:
+        return veri
+
+    print("\nGörsel var mı diye kontrol ediliyor: %d rozet." % len(sorulacak))
+    gizli, gelen = set(), 0
+    with ThreadPoolExecutor(max_workers=IS_PARCACIGI) as havuz:
+        for kod, var in zip(sorulacak, havuz.map(gorsel_var, sorulacak)):
+            if var is True:
+                if kod not in eski_set:
+                    tarihler[kod] = bugun   # görseli yeni göründü: YENİ sayılır
+                    gelen += 1
+            elif var is False:
+                gizli.add(kod)
+            elif kod not in eski_set:       # geçici hata: gizli olan gizli kalsın
+                gizli.add(kod)
+    print("   Görseli olmadığı için gizlenen: %d, görseli gelip listeye giren: %d" % (len(gizli), gelen))
+    return {k: v for k, v in veri.items() if k not in gizli}
+
+
 # ---------------------------------------------------------------- dosya işlemleri
 
 def eski_oku():
@@ -337,10 +397,10 @@ def main():
     # Geri kalanların tarihi görsellerinden bulunur (her rozet için sadece bir kez).
     eksik = sorted(k for k in veri if k not in tarihler)
     bakilan = tarihleri_coz(eksik, tarihler)
-    if yeni_say:
-        tarih_yaz(tarihler)
+    gorunur = gorselleri_denetle(veri, eski_liste, tarihler, bugun)
+    tarih_yaz(tarihler)
 
-    liste, yeni_kodlar = sirala(veri, eski_liste, tarihler, bugun)
+    liste, yeni_kodlar = sirala(gorunur, eski_liste, tarihler, bugun)
 
     if eski_liste is not None and liste == eski_liste:
         print("Değişiklik yok. rozetler.js aynı kaldı (%d rozet)." % len(liste))
