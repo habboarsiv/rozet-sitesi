@@ -93,3 +93,9 @@ if (location.protocol.startsWith("http") && location.pathname.endsWith(".html"))
   const temiz = location.pathname.replace(/\/?index\.html$/, "/").replace(/\.html$/, "");
   history.replaceState(null, "", temiz + location.search + location.hash);
 }
+
+// Ana sayfadaki slogan
+document.querySelectorAll("p,div,span,h2").forEach(e => {
+  if (!e.children.length && e.textContent.trim() === "Her otelin rozeti, her promonun görseli: hepsi tek arşivde.")
+    e.textContent = "Habbo dünyasına dair aradığın her şey tek bir adreste.";
+});

@@ -62,7 +62,7 @@ def birlestir(otel_veri):
     for kod, veri in otel_veri.items():
         for tur, f in ogeler(veri):
             c = str(f["classname"])
-            m = tum.setdefault(c, {"c": c, "y": tur, "h": [], "ad": {}, "r": 0, "k": "", "l": "", "z": 0, "d": ""})
+            m = tum.setdefault(c, {"c": c, "y": tur, "h": [], "ad": {}, "ac": {}, "r": 0, "k": "", "l": "", "z": 0})
             if kod not in m["h"]:
                 m["h"].append(kod)
             ad = str(f.get("name") or "").strip()
@@ -76,8 +76,8 @@ def birlestir(otel_veri):
             m["l"] = m["l"] or str(f.get("furniline") or "")
             m["z"] = m["z"] or (1 if f.get("rare") else 0)
             ac = str(f.get("description") or "").strip()
-            if ac and (not m["d"] or kod == "tr"):
-                m["d"] = ac[:200]
+            if ac:
+                m["ac"][kod] = ac[:200]
     return tum
 
 
@@ -101,6 +101,27 @@ def ikon_tarihi(m):
         except Exception:
             return ""
     return ""
+
+
+def dil_yaz(tum):
+    """Her dil için ayrı dosya: mobi_dil/<otel>.js (ad ve açıklama). Sadece içerik değiştiyse yazar."""
+    klasor = os.path.join(KLASOR, "mobi_dil")
+    os.makedirs(klasor, exist_ok=True)
+    for kod in OTELLER:
+        sozluk = {}
+        for c in sorted(tum):
+            ad = tum[c]["ad"].get(kod)
+            if ad:
+                ac = tum[c]["ac"].get(kod)
+                sozluk[c] = [ad, ac] if ac else [ad]
+        icerik = ('var MOBI_DIL = window.MOBI_DIL || {};\nMOBI_DIL["%s"] = %s;\n'
+                  % (kod, json.dumps(sozluk, ensure_ascii=False, separators=(",", ":"))))
+        yol = os.path.join(klasor, kod + ".js")
+        if os.path.exists(yol) and open(yol, encoding="utf-8").read() == icerik:
+            continue
+        with open(yol, "w", encoding="utf-8") as f:
+            f.write(icerik)
+        print("   Dil dosyası yazıldı: %s (%d mobi)" % (yol.split(os.sep)[-1], len(sozluk)))
 
 
 def eski_oku():
@@ -146,11 +167,8 @@ def main():
     for c, m in tum.items():
         ad = m["ad"]
         n = ad.get("tr") or ad.get("com") or next(iter(ad.values()), c)
-        kayit = {"c": c, "n": n, "d": m["d"], "r": m["r"], "y": m["y"], "k": m["k"], "l": m["l"],
+        kayit = {"c": c, "n": n, "r": m["r"], "y": m["y"], "k": m["k"], "l": m["l"],
                  "z": m["z"], "h": sorted(m["h"], key=list(OTELLER).index), "dt": tarihler.get(c, "")}
-        en = ad.get("com")
-        if en and en != n:
-            kayit["e"] = en
         if eski is not None and c not in eski_set:
             kayit["t"] = bugun
         elif eski_t.get(c):
@@ -162,6 +180,7 @@ def main():
     yeni = [b for b in liste if b.get("t") == bugun]
     with open(TARIHLER, "w", encoding="utf-8") as f:
         json.dump(tarihler, f, ensure_ascii=False, sort_keys=True)
+    dil_yaz(tum)
     if liste == eski:
         print("Değişiklik yok, mobiler.js'e dokunulmadı.")
         return
