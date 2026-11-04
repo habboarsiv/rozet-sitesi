@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mobiler – Habbo Arşiv</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f6f9;--surface:#fff;--surface2:#f0f3f8;--line:#e2e6ed;--ink:#161a22;--mute:#667085;--acc:#2858d8;--accS:#e9effd;--accT:#fff;--hot:#e5484d;--rare:#b54708;--rareS:#fef0c7}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1218;--surface:#171b24;--surface2:#1f2430;--line:#2a3040;--ink:#eef1f6;--mute:#98a2b3;--acc:#6b93ff;--accS:#1d2a4d;--accT:#0b1020;--rare:#fdb022;--rareS:#3b2a08}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.5 Manrope,system-ui,sans-serif}
+main{max-width:1100px;margin:0 auto;padding:22px 16px 60px}
+a{color:var(--acc);text-decoration:none;font-weight:600;font-size:.9rem}
+h1{margin:8px 0 2px;font:800 2rem/1.1 Manrope,sans-serif;letter-spacing:-.03em}
+.alt{color:var(--mute);margin:0 0 16px}
+.ara{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+input,select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+#q{flex:1;min-width:200px}
+label.ch{display:flex;align-items:center;gap:6px;padding:0 6px;font-weight:600;font-size:.9rem}
+.say{color:var(--mute);font-weight:600;margin:6px 0 12px}
+.izgara{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.k{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px;cursor:pointer;text-align:left;color:inherit;font:inherit}
+.k:hover{border-color:var(--acc)}
+.rs{height:84px;display:grid;place-items:center;background:var(--surface2);border-radius:8px;margin-bottom:8px}
+.rs img{max-width:100%;max-height:80px;image-rendering:pixelated}
+.yok{color:var(--mute);font-size:.75rem}
+.k b{display:block;font-size:.88rem;line-height:1.25;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.k small{color:var(--mute);font-size:.72rem;word-break:break-all}
+.et{position:absolute;top:8px;left:8px;font:800 .62rem Manrope,sans-serif;padding:2px 7px;border-radius:99px;background:var(--hot);color:#fff}
+.et.z{left:auto;right:8px;background:var(--rareS);color:var(--rare)}
+.d{display:block;margin:18px auto 0;padding:10px 22px;border:1.5px solid var(--acc);border-radius:10px;background:none;color:var(--acc);font:700 .95rem Manrope,sans-serif;cursor:pointer}
+#md{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;padding:16px}
+#md>div{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;max-width:420px;width:100%;max-height:90vh;overflow:auto}
+#md .rs{height:150px}#md .rs img{max-height:140px;transform:scale(1.6)}
+#md h2{margin:0 0 4px;font:800 1.2rem Manrope,sans-serif}
+#md p{margin:6px 0;color:var(--mute);font-size:.9rem}
+#md dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:10px 0 0;font-size:.88rem}
+#md dt{color:var(--mute)}#md dd{margin:0;word-break:break-word}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+<a href="/">← Habbo Arşiv'e dön</a>
+<h1>Mobiler</h1>
+<p class="alt">Habbo'daki tüm mobiler, otellere göre. Yeni gelenler otomatik eklenir.</p>
+<div class="ara">
+  <input id="q" type="search" placeholder="Mobi adı, kodu ya da açıklaması ara..." autocomplete="off">
+  <select id="otel"><option value="">Tüm oteller</option></select>
+  <select id="tur"><option value="">Zemin ve duvar</option><option value="f">Zemin mobileri</option><option value="w">Duvar mobileri</option></select>
+  <select id="sira"><option value="yeni">Yeniden eskiye</option><option value="eski">Eskiden yeniye</option><option value="ad">A'dan Z'ye</option></select>
+  <label class="ch"><input type="checkbox" id="nadir"> Sadece nadirler</label>
+</div>
+<div class="say" id="say">Yükleniyor...</div>
+<div class="izgara" id="liste"></div>
+<button class="d" id="daha" type="button" hidden>Daha fazla göster</button>
+</main>
+<div id="md" hidden></div>
+
+<script src="mobiler.js"></script>
+<script src="hesap.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const OTEL = { tr: ".com.tr", com: ".com", br: ".com.br", de: ".de", es: ".es", fi: ".fi", fr: ".fr", it: ".it", nl: ".nl" };
+const SAYFA = 72, YENI_GUN = 14;
+let sonuc = [], goster = SAYFA;
+
+if (typeof MOBILER === "undefined") { $("say").textContent = "Mobi listesi henüz hazırlanmadı. Biraz sonra tekrar dene."; }
+else {
+  for (const [k, v] of Object.entries(OTEL)) $("otel").add(new Option(v, k));
+  const tr = s => (s || "").toLocaleLowerCase("tr");
+  const yeniMi = m => m.t && (Date.now() - new Date(m.t).getTime()) / 864e5 <= YENI_GUN;
+
+  function ikonlar(m) {
+    const [b, i] = m.c.split("*"), ad = i ? [b + "_icon_" + i, b + "_icon"] : [b + "_icon"], o = [];
+    for (const u of ["png", "gif"]) for (const a of ad) o.push("https://images.habbo.com/dcr/hof_furni/" + m.r + "/" + a + "." + u);
+    return o;
+  }
+  function resim(m) {
+    const im = document.createElement("img"), L = ikonlar(m); let i = 0;
+    im.loading = "lazy"; im.alt = ""; im.src = L[0];
+    im.onerror = () => { if (++i < L.length) im.src = L[i]; else { const s = document.createElement("span"); s.className = "yok"; s.textContent = "Görsel yok"; im.replaceWith(s); } };
+    return im;
+  }
+
+  function sirala() {
+    const q = tr($("q").value.trim()), o = $("otel").value, t = $("tur").value, n = $("nadir").checked, s = $("sira").value;
+    sonuc = MOBILER.filter(m => (!o || m.h.includes(o)) && (!t || m.y === t) && (!n || m.z) &&
+      (!q || tr(m.n).includes(q) || tr(m.e).includes(q) || tr(m.c).includes(q) || tr(m.d).includes(q)));
+    if (s === "eski") sonuc = sonuc.slice().reverse();
+    else if (s === "ad") sonuc = sonuc.slice().sort((a, b) => a.n.localeCompare(b.n, "tr"));
+    goster = SAYFA; ciz(true);
+  }
+
+  function ciz(bastan) {
+    const kutu = $("liste"); if (bastan) kutu.textContent = "";
+    $("say").textContent = sonuc.length.toLocaleString("tr-TR") + " mobi";
+    for (const m of sonuc.slice(kutu.children.length, goster)) {
+      const k = document.createElement("button"); k.className = "k"; k.type = "button";
+      const rs = document.createElement("div"); rs.className = "rs"; rs.append(resim(m));
+      const ad = document.createElement("b"); ad.textContent = m.n;
+      const kod = document.createElement("small"); kod.textContent = m.c;
+      k.append(rs, ad, kod);
+      if (yeniMi(m)) { const e = document.createElement("span"); e.className = "et"; e.textContent = "YENİ"; k.append(e); }
+      if (m.z) { const e = document.createElement("span"); e.className = "et z"; e.textContent = "NADİR"; k.append(e); }
+      k.onclick = () => ac(m); kutu.append(k);
+    }
+    $("daha").hidden = goster >= sonuc.length;
+  }
+
+  function ac(m) {
+    const md = $("md"); md.textContent = "";
+    const kap = document.createElement("div");
+    const rs = document.createElement("div"); rs.className = "rs"; rs.append(resim(m));
+    const h = document.createElement("h2"); h.textContent = m.n; kap.append(rs, h);
+    if (m.e) { const p = document.createElement("p"); p.textContent = m.e; kap.append(p); }
+    if (m.d) { const p = document.createElement("p"); p.textContent = m.d; kap.append(p); }
+    const dl = document.createElement("dl");
+    const sat = (a, b) => { if (!b) return; const t = document.createElement("dt"), d = document.createElement("dd"); t.textContent = a; d.textContent = b; dl.append(t, d); };
+    sat("Kod", m.c); sat("Tür", m.y === "w" ? "Duvar mobisi" : "Zemin mobisi"); sat("Kategori", m.k); sat("Seri", m.l);
+    sat("Nadir", m.z ? "Evet" : ""); sat("Oteller", m.h.map(x => OTEL[x]).join("  "));
+    sat("Tarih", m.dt ? new Date(m.dt).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" }) : "");
+    kap.append(dl); md.append(kap); md.hidden = false;
+  }
+  $("md").onclick = e => { if (e.target === $("md")) $("md").hidden = true; };
+  addEventListener("keydown", e => { if (e.key === "Escape") $("md").hidden = true; });
+  $("daha").onclick = () => { goster += SAYFA; ciz(false); };
+  let z; $("q").oninput = () => { clearTimeout(z); z = setTimeout(sirala, 200); };
+  ["otel", "tur", "sira", "nadir"].forEach(id => $(id).onchange = sirala);
+  sirala();
+}
+</script>
+</body>
+</html>

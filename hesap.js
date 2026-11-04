@@ -48,36 +48,16 @@ const HESAP = (() => {
     if (a && h) a.textContent = h.ad + " (" + h.otel.toUpperCase() + ")";
   }
 
-  // Ana sayfada Rozetler / Promolar sekmelerinin yanına "Haberler" sekmesini ekler
+  // Ana sayfada Rozetler / Promolar sekmelerinin yanına "Mobiler" ve "Haberler" sekmelerini ekler
   function haberSekmesi() {
     const m = document.querySelector(".modes");
-    if (!m || document.getElementById("haberSek")) return;
-    const n = document.createElement("a");
-    n.id = "haberSek"; n.className = "tg"; n.href = "haberler"; n.textContent = "Haberler";
-    m.append(n);
-  }
-
-  // Geçerli oturum belirteci (süresi dolduysa yeniler)
-  async function token() {
-    const h = oku(); if (!h) return null;
-    if (Date.now() < h.bitis - 60000) return h.token;
-    const { ok, v } = await istek("/auth/v1/token?grant_type=refresh_token", { refresh_token: h.yenile });
-    if (!ok) { cikis(); return null; }
-    Object.assign(h, { token: v.access_token, yenile: v.refresh_token, bitis: Date.now() + v.expires_in * 1000 });
-    localStorage.setItem("hesap", JSON.stringify(h));
-    return h.token;
-  }
-
-  // Veritabanı isteği (giriş yapmışsa kişinin yetkisiyle)
-  async function rest(yol, secenek = {}) {
-    const t = await token();
-    const r = await fetch(URL + "/rest/v1/" + yol, {
-      ...secenek,
-      headers: { apikey: KEY, ...(t ? { Authorization: "Bearer " + t } : {}), "Content-Type": "application/json", ...(secenek.headers || {}) },
-    });
-    const txt = await r.text(); let v = null;
-    try { v = txt ? JSON.parse(txt) : null; } catch { /* boş cevap */ }
-    return { ok: r.ok, v };
+    if (!m) return;
+    for (const [id, ad, yol] of [["mobiSek", "Mobiler", "mobiler"], ["haberSek", "Haberler", "haberler"]]) {
+      if (document.getElementById(id)) continue;
+      const n = document.createElement("a");
+      n.id = id; n.className = "tg"; n.href = yol; n.textContent = ad;
+      m.append(n);
+    }
   }
 
   return { OTELLER, fn, giris, cikis, oku, baglanti, haberSekmesi, token, rest };
