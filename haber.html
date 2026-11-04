@@ -42,7 +42,7 @@ h1{margin:0 0 8px;font:800 1.9rem/1.2 Manrope,sans-serif;letter-spacing:-.02em}
 </head>
 <body>
 <main>
-<a class="geri" href="haberler.html">← Tüm haberler</a>
+<a class="geri" href="haberler">← Tüm haberler</a>
 <article id="haber"><div class="govde">Yükleniyor...</div></article>
 <section class="yrm" id="yrm" hidden><h2 id="yb">Yorumlar</h2><div id="yform"></div><div id="yliste"></div></section>
 </main>
@@ -88,7 +88,7 @@ async function yorumlariKur(n) {
       d.append(im, k); liste.append(d);
     }
   }
-  if (!h) form.innerHTML = '<p>Yorum yazmak için <a href="hesap.html" style="color:var(--acc)">giriş yap</a>.</p>';
+  if (!h) form.innerHTML = '<p>Yorum yazmak için <a href="hesap" style="color:var(--acc)">giriş yap</a>.</p>';
   else if (n.durum !== "yayinda") form.textContent = "Taslağa yorum yazılamaz.";
   else {
     form.innerHTML = '<textarea id="ym" maxlength="1000" placeholder="Yorumunu yaz..."></textarea><button class="btn" id="yg" type="button">Gönder</button><div class="ym" id="yi"></div>';
@@ -135,7 +135,7 @@ async function yorumlariKur(n) {
   addEventListener("keydown", e => { if (e.key === "Escape") lb.hidden = true; });
   ic.addEventListener("click", e => { if (e.target.tagName === "IMG") { lb.firstChild.src = e.target.src; lb.hidden = false; } });
   yorumlariKur(n);
-})();
+})().catch(() => hata("Haber yüklenemedi. Sayfayı yenile ya da biraz sonra tekrar dene."));
 </script>
 </body>
 </html>

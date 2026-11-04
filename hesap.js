@@ -44,6 +44,7 @@ const HESAP = (() => {
   // Sayfadaki #hesapLink bağlantısına giriş yapan kişinin adını yazar
   function baglanti() {
     const a = document.getElementById("hesapLink"), h = oku();
+    if (a) a.setAttribute("href", "hesap");
     if (a && h) a.textContent = h.ad + " (" + h.otel.toUpperCase() + ")";
   }
 
@@ -52,7 +53,7 @@ const HESAP = (() => {
     const m = document.querySelector(".modes");
     if (!m || document.getElementById("haberSek")) return;
     const n = document.createElement("a");
-    n.id = "haberSek"; n.className = "tg"; n.href = "haberler.html"; n.textContent = "Haberler";
+    n.id = "haberSek"; n.className = "tg"; n.href = "haberler"; n.textContent = "Haberler";
     m.append(n);
   }
 
@@ -83,3 +84,9 @@ const HESAP = (() => {
 })();
 HESAP.baglanti();
 HESAP.haberSekmesi();
+
+// Adres çubuğunda ".html" görünmesin (sayfa aynı şekilde çalışır)
+if (location.protocol.startsWith("http") && location.pathname.endsWith(".html")) {
+  const temiz = location.pathname.replace(/\/?index\.html$/, "/").replace(/\.html$/, "");
+  history.replaceState(null, "", temiz + location.search + location.hash);
+}

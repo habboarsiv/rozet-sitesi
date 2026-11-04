@@ -55,7 +55,7 @@ details.nasil summary{cursor:pointer;font-weight:700}details.nasil ol{margin:8px
 </head>
 <body>
 <main>
-<a href="index.html">← Habbo Arşiv'e dön</a>
+<a href="/">← Habbo Arşiv'e dön</a>
 <h1>Haber paneli</h1>
 <div class="card" id="kilit" hidden></div>
 
@@ -257,7 +257,7 @@ async function kaydet(d) {
   if (!r.ok) return durum("Kaydedilemedi: " + ((r.v && r.v.message) || "yetkin olmayabilir"), true);
   duzenlenen = r.v[0].id;
   durum(d === "yayinda" ? "Yayınlandı. Haber artık herkese açık. " : "Taslak kaydedildi. Sadece sen ve yönetici görebilirsin, hazır olunca Yayınla'ya bas. ");
-  const a = document.createElement("a"); a.href = "haber.html?id=" + duzenlenen; a.target = "_blank"; a.textContent = "Haberi gör"; $("msg").append(a);
+  const a = document.createElement("a"); a.href = "haber?id=" + duzenlenen; a.target = "_blank"; a.textContent = "Haberi gör"; $("msg").append(a);
 }
 
 $("yeniBtn").onclick = () => { bosEditor(); goster("editor"); };
@@ -267,7 +267,7 @@ $("geriBtn").onclick = () => { goster("liste"); listele(); };
 
 (function baslat() {
   const h = HESAP.oku(), k = $("kilit");
-  if (!h) { k.hidden = false; k.innerHTML = 'Haber yazmak için <a href="hesap.html">giriş yapmalısın</a>.'; return; }
+  if (!h) { k.hidden = false; k.innerHTML = 'Haber yazmak için <a href="hesap">giriş yapmalısın</a>.'; return; }
   if (h.rol !== "yazar" && h.rol !== "yonetici") { k.hidden = false; k.textContent = "Bu sayfa sadece yazarlar ve yöneticiler içindir."; return; }
   kurEditor(); ipuclari(); goster("liste"); listele();
 })();

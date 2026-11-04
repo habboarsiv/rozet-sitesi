@@ -30,7 +30,7 @@ h1{margin:10px 0 4px;font:800 2rem/1.1 Manrope,sans-serif;letter-spacing:-.03em}
 </head>
 <body>
 <main>
-<a class="geri" href="index.html">← Habbo Arşiv'e dön</a>
+<a class="geri" href="/">← Habbo Arşiv'e dön</a>
 <h1>Haberler</h1>
 <p class="alt">Habbo Arşiv'den güncel haberler ve rehberler.</p>
 <div class="izgara" id="liste"><p>Yükleniyor...</p></div>
@@ -44,7 +44,7 @@ h1{margin:10px 0 4px;font:800 2rem/1.1 Manrope,sans-serif;letter-spacing:-.03em}
   if (!r.ok) { kutu.textContent = "Haberler yüklenemedi."; return; }
   if (!r.v.length) { kutu.textContent = "Henüz haber yok."; return; }
   for (const n of r.v) {
-    const a = document.createElement("a"); a.className = "kart"; a.href = "haber.html?id=" + n.id;
+    const a = document.createElement("a"); a.className = "kart"; a.href = "haber?id=" + n.id;
     const kap = document.createElement("div"); kap.className = "kap";
     if (n.kapak && n.kapak.startsWith("https://res.cloudinary.com/")) {
       const im = document.createElement("img"); im.loading = "lazy"; im.alt = "";
@@ -65,7 +65,7 @@ h1{margin:10px 0 4px;font:800 2rem/1.1 Manrope,sans-serif;letter-spacing:-.03em}
     ic.append(b); if (n.ozet) ic.append(p); ic.append(k);
     a.append(kap, ic); kutu.append(a);
   }
-})();
+})().catch(() => { document.getElementById("liste").textContent = "Haberler yüklenemedi. Sayfayı yenile ya da biraz sonra tekrar dene."; });
 </script>
 </body>
 </html>

@@ -42,7 +42,7 @@ input,select{width:100%;font:inherit;color:var(--ink);background:var(--surface);
 </head>
 <body>
 <main>
-<a class="geri" href="index.html">← Habbo Arşiv'e dön</a>
+<a class="geri" href="/">← Habbo Arşiv'e dön</a>
 <div class="marka"><strong>Habbo Arşiv</strong><span>Her otelin rozeti, her promonun görseli: hepsi tek arşivde.</span></div>
 <div class="card">
   <h1 id="baslik">Giriş yap</h1>
@@ -124,7 +124,7 @@ $("f").onsubmit = async e => {
   try {
     if (mod === "giris") {
       const r = await HESAP.giris(otel, nick, sifre);
-      if (r.hata) msg(r.hata, "h"); else location.href = "index.html";
+      if (r.hata) msg(r.hata, "h"); else location.href = "/";
     } else if (!kodAlindi) {
       const { ok, v } = await HESAP.fn({ islem: "kod", otel, nick, amac: mod });
       if (!ok) msg(v.hata || "Bir hata oluştu.", "h");
@@ -134,7 +134,7 @@ $("f").onsubmit = async e => {
       if (!ok) msg(v.hata || "Bir hata oluştu.", "h");
       else {
         const r = await HESAP.giris(otel, nick, sifre);
-        if (r.tamam) location.href = "index.html";
+        if (r.tamam) location.href = "/";
         else { gec("giris"); msg("Hesabın hazır. Şimdi giriş yapabilirsin.", "o"); }
       }
     }
@@ -149,7 +149,7 @@ if (h) {
   $("f").hidden = true; $("girisli").hidden = false; $("baslik").textContent = "Hesabım";
   $("merhaba").textContent = h.ad + " (" + h.otel.toUpperCase() + ") olarak giriş yaptın. Rol: " + (ROL[h.rol] || "Üye") + ".";
   if (h.rol === "yazar" || h.rol === "yonetici") {
-    const l = document.createElement("a"); l.href = "haber-yaz.html"; l.textContent = "Haber paneline git";
+    const l = document.createElement("a"); l.href = "haber-yaz"; l.textContent = "Haber paneline git";
     l.style.cssText = "display:block;margin:0 0 14px"; $("merhaba").after(l);
   }
 }
