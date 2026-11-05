@@ -158,14 +158,50 @@ dialog p{margin:0 20px 12px;color:var(--mute)}
 #pdlg a{color:var(--acc)}
 #pclose{margin-top:14px}
 .hero-in{position:relative}.hesap-link{position:absolute;top:14px;right:20px;padding:7px 14px;border:1px solid var(--line);border-radius:99px;background:var(--surface2);color:var(--ink);text-decoration:none;font:600 .85rem Manrope,sans-serif}.hesap-link:hover{border-color:var(--acc)}
+.mb-top{display:flex;justify-content:flex-end;margin-bottom:8px}
+.mb-top select,.mb-ara input,.mb-ara select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+.mb-alt{color:var(--mute);margin:0 0 14px}
+.mb-ara{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+#mbq{flex:1;min-width:200px}
+.mb-ch{display:flex;align-items:center;gap:6px;padding:0 6px;font-weight:600;font-size:.9rem}
+.mb-say{color:var(--mute);font-weight:600;margin:6px 0 12px}
+.mb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.mb-k{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px;cursor:pointer;text-align:left;color:inherit;font:inherit}
+.mb-k:hover{border-color:var(--acc)}
+.mb-rs{height:84px;display:grid;place-items:center;background:var(--surface2);border-radius:8px;margin-bottom:8px}
+.mb-rs img{max-width:100%;max-height:80px;image-rendering:pixelated}
+.mb-yok{color:var(--mute);font-size:.75rem}
+.mb-k b{display:-webkit-box;font-size:.88rem;line-height:1.25;overflow:hidden;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.mb-k small{color:var(--mute);font-size:.72rem;word-break:break-all}
+.mb-et{position:absolute;top:8px;left:8px;font:800 .62rem Manrope,sans-serif;padding:2px 7px;border-radius:99px;background:#e5484d;color:#fff}
+.mb-et.z{left:auto;right:8px;background:#fef0c7;color:#b54708}
+#mbmd{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;padding:16px}
+#mbmd>div{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;max-width:420px;width:100%;max-height:90vh;overflow:auto}
+#mbmd .mb-rs{height:150px}#mbmd .mb-rs img{max-height:140px;transform:scale(1.6)}
+#mbmd h2{margin:0 0 4px;font:800 1.2rem Manrope,sans-serif}
+#mbmd p{margin:6px 0;color:var(--mute);font-size:.9rem}
+#mbmd dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:10px 0 0;font-size:.88rem}
+#mbmd dt{color:var(--mute)}#mbmd dd{margin:0;word-break:break-word}
+.hb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.hb-kart{display:block;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;color:inherit;text-decoration:none;transition:transform .15s}
+.hb-kart:hover{transform:translateY(-3px);border-color:var(--acc)}
+.hb-kap{position:relative;aspect-ratio:16/9;background:var(--surface2)}
+.hb-kap img{width:100%;height:100%;object-fit:cover;display:block}
+.hb-hot{position:absolute;top:10px;right:10px;background:#e5484d;color:#fff;font:800 .7rem Manrope,sans-serif;padding:3px 9px;border-radius:99px}
+.hb-ic{padding:14px 16px 16px}
+.hb-et{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.hb-et span{font:700 .68rem Manrope,sans-serif;padding:2px 9px;border-radius:99px;background:var(--accS);color:var(--acc);text-transform:uppercase}
+.hb-kart h3{margin:0 0 6px;font:800 1.05rem/1.3 Manrope,sans-serif}
+.hb-kart p{margin:0 0 10px;color:var(--mute);font-size:.9rem}
+.hb-kart small{color:var(--mute)}
 </style>
 </head>
 <body>
 <header class="hero">
-  <div class="hero-in"><a class="hesap-link" id="hesapLink" href="hesap.html">Giriş / Kayıt</a><h1 class="sn">Habbo Arşiv</h1><p class="sub">Her otelin rozeti, her promonun görseli: hepsi tek arşivde.</p></div>
+  <div class="hero-in"><a class="hesap-link" id="hesapLink" href="hesap.html">Giriş / Kayıt</a><h1 class="sn">Habbo Arşiv</h1><p class="sub">Habbo dünyasına dair aradığın her şey tek bir adreste.</p></div>
 </header>
 <div class="wrap">
-  <div class="seg modes" role="group" aria-label="Bölüm"><button class="tg" id="mR" type="button" aria-pressed="true">Rozetler</button><button class="tg" id="mP" type="button" aria-pressed="false">Promolar</button></div>
+  <div class="seg modes" role="group" aria-label="Bölüm"><button class="tg" id="mR" type="button" aria-pressed="true">Rozetler</button><button class="tg" id="mP" type="button" aria-pressed="false">Promolar</button><button class="tg" id="mM" type="button" aria-pressed="false">Mobiler</button><button class="tg" id="mH" type="button" aria-pressed="false">Haberler</button></div>
   <details class="usr" id="usr">
     <summary>Oyuncu rozetlerini sorgula</summary>
     <div class="usr-f">
@@ -214,6 +250,8 @@ dialog p{margin:0 20px 12px;color:var(--mute)}
     <div class="out pgrid" id="pout"></div>
     <button class="more" id="pmore" type="button" hidden></button>
   </section>
+  <section id="ms" hidden></section>
+  <section id="hs" hidden></section>
 </div>
 
 <footer class="ft">
@@ -249,6 +287,9 @@ dialog p{margin:0 20px 12px;color:var(--mute)}
 </dialog>
 
 <script src="hesap.js"></script>
+<script src="dil.js"></script>
+<script src="mobi-ui.js"></script>
+<script src="haber-ui.js"></script>
 <script src="promolar.js"></script>
 <script src="rozetler.js"></script>
 <script src="rozet_sahipler.js"></script>
@@ -734,15 +775,22 @@ var GECMIS_API="https://habbo-gecmis.habboarsiv-api.workers.dev/";
     $("pdlg").addEventListener("click",function(e){if(e.target===$("pdlg"))$("pdlg").close()});
     $("pdlg").addEventListener("close",function(){$("pimg").removeAttribute("src")});
   }
-  function mod(promo){
-    $("usr").hidden=promo||!KULLANICI_SORGU;
-    document.querySelector(".layout").hidden=promo;
-    $("ps").hidden=!promo;
-    $("mR").setAttribute("aria-pressed",!promo);$("mP").setAttribute("aria-pressed",promo);
-    if(promo&&!kuruldu){kuruldu=true;kur();ciz()}
+  function mod(k){
+    if(k===true)k="P";if(k===false)k="R";
+    var r=k==="R",p=k==="P";
+    $("usr").hidden=!r||!KULLANICI_SORGU;
+    document.querySelector(".layout").hidden=!r;
+    $("ps").hidden=!p;$("ms").hidden=k!=="M";$("hs").hidden=k!=="H";
+    ["R","P","M","H"].forEach(function(x){$("m"+x).setAttribute("aria-pressed",x===k)});
+    if(p&&!kuruldu){kuruldu=true;kur();ciz()}
+    if(k==="M"&&window.MOBI_UI)MOBI_UI.ac();
+    if(k==="H"&&window.HABER_UI)HABER_UI.ac();
   }
-  $("mR").onclick=function(){mod(false)};
-  $("mP").onclick=function(){mod(true)};
+  var HASH={R:"",P:"#promolar",M:"#mobiler",H:"#haberler"};
+  function modGit(k){mod(k);try{history.replaceState(null,"",location.pathname+location.search+HASH[k])}catch(e){}}
+  ["R","P","M","H"].forEach(function(x){$("m"+x).onclick=function(){modGit(x)}});
+  var ilk={"#promolar":"P","#mobiler":"M","#haberler":"H"}[location.hash];
+  if(ilk)mod(ilk);
 })();
 go();
 </script>

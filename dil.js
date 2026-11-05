@@ -49,10 +49,11 @@ const DIL = (() => {
   const iso = () => ISO[idx()];
 
   // data-i18n="anahtar" yazan öğelerin metnini, data-i18n-ph yazanların ipucu yazısını çevirir
-  function uygula() {
-    document.documentElement.lang = iso();
-    document.querySelectorAll("[data-i18n]").forEach(e => { e.textContent = t(e.dataset.i18n); });
-    document.querySelectorAll("[data-i18n-ph]").forEach(e => { e.placeholder = t(e.dataset.i18nPh); });
+  function uygula(kok) {
+    if (!kok) document.documentElement.lang = iso();   // kısmi uygulamada sayfa dilini değiştirme
+    const r = kok || document;
+    r.querySelectorAll("[data-i18n]").forEach(e => { e.textContent = t(e.dataset.i18n); });
+    r.querySelectorAll("[data-i18n-ph]").forEach(e => { e.placeholder = t(e.dataset.i18nPh); });
   }
 
   // Dil seçici (açılır liste). Dil değişince sayfa yenilenir.

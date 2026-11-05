@@ -51,7 +51,7 @@ const HESAP = (() => {
   // Ana sayfada Rozetler / Promolar sekmelerinin yanına "Mobiler" ve "Haberler" sekmelerini ekler
   function haberSekmesi() {
     const m = document.querySelector(".modes");
-    if (!m) return;
+    if (!m || document.getElementById("mM")) return;   // sekmeler index.html içinde
     for (const [id, ad, yol] of [["mobiSek", "Mobiler", "mobiler"], ["haberSek", "Haberler", "haberler"]]) {
       if (document.getElementById(id)) continue;
       const n = document.createElement("a");
