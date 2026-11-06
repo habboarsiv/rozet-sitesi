@@ -37,6 +37,16 @@ h1{margin:0 0 8px;font:800 1.9rem/1.2 Manrope,sans-serif;letter-spacing:-.02em}
 .ym{font-size:.88rem;margin-top:6px;color:var(--mute)}.ym.h{color:#d92d20}
 #lb{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;cursor:zoom-out}
 #lb img{max-width:96vw;max-height:94vh}
+.yz{display:flex;align-items:center;gap:14px;margin-top:30px;padding-top:20px;border-top:1px solid var(--line)}
+.yz-av{flex:none;width:54px;height:54px;padding:2px;border-radius:16px;background:linear-gradient(145deg,var(--acc),color-mix(in srgb,var(--acc) 35%,transparent))}
+.yz-av span{display:grid;place-items:center;width:100%;height:100%;border-radius:14px;overflow:hidden;background:var(--accS)}
+.yz-av span{font:800 1.4rem Manrope,sans-serif;color:var(--acc)}
+.yz-av img{width:100%;height:100%;object-fit:contain;image-rendering:pixelated}
+.yz-t{min-width:0}
+.yz-ad{font-size:1rem;line-height:1.3;color:var(--mute);overflow-wrap:anywhere}
+.yz-ad b{font-weight:800;font-size:1.08rem;color:var(--ink)}
+.yz-alt{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:5px;color:var(--mute);font-size:.84rem}
+.yz-ot{font:700 .68rem ui-monospace,Consolas,monospace;letter-spacing:.06em;padding:2px 9px;border-radius:99px;background:var(--accS);color:var(--acc)}
 [hidden]{display:none!important}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&display=swap" rel="stylesheet">
@@ -130,7 +140,30 @@ async function yorumlariKur(n) {
   const wrap = document.createElement("div"); wrap.className = "ql-snow";
   const ic = document.createElement("div"); ic.className = "ql-editor"; ic.id = "icerik";
   ic.innerHTML = DOMPurify.sanitize(n.icerik || "");
-  wrap.append(ic); g.append(wrap); kutu.append(g);
+  wrap.append(ic); g.append(wrap);
+  if (y.habbo_ad) {
+    const yz = document.createElement("div"); yz.className = "yz";
+    const av = document.createElement("span"); av.className = "yz-av";
+    const avi = document.createElement("span");
+    if (HESAP.OTELLER[y.otel]) {
+      const ai = document.createElement("img"); ai.alt = "";
+      ai.onerror = () => { ai.remove(); avi.textContent = y.habbo_ad.charAt(0).toUpperCase(); };
+      ai.src = "https://www.habbo" + HESAP.OTELLER[y.otel] + "/habbo-imaging/avatarimage?user=" + encodeURIComponent(y.habbo_ad) + "&headonly=1&size=l&direction=2&head_direction=3&gesture=sml";
+      avi.append(ai);
+    } else avi.textContent = y.habbo_ad.charAt(0).toUpperCase();
+    av.append(avi);
+    const yt = document.createElement("div"); yt.className = "yz-t";
+    const ya = document.createElement("div"); ya.className = "yz-ad";
+    const yb = document.createElement("b"); yb.textContent = y.habbo_ad;
+    ya.append(yb, " tarafından yazıldı");
+    const yl = document.createElement("div"); yl.className = "yz-alt";
+    if (HESAP.OTELLER[y.otel]) { const o = document.createElement("span"); o.className = "yz-ot"; o.textContent = y.otel.toUpperCase(); yl.append(o); }
+    const yd = document.createElement("span");
+    yd.textContent = new Date(n.yayin_tarihi || n.olusturma).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
+    yl.append(yd);
+    yt.append(ya, yl); yz.append(av, yt); g.append(yz);
+  }
+  kutu.append(g);
 
   const lb = document.createElement("div"); lb.id = "lb"; lb.hidden = true; lb.append(document.createElement("img")); document.body.append(lb);
   lb.onclick = () => lb.hidden = true;
