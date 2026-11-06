@@ -107,3 +107,16 @@ main .out.grid .b:hover{transform:translateY(-4px);border-color:var(--c1);box-sh
 .mb-ara input[type=search]{width:auto;flex:1 1 240px}
 .mb-ch input{width:auto;margin:0;box-shadow:none}
 @media (max-width:480px){.modes{padding:4px;gap:2px}.modes .tg{padding:0 9px;font-size:.88rem}.modes .tg::before{margin-right:6px}}
+
+/* alfabe çubuğu: kaydırma çubuğu yok, harfler alt satıra sarılır; 0–9 ve Tümü tek satırda kalır */
+.abr{flex-wrap:wrap;overflow:visible;gap:4px;padding:8px;border:1px solid var(--line2);border-radius:14px;background:var(--glass);box-shadow:var(--hi)}
+.ab{white-space:nowrap;padding:0 9px;min-width:32px;height:32px;border-radius:9px;transition:background .15s,color .15s}
+.ab[aria-pressed="true"]{box-shadow:0 6px 16px -6px var(--c1)}
+
+/* sistem öğeleri (kaydırma çubuğu, onay kutusu) temaya uysun */
+:root{color-scheme:dark}
+@media (prefers-color-scheme:light){:root{color-scheme:light}}
+*{scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:var(--line2);border-radius:10px;border:2px solid transparent;background-clip:padding-box}
+::-webkit-scrollbar-track{background:transparent}

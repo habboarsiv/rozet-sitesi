@@ -1,0 +1,55 @@
+/* Habbo Arşiv - tema, ana sayfa dışındaki sayfalar için (giriş, haber, haber paneli).
+   Kaldırmak için ilgili sayfadaki tema-sayfa.css satırını sil. */
+:root{--bg:#070b16;--surface:#0e1527;--surface2:#141d36;--line:#1f2a4a;--line2:#2c3c6b;--ink:#f1f5ff;--mute:#93a3cc;
+  --shadow:0 14px 34px -16px rgba(0,0,0,.85);--hi:inset 0 1px 0 rgba(255,255,255,.07);--glass:rgba(255,255,255,.045);color-scheme:dark}
+body{--c1:#4d7cff;--c2:#8fb0ff;--cg:rgba(77,124,255,.42);--on:#fff;--acc:var(--c1);--accT:var(--on);--accS:color-mix(in srgb,var(--c1) 18%,transparent)}
+body[data-sec=H]{--c1:#20d6a0;--c2:#1fb4ee;--cg:rgba(32,214,160,.38);--on:#03211a}
+@media (prefers-color-scheme:light){:root{--bg:#e8edfa;--surface:#fff;--surface2:#eef2fd;--line:#d5ddf3;--line2:#bcc9ea;--ink:#0a1130;--mute:#55618a;--shadow:0 14px 34px -18px rgba(24,40,100,.35);--hi:inset 0 1px 0 #fff;--glass:rgba(10,20,60,.04);color-scheme:light}
+  body{--c1:#2f5bff;--c2:#6b8cff;--cg:rgba(47,91,255,.28)}
+  body[data-sec=H]{--c1:#0aa579;--c2:#0b8fc9;--on:#fff}}
+
+body{position:relative;min-height:100vh;background:radial-gradient(1000px 520px at 90% -8%,color-mix(in srgb,var(--c1) 20%,transparent),transparent 62%),radial-gradient(760px 460px at -8% 40%,color-mix(in srgb,var(--c2) 11%,transparent),transparent 62%),var(--bg)!important;background-repeat:no-repeat!important}
+body::before{content:"";position:absolute;inset:0 0 auto 0;height:380px;pointer-events:none;
+  background:repeating-linear-gradient(63.43deg,transparent 0 44px,color-mix(in srgb,var(--c1) 24%,transparent) 44px 45px),repeating-linear-gradient(-63.43deg,transparent 0 44px,color-mix(in srgb,var(--c1) 24%,transparent) 44px 45px);
+  -webkit-mask-image:radial-gradient(60% 120% at 92% 0%,#000,transparent 72%);mask-image:radial-gradient(60% 120% at 92% 0%,#000,transparent 72%)}
+main{position:relative;z-index:1}
+h1,h2,h3,.marka strong,.btn{font-family:"Bricolage Grotesque",Manrope,system-ui,sans-serif!important}
+.geri{color:var(--c1)}
+
+/* yüzeyler */
+.card,article,.yrm,#md>div,details.nasil{background:linear-gradient(180deg,rgba(255,255,255,.045),transparent 42%),var(--surface);border:1px solid var(--line2);border-radius:18px;box-shadow:var(--hi),var(--shadow)}
+.card{border-top:3px solid var(--c1)}
+.yrm{border-left:3px solid var(--c1)}
+details.nasil{background:color-mix(in srgb,var(--c1) 10%,var(--surface));border-radius:12px}
+
+/* alanlar ve düğmeler */
+input[type=text],input[type=password],input[type=search],textarea,select{background:var(--surface2);color:var(--ink);border:1px solid var(--line2);border-radius:12px;box-shadow:inset 0 2px 6px rgba(0,0,0,.22);transition:border-color .2s,box-shadow .2s}
+input:focus,textarea:focus,select:focus{outline:0;border-color:var(--c1);box-shadow:0 0 0 3px var(--cg)}
+.btn{border:0;border-radius:12px;background:linear-gradient(135deg,var(--c1),var(--c2));color:var(--on);font-weight:800;box-shadow:0 10px 24px -8px var(--c1);transition:transform .15s,filter .15s}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.btn.ik,.btn.ikinci,.ikinci{background:transparent;border:1.5px solid var(--c1);color:var(--c1);box-shadow:none}
+.btn.kz{background:transparent;border:1.5px solid #ff5d6c;color:#ff7684;box-shadow:none}
+.alt a,.alt a:hover{color:var(--mute)}
+
+/* giriş sayfası */
+.marka strong{font-size:clamp(2.4rem,9vw,3.4rem);font-weight:800;letter-spacing:-.05em;line-height:.95;background:linear-gradient(100deg,var(--ink) 30%,var(--c2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.kod{background:color-mix(in srgb,var(--c1) 14%,transparent);border:1px dashed var(--c1);border-radius:12px}
+.kod b{color:var(--c2)}
+
+/* haber sayfası */
+article{border-radius:22px}
+.govde h1{font-size:clamp(1.8rem,5vw,2.5rem);line-height:1.12;letter-spacing:-.035em}
+.et span{background:color-mix(in srgb,var(--c1) 16%,transparent);color:var(--c1);border-radius:999px}
+.et .hot{background:linear-gradient(135deg,#ff4d6d,#ff8a3d);color:#fff}
+.meta{border-bottom:1px solid var(--line2)}
+.ql-editor a{color:var(--c1)}
+.yo{border-top:1px solid var(--line)}
+.yo img{border:1px solid var(--line2);border-radius:10px}
+
+/* haber paneli */
+.hb{border-top:1px solid var(--line2)}
+.rozet{background:color-mix(in srgb,var(--c1) 16%,transparent);color:var(--c1);border-radius:999px}
+.ql-toolbar.ql-snow,.ql-container.ql-snow{border-color:var(--line2)!important}
+.ql-toolbar.ql-snow{border-radius:12px 12px 0 0;background:var(--surface2)}
+.ql-container.ql-snow{border-radius:0 0 12px 12px}
+*{scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
