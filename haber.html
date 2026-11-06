@@ -37,16 +37,13 @@ h1{margin:0 0 8px;font:800 1.9rem/1.2 Manrope,sans-serif;letter-spacing:-.02em}
 .ym{font-size:.88rem;margin-top:6px;color:var(--mute)}.ym.h{color:#d92d20}
 #lb{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;cursor:zoom-out}
 #lb img{max-width:96vw;max-height:94vh}
-.yz{display:flex;align-items:center;gap:14px;margin-top:30px;padding-top:20px;border-top:1px solid var(--line)}
-.yz-av{flex:none;width:54px;height:54px;padding:2px;border-radius:16px;background:linear-gradient(145deg,var(--acc),color-mix(in srgb,var(--acc) 35%,transparent))}
-.yz-av span{display:grid;place-items:center;width:100%;height:100%;border-radius:14px;overflow:hidden;background:var(--accS)}
-.yz-av span{font:800 1.4rem Manrope,sans-serif;color:var(--acc)}
-.yz-av img{width:100%;height:100%;object-fit:contain;image-rendering:pixelated}
-.yz-t{min-width:0}
-.yz-ad{font-size:1rem;line-height:1.3;color:var(--mute);overflow-wrap:anywhere}
-.yz-ad b{font-weight:800;font-size:1.08rem;color:var(--ink)}
-.yz-alt{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:5px;color:var(--mute);font-size:.84rem}
-.yz-ot{font:700 .68rem ui-monospace,Consolas,monospace;letter-spacing:.06em;padding:2px 9px;border-radius:99px;background:var(--accS);color:var(--acc)}
+.meta.yzm{display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px}
+.yzm-av{flex:none;display:grid;place-items:center;width:30px;height:30px;border-radius:10px;overflow:hidden;background:var(--accS);border:1px solid var(--line);font:800 .85rem Manrope,sans-serif;color:var(--acc)}
+.yzm-av img{width:100%;height:100%;object-fit:contain;image-rendering:pixelated}
+.yzm-t{color:var(--mute);font-size:.92rem}
+.yzm-t b{font-weight:800;color:var(--ink)}
+.yzm-ot{font:700 .68rem ui-monospace,Consolas,monospace;letter-spacing:.06em;padding:2px 9px;border-radius:99px;background:var(--accS);color:var(--acc)}
+.yzm-d::before{content:"\00b7";margin-right:10px}
 [hidden]{display:none!important}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&display=swap" rel="stylesheet">
@@ -132,37 +129,31 @@ async function yorumlariKur(n) {
   for (const t of n.etiketler || []) { const s = document.createElement("span"); s.textContent = t; et.append(s); }
   if (et.children.length) g.append(et);
   const h1 = document.createElement("h1"); h1.textContent = n.baslik; g.append(h1);
-  const m = document.createElement("div"); m.className = "meta";
-  m.textContent = (y.habbo_ad ? y.habbo_ad + " (" + (HESAP.OTELLER[y.otel] || "") + ") · " : "") +
-    new Date(n.yayin_tarihi || n.olusturma).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" }) +
+  const m = document.createElement("div"); m.className = "meta yzm";
+  if (y.habbo_ad) {
+    const av = document.createElement("span"); av.className = "yzm-av";
+    if (HESAP.OTELLER[y.otel]) {
+      const ai = document.createElement("img"); ai.alt = "";
+      ai.onerror = () => { ai.remove(); av.textContent = y.habbo_ad.charAt(0).toUpperCase(); };
+      ai.src = "https://www.habbo" + HESAP.OTELLER[y.otel] + "/habbo-imaging/avatarimage?user=" + encodeURIComponent(y.habbo_ad) + "&headonly=1&size=m&direction=2&head_direction=3&gesture=sml";
+      av.append(ai);
+    } else av.textContent = y.habbo_ad.charAt(0).toUpperCase();
+    const yt = document.createElement("span"); yt.className = "yzm-t";
+    const yb = document.createElement("b"); yb.textContent = y.habbo_ad;
+    yt.append(yb, " tarafından yazıldı");
+    m.append(av, yt);
+    if (HESAP.OTELLER[y.otel]) { const o = document.createElement("span"); o.className = "yzm-ot"; o.textContent = y.otel.toUpperCase(); m.append(o); }
+  }
+  const yd = document.createElement("span");
+  if (y.habbo_ad) yd.className = "yzm-d";
+  yd.textContent = new Date(n.yayin_tarihi || n.olusturma).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" }) +
     (n.durum !== "yayinda" ? " · TASLAK (sadece sen görüyorsun)" : "");
+  m.append(yd);
   g.append(m);
   const wrap = document.createElement("div"); wrap.className = "ql-snow";
   const ic = document.createElement("div"); ic.className = "ql-editor"; ic.id = "icerik";
   ic.innerHTML = DOMPurify.sanitize(n.icerik || "");
   wrap.append(ic); g.append(wrap);
-  if (y.habbo_ad) {
-    const yz = document.createElement("div"); yz.className = "yz";
-    const av = document.createElement("span"); av.className = "yz-av";
-    const avi = document.createElement("span");
-    if (HESAP.OTELLER[y.otel]) {
-      const ai = document.createElement("img"); ai.alt = "";
-      ai.onerror = () => { ai.remove(); avi.textContent = y.habbo_ad.charAt(0).toUpperCase(); };
-      ai.src = "https://www.habbo" + HESAP.OTELLER[y.otel] + "/habbo-imaging/avatarimage?user=" + encodeURIComponent(y.habbo_ad) + "&headonly=1&size=l&direction=2&head_direction=3&gesture=sml";
-      avi.append(ai);
-    } else avi.textContent = y.habbo_ad.charAt(0).toUpperCase();
-    av.append(avi);
-    const yt = document.createElement("div"); yt.className = "yz-t";
-    const ya = document.createElement("div"); ya.className = "yz-ad";
-    const yb = document.createElement("b"); yb.textContent = y.habbo_ad;
-    ya.append(yb, " tarafından yazıldı");
-    const yl = document.createElement("div"); yl.className = "yz-alt";
-    if (HESAP.OTELLER[y.otel]) { const o = document.createElement("span"); o.className = "yz-ot"; o.textContent = y.otel.toUpperCase(); yl.append(o); }
-    const yd = document.createElement("span");
-    yd.textContent = new Date(n.yayin_tarihi || n.olusturma).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
-    yl.append(yd);
-    yt.append(ya, yl); yz.append(av, yt); g.append(yz);
-  }
   kutu.append(g);
 
   const lb = document.createElement("div"); lb.id = "lb"; lb.hidden = true; lb.append(document.createElement("img")); document.body.append(lb);
