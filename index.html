@@ -195,10 +195,12 @@ dialog p{margin:0 20px 12px;color:var(--mute)}
 .hb-kart p{margin:0 0 10px;color:var(--mute);font-size:.9rem}
 .hb-kart small{color:var(--mute)}
 </style>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tema.css">
 </head>
-<body>
+<body data-sec="R">
 <header class="hero">
-  <div class="hero-in"><a class="hesap-link" id="hesapLink" href="hesap.html">Giriş / Kayıt</a><h1 class="sn">Habbo Arşiv</h1><p class="sub">Habbo dünyasına dair aradığın her şey tek bir adreste.</p></div>
+  <div class="hero-in"><a class="hesap-link" id="hesapLink" href="hesap.html">Giriş / Kayıt</a><h1 class="sn">Habbo Arşiv</h1><p class="sub">Habbo dünyasına dair aradığın her şey tek bir adreste.</p><div class="led" id="led"></div></div>
 </header>
 <div class="wrap">
   <div class="seg modes" role="group" aria-label="Bölüm"><button class="tg" id="mR" type="button" aria-pressed="true">Rozetler</button><button class="tg" id="mP" type="button" aria-pressed="false">Promolar</button><button class="tg" id="mM" type="button" aria-pressed="false">Mobiler</button><button class="tg" id="mH" type="button" aria-pressed="false">Haberler</button></div>
@@ -293,6 +295,7 @@ dialog p{margin:0 20px 12px;color:var(--mute)}
 <script src="promolar.js"></script>
 <script src="rozetler.js"></script>
 <script src="rozet_sahipler.js"></script>
+<script src="tema.js"></script>
 <script>
 var SITE_ADI="Habbo Arşiv";   // Site adını yalnızca buradan değiştirmeniz yeterli (başlık, sekme adı ve alt yazı)
 document.title=SITE_ADI;
@@ -782,6 +785,7 @@ var GECMIS_API="https://habbo-gecmis.habboarsiv-api.workers.dev/";
     document.querySelector(".layout").hidden=!r;
     $("ps").hidden=!p;$("ms").hidden=k!=="M";$("hs").hidden=k!=="H";
     ["R","P","M","H"].forEach(function(x){$("m"+x).setAttribute("aria-pressed",x===k)});
+    document.body.setAttribute("data-sec",k);
     if(p&&!kuruldu){kuruldu=true;kur();ciz()}
     if(k==="M"&&window.MOBI_UI)MOBI_UI.ac();
     if(k==="H"&&window.HABER_UI)HABER_UI.ac();
