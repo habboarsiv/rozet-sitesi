@@ -414,7 +414,13 @@ def main():
         for b in liste[:len(yeni_kodlar)][:30]:
             print("  ", b["code"], "-", b["name"])
         if len(yeni_kodlar) > 30:
-            print("   ... ve %d tane daha" % (len(yeni_kodlar) - 30))
+            print("   ... ve %d tane daha" % (len(yeni_kodlar) - 30))        
+        try:
+            from discord_bildir import rozet_bildir
+            yeni_set = set(yeni_kodlar)
+            rozet_bildir([b for b in liste if b["code"] in yeni_set])
+        except Exception as hata:
+            print("Discord bildirimi gönderilemedi:", hata)
     if bakilan:
         rapor(liste, tarihler)
 
