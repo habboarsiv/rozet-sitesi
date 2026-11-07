@@ -42,6 +42,101 @@ h1{margin:0 0 8px;font:800 1.9rem/1.2 Manrope,sans-serif;letter-spacing:-.02em}
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="tema-sayfa.css">
 <link rel="stylesheet" href="site.css">
+<style>
+/* ---- yorumlar ---- */
+.yrm{padding:22px 26px 12px}
+.yrm h2{display:flex;align-items:center;gap:10px;margin:0 0 16px;font-size:1.4rem;letter-spacing:-.03em}
+.yrm-say{font:700 .8rem Manrope,sans-serif;letter-spacing:0;padding:2px 11px;border-radius:999px;background:color-mix(in srgb,var(--c1) 16%,transparent);color:var(--c1)}
+.yf{display:flex;gap:14px;align-items:flex-start}
+.yf>.av{width:46px;height:46px;margin-top:2px}
+.yf-sag{flex:1;min-width:0}
+.yrm .yf textarea{display:block;width:100%;min-height:84px;max-height:320px;resize:none;padding:12px 14px;line-height:1.5;border-radius:14px}
+.yf-alt{display:flex;align-items:center;gap:12px;margin-top:8px}
+.yf-say{margin-right:auto;font:700 .76rem Manrope,sans-serif;font-variant-numeric:tabular-nums;color:var(--mute)}
+.yrm .yf .btn{margin:0;padding:9px 22px}
+.yrm .yf .btn:disabled{opacity:.45;transform:none;filter:none;cursor:default}
+.ym.ok{color:var(--c1);font-weight:700}
+.yf-misafir{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;padding:16px 18px;border-radius:16px;background:color-mix(in srgb,var(--c1) 9%,transparent);border:1px dashed color-mix(in srgb,var(--c1) 55%,var(--line2))}
+.yf-misafir b{font:800 1.05rem "Bricolage Grotesque",Manrope,sans-serif;letter-spacing:-.02em}
+.yf-misafir p{margin:2px 0 0;color:var(--mute);font-size:.92rem}
+.yf-btn{display:flex;gap:8px}
+.yrm .yf-btn .btn{margin:0;padding:9px 18px}
+#yliste{margin-top:14px}
+.yo{position:relative;display:flex;gap:14px;padding:16px 12px;margin:0 -12px;border-top:1px solid var(--line);border-radius:14px;transition:background .2s}
+.yo:first-child{border-top-color:transparent}
+.yo:hover{background:color-mix(in srgb,var(--c1) 5%,transparent)}
+.yo-av{flex:none;align-self:flex-start;padding:0;border:0;background:none;border-radius:50%;cursor:pointer}
+span.yo-av{cursor:default}
+.yo-av .av{width:46px;height:46px;transition:box-shadow .2s}
+button.yo-av:hover .av,button.yo-av:focus-visible .av{box-shadow:0 0 0 3px var(--cg)}
+button.yo-av:focus-visible,.yo-ad:focus-visible{outline:2px solid var(--c1);outline-offset:3px}
+.yo .av img{width:100%;height:100%;object-fit:contain;object-position:center;border:0;border-radius:0;margin:0}
+.yo-k{flex:1;min-width:0}
+.yo-bas{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px}
+.yo-ad{padding:0;border:0;background:none;color:var(--ink);font:800 1.02rem "Bricolage Grotesque",Manrope,sans-serif;letter-spacing:-.015em;cursor:pointer;text-align:left}
+button.yo-ad:hover{color:var(--c1)}
+b.yo-ad{cursor:default;color:var(--mute)}
+.yo-ben{font:800 .66rem Manrope,sans-serif;padding:2px 8px;border-radius:999px;background:color-mix(in srgb,var(--c1) 18%,transparent);color:var(--c1)}
+.yo time{color:var(--mute);font-size:.8rem}
+.yo .sil{margin-left:auto;padding:2px 6px;border-radius:8px;text-decoration:none;opacity:0;transition:opacity .15s,color .15s}
+.yo:hover .sil,.yo .sil:focus-visible,.yo .sil.sor{opacity:1}
+.yo .sil:hover{color:#ff7684}.yo .sil.sor{color:#ff7684;font-weight:700}
+@media (hover:none){.yo .sil{opacity:.7}}
+.yo-metin{margin:5px 0 0;white-space:pre-wrap;word-break:break-word;line-height:1.6}
+.yo.yeni{animation:yoYeni 1.6s ease-out}
+@keyframes yoYeni{0%{background:color-mix(in srgb,var(--c1) 22%,transparent)}100%{background:transparent}}
+.yrm-bos{margin:0;padding:26px 0 18px;text-align:center;color:var(--mute)}
+.yrm-isk{display:flex;gap:14px;padding:16px 0}
+.yrm-isk i,.pf-isk{display:block;border-radius:10px;background:linear-gradient(90deg,var(--surface2) 25%,color-mix(in srgb,var(--c1) 12%,var(--surface2)) 50%,var(--surface2) 75%);background-size:200% 100%;animation:isk 1.4s linear infinite}
+.yrm-isk .a{width:46px;height:46px;border-radius:50%}
+.yrm-isk>div{flex:1}.yrm-isk .b{height:14px;width:34%;margin:4px 0 10px}.yrm-isk .c{height:12px;width:78%}
+@keyframes isk{to{background-position:-200% 0}}
+
+/* ---- profil kartı ---- */
+body.pf-kilit{overflow:hidden}
+.pf{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(3,6,14,.66);backdrop-filter:blur(6px);opacity:0;visibility:hidden;transition:opacity .2s,visibility .2s}
+.pf.acik{opacity:1;visibility:visible}
+.pf-kart{position:relative;width:100%;max-width:460px;max-height:calc(100vh - 32px);overflow:auto;border-radius:24px;background:linear-gradient(180deg,rgba(255,255,255,.05),transparent 40%),var(--surface);border:1px solid var(--line2);border-top:3px solid var(--c1);box-shadow:var(--hi),0 40px 90px -24px rgba(0,0,0,.9);transform:translateY(14px) scale(.98);transition:transform .25s cubic-bezier(.2,.7,.2,1);outline:0}
+.pf.acik .pf-kart{transform:none}
+.pf-x{position:absolute;right:12px;top:12px;z-index:2;width:34px;height:34px;display:grid;place-items:center;border-radius:10px;border:1px solid var(--line2);background:var(--glass);color:var(--mute);cursor:pointer;transition:color .15s,border-color .15s}
+.pf-x:hover{color:var(--ink);border-color:var(--c1)}.pf-x .ic{width:18px;height:18px}
+.pf-x:focus-visible,.pf-yo:focus-visible,.pf-duz:focus-visible{outline:2px solid var(--c1);outline-offset:2px}
+.pf-ust{display:flex;gap:18px;align-items:flex-end;padding:28px 26px 16px;background:linear-gradient(135deg,color-mix(in srgb,var(--c1) 22%,var(--surface)),transparent 72%)}
+.pf-av{position:relative;flex:none;width:92px;height:128px;display:grid;place-items:end center}
+.pf-floor{position:absolute;left:50%;bottom:0;width:92px;height:46px;transform:translateX(-50%);clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);background:linear-gradient(135deg,var(--c1),var(--c2));opacity:.45}
+.pf-av img{position:relative;height:112px;width:auto;image-rendering:pixelated;margin-bottom:12px;filter:drop-shadow(0 8px 10px rgba(0,0,0,.45))}
+.pf-av.yok{color:var(--mute)}.pf-av.yok .ic{position:relative;width:70px;height:70px;margin-bottom:20px}
+.pf-kim{min-width:0;padding:0 34px 10px 0}
+.pf-ad{margin:0 0 8px;font-size:1.85rem;line-height:1.05;letter-spacing:-.04em;word-break:break-word}
+.pf-rozet{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.pf-govde{padding:6px 26px 24px}
+.pf-motto{position:relative;margin:12px 0 4px;padding:4px 0 4px 16px;font:600 1.05rem/1.4 Manrope,system-ui,sans-serif;overflow-wrap:anywhere}
+.pf-motto::before{content:"";position:absolute;left:0;top:4px;bottom:4px;width:3px;border-radius:3px;background:linear-gradient(180deg,var(--c1),var(--c2))}
+.pf-motto.yok{color:var(--mute);font-weight:500}.pf-motto.yok::before{background:var(--line2)}
+.pf-liste{margin:16px 0 0;border-top:1px solid var(--line)}
+.pf-sat{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:11px 0;border-bottom:1px solid var(--line)}
+.pf-sat dt{color:var(--mute);font-size:.88rem}
+.pf-sat dd{margin:0;display:flex;align-items:center;gap:8px;font-weight:700;text-align:right}
+.pf-nokta{width:8px;height:8px;border-radius:50%;background:var(--mute);opacity:.6}
+.pf-nokta.on{background:#35e0b0;opacity:1;box-shadow:0 0 0 0 rgba(53,224,176,.6);animation:pfNabiz 2.6s ease-out infinite}
+@keyframes pfNabiz{0%{box-shadow:0 0 0 0 rgba(53,224,176,.55)}70%,100%{box-shadow:0 0 0 8px rgba(53,224,176,0)}}
+.pf-bas{margin:22px 0 6px;font:800 1.08rem "Bricolage Grotesque",Manrope,sans-serif;letter-spacing:-.02em}
+.pf-yo{display:block;padding:12px;margin:0 -12px;border-radius:12px;text-decoration:none;color:inherit;transition:background .15s}
+.pf-yo:hover{background:color-mix(in srgb,var(--c1) 10%,transparent)}
+.pf-yo b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:800;font-size:.88rem;color:var(--c1)}
+.pf-yo p{margin:2px 0 3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:.93rem;word-break:break-word}
+.pf-yo time{color:var(--mute);font-size:.78rem}
+.pf-bos{margin:6px 0 0;color:var(--mute)}
+.pf-duz{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-weight:700;color:var(--c1);text-decoration:none}
+.pf-duz .ic{width:16px;height:16px}.pf-duz:hover span{text-decoration:underline}
+.pf-isk{height:18px;margin:16px 0}.pf-isk.k{width:70%}
+@media (max-width:560px){
+  .yrm{padding:18px 16px 8px}.yf{gap:10px}.yf>.av{width:38px;height:38px}.yo{gap:11px}
+  .pf{align-items:flex-end;padding:0}.pf-kart{max-width:none;border-radius:24px 24px 0 0;max-height:88vh;transform:translateY(40px)}
+  .pf-ust{padding:26px 18px 14px}.pf-govde{padding:6px 18px 22px}
+}
+@media (prefers-reduced-motion:reduce){.pf,.pf-kart,.yo,.yo.yeni,.yrm-isk i,.pf-isk,.pf-nokta.on{animation:none;transition:none}}
+</style>
 </head>
 <body data-sec="H" data-nav="H">
 <main>
@@ -67,45 +162,228 @@ DOMPurify.addHook("afterSanitizeAttributes", n => {
 });
 
 
+/* ---------- yardımcılar ---------- */
+const S = SITE, el = S.el;
+const habboUrl = (otel, ad, ek) => "https://www.habbo" + (HESAP.OTELLER[otel] || ".com") + "/habbo-imaging/avatarimage?user=" + encodeURIComponent(ad) + "&" + ek;
+function zaman(t) {
+  const d = new Date(t); if (isNaN(d)) return "";
+  const s = Math.max(0, Math.round((Date.now() - d) / 1000));
+  if (s < 60) return "az önce";
+  if (s < 3600) return Math.floor(s / 60) + " dk önce";
+  if (s < 86400) return Math.floor(s / 3600) + " saat önce";
+  if (s < 7 * 86400) return Math.floor(s / 86400) + " gün önce";
+  const ayni = d.getFullYear() === new Date().getFullYear();
+  return d.toLocaleDateString("tr-TR", ayni ? { day: "numeric", month: "long" } : { day: "numeric", month: "long", year: "numeric" });
+}
+const tamZaman = t => new Date(t).toLocaleString("tr-TR", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" });
+// Sütun izinleri farklıysa sırayla daha sade sorguyu dener (sayfa bozulmasın diye)
+async function ilkDeneme(secenekler, yol) {
+  let r = null;
+  for (const s of secenekler) { r = await HESAP.rest(yol(s)); if (r.ok) return r; }
+  return r;
+}
+
+/* ---------- kullanıcı profil kartı ---------- */
+const PF = (() => {
+  let kok, kart, onceki, sayac = 0;
+
+  function kur() {
+    kok = el("div", "pf"); kok.setAttribute("aria-hidden", "true");
+    kok.innerHTML = '<div class="pf-kart" role="dialog" aria-modal="true" aria-label="Kullanıcı profili" tabindex="-1">' +
+      '<button class="pf-x" type="button" aria-label="Kapat">' + S.svg("x") + '</button><div class="pf-ic"></div></div>';
+    document.body.appendChild(kok); kart = kok.querySelector(".pf-kart");
+    kok.addEventListener("click", e => { if (e.target === kok || e.target.closest(".pf-x")) kapat(); });
+    document.addEventListener("keydown", e => { if (e.key === "Escape" && kok.classList.contains("acik")) kapat(); });
+    kok.addEventListener("keydown", e => {   // Tab tuşu pencerenin dışına çıkmasın
+      if (e.key !== "Tab") return;
+      const f = [...kart.querySelectorAll("a[href],button:not([disabled])")]; if (!f.length) return;
+      const a = f[0], z = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === a) { e.preventDefault(); z.focus(); }
+      else if (!e.shiftKey && document.activeElement === z) { e.preventDefault(); a.focus(); }
+    });
+  }
+  function kapat() {
+    sayac++; kok.classList.remove("acik"); kok.setAttribute("aria-hidden", "true"); document.body.classList.remove("pf-kilit");
+    if (onceki && onceki.focus) onceki.focus();
+  }
+
+  const profilCek = async id => {
+    try {
+      const r = await ilkDeneme(["habbo_ad,otel,rol,olusturma,motto", "habbo_ad,otel,rol", "habbo_ad,otel"], s => "profiller?select=" + s + "&id=eq." + encodeURIComponent(id));
+      return r && r.ok && r.v && r.v[0] ? r.v[0] : null;
+    } catch { return null; }
+  };
+  const yorumCek = async id => {
+    try {
+      const r = await HESAP.rest("yorumlar?yazar_id=eq." + encodeURIComponent(id) + "&select=id,metin,olusturma,haber_id&order=olusturma.desc&limit=100");
+      return r.ok && Array.isArray(r.v) ? r.v : null;
+    } catch { return null; }
+  };
+  const baslikCek = async liste => {
+    const ids = [...new Set(liste.map(c => c.haber_id))].filter(x => /^\d+$/.test(String(x)));
+    if (!ids.length) return {};
+    try {
+      const r = await HESAP.rest("haberler?id=in.(" + ids.join(",") + ")&select=id,baslik");
+      const m = {}; if (r.ok && Array.isArray(r.v)) r.v.forEach(x => m[x.id] = x.baslik); return m;
+    } catch { return {}; }
+  };
+  // Habbo'nun herkese açık verisi: çevrimiçi mi? (ulaşılamazsa o satır hiç görünmez)
+  const habboDurum = async k => {
+    const c = new AbortController(), t = setTimeout(() => c.abort(), 4000);
+    try {
+      const r = await fetch("https://www.habbo" + (HESAP.OTELLER[k.otel] || ".com") + "/api/public/users?name=" + encodeURIComponent(k.ad), { signal: c.signal });
+      if (!r.ok) return null; const j = await r.json();
+      return typeof j.online === "boolean" ? j : null;
+    } catch { return null; } finally { clearTimeout(t); }
+  };
+
+  function render(k, v) {
+    const ic = kart.querySelector(".pf-ic"); ic.textContent = "";
+    const rol = S.ROL[k.rol] ? k.rol : "uye";
+    const ust = el("div", "pf-ust"), av = el("div", "pf-av"); av.appendChild(el("span", "pf-floor"));
+    const im = document.createElement("img"); im.alt = ""; im.src = habboUrl(k.otel, k.ad, "direction=2&head_direction=3&gesture=sml&size=l");
+    im.onerror = () => { av.classList.add("yok"); im.replaceWith(el("span", "", S.svg("user"))); };
+    av.appendChild(im);
+    const kim = el("div", "pf-kim"), ad = el("h3", "pf-ad"); ad.textContent = k.ad;
+    kim.appendChild(ad); kim.appendChild(el("div", "pf-rozet", S.rozet(rol) + S.otelEt(k.otel)));
+    ust.appendChild(av); ust.appendChild(kim); ic.appendChild(ust);
+
+    const g = el("div", "pf-govde"); ic.appendChild(g);
+    if (!v) { g.innerHTML = '<div class="pf-isk"></div><div class="pf-isk k"></div><div class="pf-isk"></div>'; return; }
+
+    const p = v.profil;
+    if (p && "motto" in p) { const m = el("p", "pf-motto" + (p.motto ? "" : " yok")); m.textContent = p.motto || "Henüz bir motto yazmamış."; g.appendChild(m); }
+    const liste = el("dl", "pf-liste");
+    const sat = (et, de) => { const s = el("div", "pf-sat"); s.appendChild(el("dt", "", et)); const d = el("dd"); d.textContent = de; s.appendChild(d); liste.appendChild(s); return d; };
+    if (p && p.olusturma) sat("Aramıza katıldı", new Date(p.olusturma).toLocaleDateString("tr-TR", { month: "long", year: "numeric" }));
+    sat("Yorum sayısı", v.yorumlar ? (v.yorumlar.length >= 100 ? "100+" : String(v.yorumlar.length)) : "—");
+    sat("Habbo'da", "Kontrol ediliyor…").classList.add("pf-habbo");
+    g.appendChild(liste);
+
+    g.appendChild(el("h4", "pf-bas", "Son yorumları"));
+    const yl = el("div", "pf-yl");
+    if (!v.yorumlar) yl.appendChild(el("p", "pf-bos", "Yorumlar yüklenemedi."));
+    else if (!v.yorumlar.length) yl.appendChild(el("p", "pf-bos", "Henüz yorum yazmamış."));
+    else v.yorumlar.slice(0, 5).forEach(c => {
+      const a = el("a", "pf-yo"); a.href = "haber?id=" + c.haber_id;
+      const b = el("b"); b.textContent = v.basliklar[c.haber_id] || "Habere git"; a.appendChild(b);
+      const t = el("p"); t.textContent = c.metin; a.appendChild(t);
+      const tm = el("time"); tm.dateTime = c.olusturma; tm.title = tamZaman(c.olusturma); tm.textContent = zaman(c.olusturma); a.appendChild(tm);
+      yl.appendChild(a);
+    });
+    g.appendChild(yl);
+
+    const ben = HESAP.oku();
+    if (ben && ben.id === k.id) { const a = el("a", "pf-duz", S.svg("pen") + "<span>Mottonu düzenle</span>"); a.href = "/hesap"; g.appendChild(a); }
+  }
+
+  function habboDoldur(j) {
+    const dd = kart.querySelector(".pf-habbo"); if (!dd) return;
+    if (!j) { dd.closest(".pf-sat").remove(); return; }
+    dd.textContent = "";
+    dd.appendChild(el("span", "pf-nokta" + (j.online ? " on" : "")));
+    let metin = j.online ? "Çevrimiçi" : "Çevrimdışı";
+    const son = typeof j.lastAccessTime === "string" ? zaman(j.lastAccessTime.replace(/([+-]\d{2})(\d{2})$/, "$1:$2")) : "";
+    if (!j.online && son) metin += " · " + son;
+    dd.appendChild(document.createTextNode(metin));
+  }
+
+  async function ac(kisi, tetikleyen) {
+    if (!kok) kur();
+    const me = ++sayac; onceki = tetikleyen || document.activeElement;
+    render(kisi, null);
+    kok.classList.add("acik"); kok.setAttribute("aria-hidden", "false"); document.body.classList.add("pf-kilit");
+    kart.querySelector(".pf-x").focus();
+    const habboP = habboDurum(kisi);
+    const [profil, yorumlar] = await Promise.all([profilCek(kisi.id), yorumCek(kisi.id)]);
+    if (me !== sayac) return;
+    const basliklar = await baslikCek((yorumlar || []).slice(0, 5));
+    if (me !== sayac) return;
+    const k = Object.assign({}, kisi, profil ? { ad: profil.habbo_ad || kisi.ad, otel: profil.otel || kisi.otel, rol: profil.rol || kisi.rol } : {});
+    render(k, { profil, yorumlar, basliklar });
+    habboP.then(j => { if (me === sayac) habboDoldur(j); });
+  }
+  return { ac };
+})();
+
+/* ---------- yorumlar ---------- */
+const YSEC = ["id,metin,olusturma,yazar_id,profiller(habbo_ad,otel,rol)", "id,metin,olusturma,yazar_id,profiller(habbo_ad,otel)"];
+
+function yorumKarti(c, h, vurgu, yenile) {
+  const p = c.profiller || {}, ben = !!h && h.id === c.yazar_id;
+  const kisi = { id: c.yazar_id, ad: p.habbo_ad || "", otel: p.otel, rol: p.rol }, acilir = !!kisi.ad;
+  const d = el("div", "yo" + (ben ? " ben" : "") + (vurgu ? " yeni" : ""));
+  let av;
+  if (acilir) {
+    av = el("button", "yo-av"); av.type = "button"; av.setAttribute("aria-label", kisi.ad + " profilini aç");
+    av.appendChild(S.avatar({ ad: kisi.ad, otel: kisi.otel }, "m", true, "")); av.onclick = () => PF.ac(kisi, av);
+  } else { av = el("span", "yo-av"); av.appendChild(el("span", "av yok", S.svg("user"))); }
+
+  const k = el("div", "yo-k"), bas = el("div", "yo-bas");
+  let ad;
+  if (acilir) { ad = el("button", "yo-ad"); ad.type = "button"; ad.onclick = () => PF.ac(kisi, ad); } else ad = el("b", "yo-ad");
+  ad.textContent = kisi.ad || "Silinmiş kullanıcı"; bas.appendChild(ad);
+  if (p.rol === "yazar" || p.rol === "yonetici") bas.insertAdjacentHTML("beforeend", S.rozet(p.rol));
+  if (p.otel) bas.insertAdjacentHTML("beforeend", S.otelEt(p.otel));
+  if (ben) bas.appendChild(el("span", "yo-ben", "Sen"));
+  const tm = el("time"); tm.dateTime = c.olusturma; tm.title = tamZaman(c.olusturma); tm.textContent = zaman(c.olusturma); bas.appendChild(tm);
+
+  if (h && (ben || h.rol === "yonetici")) {
+    const s = el("button", "sil", "Sil"); s.type = "button"; let zm;
+    s.onclick = async () => {   // iki adım: önce "Emin misin?", sonra siler
+      if (!s.classList.contains("sor")) {
+        s.classList.add("sor"); s.textContent = "Emin misin?";
+        zm = setTimeout(() => { s.classList.remove("sor"); s.textContent = "Sil"; }, 3000); return;
+      }
+      clearTimeout(zm); s.disabled = true;
+      const x = await HESAP.rest("yorumlar?id=eq." + c.id, { method: "DELETE" });
+      if (x.ok) yenile(); else { s.disabled = false; s.classList.remove("sor"); s.textContent = "Sil"; }
+    };
+    bas.appendChild(s);
+  }
+  const t = el("p", "yo-metin"); t.textContent = c.metin;
+  k.append(bas, t); d.append(av, k); return d;
+}
+
 async function yorumlariKur(n) {
   $("yrm").hidden = false;
   const h = HESAP.oku(), liste = $("yliste"), form = $("yform");
-  async function yukle() {
-    const r = await HESAP.rest("yorumlar?haber_id=eq." + n.id + "&select=id,metin,olusturma,yazar_id,profiller(habbo_ad,otel)&order=olusturma.desc&limit=200");
+  const baslik = say => { const b = $("yb"); b.textContent = "Yorumlar"; if (say != null) b.appendChild(el("span", "yrm-say", String(say))); };
+  baslik();
+  liste.innerHTML = '<div class="yrm-isk"><i class="a"></i><div><i class="b"></i><i class="c"></i></div></div><div class="yrm-isk"><i class="a"></i><div><i class="b"></i><i class="c"></i></div></div>';
+
+  async function yukle(vurgu) {
+    const r = await ilkDeneme(YSEC, s => "yorumlar?haber_id=eq." + n.id + "&select=" + s + "&order=olusturma.desc&limit=200");
     liste.textContent = "";
-    if (!r.ok) { liste.textContent = "Yorumlar yüklenemedi."; return; }
-    $("yb").textContent = "Yorumlar (" + r.v.length + ")";
-    for (const c of r.v) {
-      const p = c.profiller || {}, d = document.createElement("div"); d.className = "yo";
-      const im = document.createElement("img"); im.alt = ""; im.loading = "lazy";
-      if (p.habbo_ad && HESAP.OTELLER[p.otel]) im.src = "https://www.habbo" + HESAP.OTELLER[p.otel] + "/habbo-imaging/avatarimage?user=" + encodeURIComponent(p.habbo_ad) + "&headonly=1&size=m&direction=2&head_direction=3&gesture=sml";
-      const k = document.createElement("div");
-      const ad = document.createElement("b"); ad.textContent = p.habbo_ad || "?";
-      const al = document.createElement("small"); al.textContent = " (" + (HESAP.OTELLER[p.otel] || "") + ") · " + new Date(c.olusturma).toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
-      k.append(ad, al);
-      if (h && (h.id === c.yazar_id || h.rol === "yonetici")) {
-        const s = document.createElement("button"); s.className = "sil"; s.type = "button"; s.textContent = "Sil";
-        s.onclick = async () => { if (!confirm("Yorum silinsin mi?")) return; const x = await HESAP.rest("yorumlar?id=eq." + c.id, { method: "DELETE" }); if (x.ok) yukle(); };
-        k.append(s);
-      }
-      const t = document.createElement("p"); t.textContent = c.metin; k.append(t);
-      d.append(im, k); liste.append(d);
-    }
+    if (!r || !r.ok) { liste.appendChild(el("p", "yrm-bos", "Yorumlar yüklenemedi. Sayfayı yenileyip tekrar dene.")); return; }
+    baslik(r.v.length);
+    if (!r.v.length) { liste.appendChild(el("p", "yrm-bos", "Henüz yorum yok. İlk yorumu sen yaz.")); return; }
+    r.v.forEach((c, i) => liste.appendChild(yorumKarti(c, h, vurgu && i === 0, () => yukle(false))));
   }
-  if (!h) form.innerHTML = '<p>Yorum yazmak için <a href="#" data-giris="giris" style="color:var(--acc)">giriş yap</a>.</p>';
-  else if (n.durum !== "yayinda") form.textContent = "Taslağa yorum yazılamaz.";
+
+  if (!h) {
+    form.innerHTML = '<div class="yf-misafir"><div><b>Sohbete katıl</b><p>Yorum yazmak için Habbo hesabınla giriş yap.</p></div>' +
+      '<div class="yf-btn"><button class="btn" data-giris="giris" type="button">Giriş yap</button><button class="btn ik" data-giris="kayit" type="button">Kayıt ol</button></div></div>';
+  } else if (n.durum !== "yayinda") form.textContent = "Taslağa yorum yazılamaz.";
   else {
-    form.innerHTML = '<textarea id="ym" maxlength="1000" placeholder="Yorumunu yaz..."></textarea><button class="btn" id="yg" type="button">Gönder</button><div class="ym" id="yi"></div>';
-    $("yg").onclick = async () => {
-      const metin = $("ym").value.trim(); if (!metin) return;
-      $("yg").disabled = true;
+    form.innerHTML = '<div class="yf"><div class="yf-sag"><textarea id="ym" maxlength="1000" rows="2" placeholder="Bu habere ne düşünüyorsun?"></textarea>' +
+      '<div class="yf-alt"><span class="yf-say" id="ys">0/1000</span><button class="btn" id="yg" type="button" disabled>Gönder</button></div><div class="ym" id="yi" role="status" aria-live="polite"></div></div></div>';
+    form.firstChild.prepend(S.avatar(h, "m", true, "orta"));
+    const ta = $("ym"), yg = $("yg");
+    const guncelle = () => { ta.style.height = "auto"; ta.style.height = Math.min(ta.scrollHeight, 320) + "px"; $("ys").textContent = ta.value.length + "/1000"; yg.disabled = !ta.value.trim(); };
+    ta.addEventListener("input", guncelle);
+    ta.addEventListener("keydown", e => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey) && !yg.disabled) yg.click(); });
+    yg.onclick = async () => {
+      const metin = ta.value.trim(); if (!metin) return;
+      yg.disabled = true;
       const r = await HESAP.rest("yorumlar", { method: "POST", body: JSON.stringify({ haber_id: n.id, yazar_id: h.id, metin }) });
-      $("yg").disabled = false;
-      if (!r.ok) { $("yi").className = "ym h"; $("yi").textContent = (r.v && r.v.message) || "Yorum gönderilemedi."; return; }
-      $("ym").value = ""; $("yi").textContent = ""; yukle();
+      if (!r.ok) { yg.disabled = false; $("yi").className = "ym h"; $("yi").textContent = (r.v && r.v.message) || "Yorum gönderilemedi. Tekrar dene."; return; }
+      ta.value = ""; guncelle(); $("yi").className = "ym ok"; $("yi").textContent = "Yorumun yayınlandı.";
+      setTimeout(() => { if ($("yi")) $("yi").textContent = ""; }, 3500);
+      yukle(true);
     };
   }
-  yukle();
+  yukle(false);
 }
 (async () => {
   const id = new URLSearchParams(location.search).get("id");
