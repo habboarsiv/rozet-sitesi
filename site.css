@@ -210,7 +210,7 @@ body.gm-kilit{overflow:hidden}
 .ark-kart{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:26px;padding:22px;border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.045),transparent 42%),var(--surface);border:1px solid var(--line2);box-shadow:var(--hi),var(--shadow)}
 .ark-onizle{position:relative;aspect-ratio:16/8;border-radius:16px;overflow:hidden;border:1px solid var(--line2);background:linear-gradient(135deg,color-mix(in srgb,var(--c1) 20%,var(--surface)),var(--surface) 72%)}
 .ark-onizle img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.ark-onizle::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(135deg,rgba(6,10,24,.5),rgba(6,10,24,.74));opacity:0}
+.ark-onizle::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(6,10,24,.3),rgba(6,10,24,.5)),radial-gradient(120% 90% at 50% 120%,rgba(6,10,24,.55),transparent 60%);opacity:0}
 .ark-onizle.dolu::after{opacity:1}
 .ark-onizle span{position:absolute;left:14px;bottom:12px;z-index:1;padding:4px 11px;border-radius:999px;font:700 .76rem Manrope,sans-serif;color:#f1f5ff;background:rgba(6,10,24,.6);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.18)}
 .ark-yok{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:16px;color:var(--mute);font-size:.9rem}
