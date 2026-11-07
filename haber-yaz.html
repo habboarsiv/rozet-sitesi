@@ -90,7 +90,7 @@ details.nasil summary{cursor:pointer;font-weight:700}details.nasil ol{margin:8px
     <input type="file" id="gorselSec" accept="image/*" multiple hidden>
   </div>
   <div class="sat">
-    <button class="btn ik" id="taslakBtn" type="button" title="Haberi kaydeder, sadece sen ve yönetici görür">Taslak kaydet</button>
+    <button class="btn ik" id="taslakBtn" type="button" title="Haberi kaydeder, sadece sen, moderatörler ve yönetici görür">Taslak kaydet</button>
     <button class="btn" id="yayinBtn" type="button" title="Haberi kaydeder ve herkese açar">Yayınla</button>
     <button class="btn ik" id="geriBtn" type="button" title="Haber listesine döner (kaydetmediysen değişiklikler gider)">← Listeye dön</button>
   </div>
@@ -211,7 +211,7 @@ function bosEditor() {
 }
 
 async function listele() {
-  const h = HESAP.oku(), kendi = h.rol === "yonetici" ? "" : "&yazar_id=eq." + h.id;
+  const h = HESAP.oku(), rol = SITE.rolOf(h), kendi = (rol === "yonetici" || rol === "moderator") ? "" : "&yazar_id=eq." + h.id;   // moderatör ve yönetici tüm haberleri görür
   const r = await HESAP.rest("haberler?select=id,baslik,durum,guncelleme&order=guncelleme.desc" + kendi);
   const kutu = $("hl"); kutu.textContent = "";
   if (!r.ok) { kutu.textContent = "Haberler okunamadı."; return; }
@@ -226,7 +226,8 @@ async function listele() {
     const sag = document.createElement("div"); sag.className = "sat"; sag.style.margin = 0;
     const d = document.createElement("button"); d.className = "btn ik"; d.type = "button"; d.textContent = "Düzenle"; d.onclick = () => ac(n.id);
     const s = document.createElement("button"); s.className = "btn kz"; s.type = "button"; s.textContent = "Sil"; s.onclick = () => sil(n.id);
-    sag.append(d, s); sat.append(sol, sag); kutu.append(sat);
+    if (rol === "moderator") sag.append(d); else sag.append(d, s);   // moderatör düzenler ve yayınlar, silemez
+    sat.append(sol, sag); kutu.append(sat);
   }
 }
 
@@ -259,7 +260,7 @@ async function kaydet(d) {
   $("taslakBtn").disabled = $("yayinBtn").disabled = false;
   if (!r.ok) return durum("Kaydedilemedi: " + ((r.v && r.v.message) || "yetkin olmayabilir"), true);
   duzenlenen = r.v[0].id;
-  durum(d === "yayinda" ? "Yayınlandı. Haber artık herkese açık. " : "Taslak kaydedildi. Sadece sen ve yönetici görebilirsin, hazır olunca Yayınla'ya bas. ");
+  durum(d === "yayinda" ? "Yayınlandı. Haber artık herkese açık. " : "Taslak kaydedildi. Sadece sen, moderatörler ve yönetici görebilirsin, hazır olunca Yayınla'ya bas. ");
   const a = document.createElement("a"); a.href = "haber?id=" + duzenlenen; a.target = "_blank"; a.textContent = "Haberi gör"; $("msg").append(a);
 }
 
@@ -271,7 +272,7 @@ $("geriBtn").onclick = () => { goster("liste"); listele(); };
 (function baslat() {
   const h = HESAP.oku(), k = $("kilit");
   if (!h) { k.hidden = false; k.innerHTML = 'Haber yazmak için <a href="#" data-giris="giris">giriş yapmalısın</a>.'; return; }
-  if (h.rol !== "yazar" && h.rol !== "yonetici") { k.hidden = false; k.textContent = "Bu sayfa sadece yazarlar ve yöneticiler içindir."; return; }
+  if (!["yazar", "moderator", "yonetici"].includes(SITE.rolOf(h))) { k.hidden = false; k.textContent = "Bu sayfa sadece yazarlar, moderatörler ve yöneticiler içindir."; return; }
   kurEditor(); ipuclari(); goster("liste"); listele();
 })();
 </script>

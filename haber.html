@@ -160,7 +160,7 @@ function yorumKarti(c, h, vurgu, yenile) {
   let ad;
   if (acilir) { ad = el("a", "yo-ad"); ad.href = href; } else ad = el("b", "yo-ad");
   ad.textContent = kisi.ad || "Silinmiş kullanıcı"; bas.appendChild(ad);
-  if (p.rol === "yazar" || p.rol === "yonetici") bas.insertAdjacentHTML("beforeend", S.rozet(p.rol));
+  bas.insertAdjacentHTML("beforeend", S.rozet(S.rolOf(p)));   // üye, yazar, moderatör, yönetici: herkesin etiketi görünür
   if (p.otel) bas.insertAdjacentHTML("beforeend", S.otelEt(p.otel));
   if (ben) bas.appendChild(el("span", "yo-ben", "Sen"));
   const tm = el("time"); tm.dateTime = c.olusturma; tm.title = tamZaman(c.olusturma); tm.textContent = zaman(c.olusturma); bas.appendChild(tm);
@@ -240,7 +240,7 @@ async function yorumlariKur(n) {
   if (et.children.length) g.append(et);
   const h1 = document.createElement("h1"); h1.textContent = n.baslik; g.append(h1);
   const m = document.createElement("div"); m.className = "meta";
-  m.textContent = (y.habbo_ad ? y.habbo_ad + " (" + (HESAP.OTELLER[y.otel] || "") + ") · " : "") +
+  m.textContent = (y.habbo_ad ? y.habbo_ad + " tarafından yazıldı · " : "") +
     new Date(n.yayin_tarihi || n.olusturma).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" }) +
     (n.durum !== "yayinda" ? " · TASLAK (sadece sen görüyorsun)" : "");
   g.append(m);

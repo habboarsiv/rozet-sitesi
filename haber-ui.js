@@ -28,7 +28,7 @@
             var b = document.createElement("h3"); b.textContent = n.baslik; ic.appendChild(b);
             if (n.ozet) { var p = document.createElement("p"); p.textContent = n.ozet; ic.appendChild(p); }
             var k = document.createElement("small"), y = n.profiller || {};
-            k.textContent = (y.habbo_ad ? y.habbo_ad + " (" + (HESAP.OTELLER[y.otel] || "") + ") · " : "") +
+            k.textContent = (y.habbo_ad ? y.habbo_ad + " tarafından yazıldı · " : "") +
               new Date(n.yayin_tarihi).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
             ic.appendChild(k); a.appendChild(kap); a.appendChild(ic); kutu.appendChild(a);
           });
