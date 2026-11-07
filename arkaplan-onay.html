@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Arkaplan Onayları – Habbo Arşiv</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,600..800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070b16;--surface:#0e1527;--surface2:#141d36;--line:#1f2a4a;--line2:#2c3c6b;--ink:#f1f5ff;--mute:#93a3cc}
+*{box-sizing:border-box}
+body{margin:0;color:var(--ink);font:400 15px/1.55 Manrope,system-ui,sans-serif}
+a{color:inherit}
+[hidden]{display:none!important}
+</style>
+<link rel="stylesheet" href="tema-sayfa.css">
+<link rel="stylesheet" href="site.css">
+</head>
+<body data-sec="A">
+<main class="hm" id="hm"></main>
+<script src="hesap.js"></script>
+<script src="site.js"></script>
+<script>
+/* Yönetici / moderatör: kullanıcıların gönderdiği profil arkaplanlarını onaylar ya da reddeder.
+   Yetki denetimi sunucuda (Supabase satır güvenliği) yapılır; bu sayfa yalnızca arayüzdür. */
+(function () {
+  const S = SITE, el = S.el, kok = document.getElementById("hm"), h = HESAP.oku();
+  document.title = "Arkaplan Onayları – Habbo Arşiv";
+
+  const kapali = (baslik, metin) => {
+    const d = el("div", "mod-kapali"); d.appendChild(el("h1", "", baslik));
+    const p = el("p"); p.textContent = metin; d.appendChild(p);
+    if (!h) { const b = el("button", "gm-btn", "Giriş yap"); b.type = "button"; b.dataset.giris = "giris"; b.style.marginTop = "18px"; b.style.flex = "0 1 auto"; d.appendChild(b); }
+    kok.appendChild(d);
+  };
+  if (!h) return kapali("Giriş gerekli", "Bu sayfa yalnızca yönetici ve moderatörlere açık.");
+  const r = S.rolOf(h);
+  if (r !== "moderator" && r !== "yonetici") return kapali("Erişim yok", "Bu sayfa yalnızca yönetici ve moderatörlere açık.");
+
+  const zaman = t => new Date(t).toLocaleString("tr-TR", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" });
+  const ust = el("div", "mod-ust"); ust.appendChild(el("h1", "", "Arkaplan onayları"));
+  const say = el("span", "mod-say", "…"); ust.appendChild(say); kok.appendChild(ust);
+  const alt = el("p", "mod-alt", "Kullanıcıların profiline koymak istediği arkaplanlar burada bekler. Onayladığın görsel profilde otomatik uygulanır; reddedersen kullanıcı nedenini hesabında görür."); kok.appendChild(alt);
+  const liste = el("div", "mod-liste"); kok.appendChild(liste);
+
+  let kalan = 0;
+  const sayiyaz = () => { say.textContent = String(kalan); if (!kalan) { liste.textContent = ""; liste.appendChild(el("p", "mod-bos", "Bekleyen arkaplan talebi yok.")); } };
+
+  function kart(x) {
+    const k = el("article", "mod-kart"), kim = x.profiller || {}, url = HESAP.depoUrl(x.dosya);
+    const on = el("div", "ark-onizle dolu");
+    if (url) { const im = document.createElement("img"); im.alt = "Gönderilen arkaplan"; im.loading = "lazy"; im.src = url; on.appendChild(im); }
+    const et = el("span"); et.textContent = "Profil önizlemesi"; on.appendChild(et);
+
+    const bilgi = el("div", "mod-kim"), h2 = el("h2");
+    if (kim.habbo_ad) { const a = document.createElement("a"); a.textContent = kim.habbo_ad; a.href = "/profil?id=" + encodeURIComponent(x.kullanici_id); h2.appendChild(a); }
+    else h2.textContent = "Bilinmeyen kullanıcı";
+    bilgi.appendChild(h2);
+    if (kim.otel) bilgi.appendChild(el("div", "", S.otelEt(kim.otel)));
+    const tm = el("time"); tm.dateTime = x.olusturma; tm.textContent = zaman(x.olusturma); bilgi.appendChild(tm);
+    if (url) { const l = el("div", "mod-lk"), a = el("a"); a.href = url; a.target = "_blank"; a.rel = "noopener noreferrer"; a.textContent = "Görseli tam boyutta aç"; l.appendChild(a); bilgi.appendChild(l); }
+
+    const ms = el("div", "ark-msg"); ms.setAttribute("role", "status"); ms.setAttribute("aria-live", "polite");
+    const eylem = el("div", "ark-eylem");
+    const ok = el("button", "ark-btn", "Onayla"), no = el("button", "ark-btn kz", "Reddet"); ok.type = no.type = "button";
+    eylem.append(ok, no);
+    const red = el("div", "mod-red"); red.hidden = true;
+    const inp = document.createElement("input"); inp.type = "text"; inp.maxLength = 200; inp.placeholder = "Red nedeni (isteğe bağlı)"; inp.setAttribute("aria-label", "Red nedeni");
+    const rs = el("div", "ark-eylem"), onay = el("button", "ark-btn kz", "Reddi onayla"), vaz = el("button", "ark-btn ik", "Vazgeç"); onay.type = vaz.type = "button";
+    rs.append(onay, vaz); red.append(inp, rs);
+    bilgi.append(eylem, red, ms);
+
+    const kilit = v => k.querySelectorAll("button").forEach(b => b.disabled = v);
+    async function karar(durum, neden) {
+      kilit(true); ms.textContent = ""; ms.className = "ark-msg";
+      let tamam = false;
+      try {
+        const g = { durum }; if (durum === "reddedildi" && neden) g.red_nedeni = neden;
+        const s = await HESAP.rest("arkaplan_talepleri?id=eq." + encodeURIComponent(x.id) + "&durum=eq.bekliyor", { method: "PATCH", headers: { Prefer: "return=representation" }, body: JSON.stringify(g) });
+        tamam = s.ok && Array.isArray(s.v) && s.v.length === 1;
+        if (!tamam && s.ok) { ms.textContent = "Bu talep zaten karara bağlanmış."; ms.className = "ark-msg h"; k.remove(); kalan = Math.max(0, kalan - 1); sayiyaz(); return; }
+      } catch { /* ağ hatası */ }
+      if (tamam) { k.remove(); kalan = Math.max(0, kalan - 1); sayiyaz(); return; }
+      ms.textContent = "İşlem yapılamadı. Yetkini ve bağlantını kontrol edip tekrar dene."; ms.className = "ark-msg h"; kilit(false);
+    }
+    ok.onclick = () => karar("onayli");
+    no.onclick = () => { eylem.hidden = true; red.hidden = false; inp.focus(); };
+    vaz.onclick = () => { red.hidden = true; eylem.hidden = false; };
+    onay.onclick = () => karar("reddedildi", inp.value.replace(/\s+/g, " ").trim().slice(0, 200));
+    inp.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); onay.click(); } });
+
+    k.append(on, bilgi); return k;
+  }
+
+  (async () => {
+    liste.appendChild(el("p", "mod-bos", "Yükleniyor…"));
+    let r2;
+    try { r2 = await HESAP.rest("arkaplan_talepleri?select=id,kullanici_id,dosya,olusturma,profiller!kullanici_id(habbo_ad,otel)&durum=eq.bekliyor&order=olusturma.asc&limit=100"); } catch { r2 = null; }
+    liste.textContent = "";
+    if (!r2 || !r2.ok || !Array.isArray(r2.v)) { say.remove(); liste.appendChild(el("p", "mod-bos", "Talepler yüklenemedi. Sayfayı yenile ya da arkaplan.sql dosyasının çalıştırıldığından emin ol.")); return; }
+    kalan = r2.v.length; r2.v.forEach(x => liste.appendChild(kart(x))); sayiyaz();
+  })();
+})();
+</script>
+</body>
+</html>

@@ -83,7 +83,28 @@ const HESAP = (() => {
     return { ok: r.ok, v };
   }
 
-  return { OTELLER, fn, giris, cikis, oku, baglanti, haberSekmesi, token, rest };
+  // ---- Profil arkaplanı için dosya deposu (Supabase Storage, "arkaplanlar" kovası) ----
+  const DEPO = URL + "/storage/v1/object/";
+  // Yalnızca beklenen biçimdeki yolları adrese çevirir (başka bir şey gelirse boş döner)
+  const depoUrl = (yol) => /^[0-9a-f-]{36}\/[0-9a-f-]{36}\.(webp|jpg)$/.test(yol || "") ? DEPO + "public/arkaplanlar/" + yol : "";
+
+  async function yukle(yol, blob) {
+    const t = await token(); if (!t) return false;
+    const r = await fetch(DEPO + "arkaplanlar/" + yol, {
+      method: "POST",
+      headers: { apikey: KEY, Authorization: "Bearer " + t, "Content-Type": blob.type, "x-upsert": "false" },
+      body: blob,
+    });
+    return r.ok;
+  }
+
+  async function depoSil(yol) {
+    const t = await token(); if (!t || !depoUrl(yol)) return false;
+    const r = await fetch(DEPO + "arkaplanlar/" + yol, { method: "DELETE", headers: { apikey: KEY, Authorization: "Bearer " + t } });
+    return r.ok;
+  }
+
+  return { OTELLER, fn, giris, cikis, oku, baglanti, haberSekmesi, token, rest, yukle, depoSil, depoUrl };
 })();
 HESAP.baglanti();
 HESAP.haberSekmesi();

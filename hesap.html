@@ -81,6 +81,129 @@ a{color:inherit}
     return kap;
   };
 
+  // Profil arkaplanı: görsel seç, önizle, onaya gönder. Onaylanınca profilde kendiliğinden uygulanır.
+  // Tablo henüz kurulmadıysa (arkaplan.sql çalışmadıysa) blok kendini gizler.
+  const arkaplanKur = (kisi) => {
+    const MAX = 1.9 * 1024 * 1024;   // depo sınırı 2 MB
+    const sec = el("section", "ark hm-in"); sec.style.setProperty("--d", ".1s");
+    sec.appendChild(el("h2", "hm-baslik", "Profil arkaplanı"));
+    const kart = el("div", "ark-kart"), onizle = el("div", "ark-onizle"), yan = el("div", "ark-yan");
+    const chip = el("span", "ark-chip"), not = el("p", "ark-not"), eylem = el("div", "ark-eylem"), msg = el("div", "ark-msg");
+    msg.setAttribute("role", "status"); msg.setAttribute("aria-live", "polite");
+    const dosya = document.createElement("input"); dosya.type = "file"; dosya.accept = "image/jpeg,image/png,image/webp"; dosya.tabIndex = -1;
+    yan.append(chip, not, eylem, msg, dosya); kart.append(onizle, yan); sec.appendChild(kart);
+
+    let satirlar = [], secili = null;
+    const bekleyen = () => satirlar.find(x => x.durum === "bekliyor");
+    const aktif = () => satirlar.find(x => x.durum === "onayli");
+    const bildir = (t, c) => { msg.textContent = t || ""; msg.className = "ark-msg" + (c ? " " + c : ""); };
+    const uuid = () => crypto.randomUUID ? crypto.randomUUID() :
+      "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c => { const r = crypto.getRandomValues(new Uint8Array(1))[0] & 15; return (c === "x" ? r : (r & 3 | 8)).toString(16); });
+
+    const resim = (src, etiket) => {
+      onizle.textContent = "";
+      if (!src) { onizle.classList.remove("dolu"); onizle.appendChild(el("div", "ark-yok", "Henüz özel arkaplanın yok. Bir görsel seçip önizleyebilirsin.")); return; }
+      const im = document.createElement("img"); im.alt = ""; im.src = src; onizle.appendChild(im); onizle.classList.add("dolu");
+      if (etiket) { const e = el("span"); e.textContent = etiket; onizle.appendChild(e); }
+    };
+    const rozetle = (sinif, metin) => { chip.className = "ark-chip " + sinif; chip.textContent = ""; chip.appendChild(el("i")); chip.appendChild(document.createTextNode(metin)); };
+    const dugme = (metin, sinif, tik) => { const b = el("button", "ark-btn " + sinif); b.type = "button"; b.textContent = metin; b.onclick = tik; eylem.appendChild(b); return b; };
+    const mesgul = (v) => eylem.querySelectorAll("button").forEach(b => b.disabled = v);
+
+    const ciz = () => {
+      eylem.textContent = "";
+      const bk = bekleyen(), ak = aktif(), son = satirlar[0];
+      if (secili) {
+        resim(secili.url, "Önizleme"); rozetle("", "Önizleme");
+        not.textContent = "Profilin böyle görünecek. Onaya gönderince yönetici ya da moderatör inceler; onaylanınca arkaplan otomatik uygulanır.";
+        dugme("Kaydet ve onaya gönder", "", gonder); dugme("Başka görsel seç", "ik", () => dosya.click()); dugme("Vazgeç", "ik", () => { URL.revokeObjectURL(secili.url); secili = null; bildir(""); ciz(); });
+      } else if (bk) {
+        resim(HESAP.depoUrl(bk.dosya), "Onay bekleyen"); rozetle("bk", "Onay bekliyor");
+        not.textContent = "Arkaplanın kaydedildi ve onay bekliyor. Onaylanınca profilinde otomatik uygulanır." + (ak ? " O zamana kadar mevcut arkaplanın korunur." : "");
+        dugme("Başka görsel seç", "ik", () => dosya.click()); dugme("Talebi geri çek", "kz", () => sil("&durum=eq.bekliyor", "Talep geri çekildi."));
+      } else if (son && son.durum === "reddedildi") {
+        resim(ak ? HESAP.depoUrl(ak.dosya) : "", ak ? "Profilinde uygulanan" : ""); rozetle("rd", "Reddedildi");
+        not.textContent = "Son gönderdiğin arkaplan onaylanmadı." + (son.red_nedeni ? " Not: " + son.red_nedeni : "") + " Yeni bir görsel seçip tekrar deneyebilirsin.";
+        dugme("Yeni görsel seç", "", () => dosya.click()); if (ak) dugme("Arkaplanı kaldır", "kz", () => sil("", "Arkaplan kaldırıldı."));
+      } else if (ak) {
+        resim(HESAP.depoUrl(ak.dosya), "Profilinde uygulanıyor"); rozetle("ok", "Uygulandı");
+        not.textContent = "Bu arkaplan profilinde görünüyor. Değiştirmek istersen yeni görsel yüklersin; o da onaydan geçtikten sonra uygulanır.";
+        dugme("Değiştir", "", () => dosya.click()); dugme("Arkaplanı kaldır", "kz", () => sil("", "Arkaplan kaldırıldı."));
+      } else {
+        resim("", ""); rozetle("", "Varsayılan");
+        not.textContent = "Profiline kendi görselini koyabilirsin. Görsel önce yönetici ya da moderatör onayından geçer, onaylanınca otomatik uygulanır.";
+        dugme("Görsel seç", "", () => dosya.click());
+      }
+    };
+
+    const yenile = async () => {
+      const r = await HESAP.rest("arkaplan_talepleri?select=id,dosya,durum,red_nedeni,olusturma&kullanici_id=eq." + encodeURIComponent(kisi.id) +
+        "&durum=in.(bekliyor,onayli,reddedildi)&order=olusturma.desc&limit=20");
+      if (!r.ok || !Array.isArray(r.v)) return false;
+      satirlar = r.v; return true;
+    };
+
+    // Görseli tarayıcıda küçültüp yeniden kodlar (boyut sınırı + gizli bilgiler temizlenir)
+    const hazirla = async (f) => {
+      if (!/^image\/(jpeg|png|webp)$/.test(f.type)) throw new Error("Yalnızca JPG, PNG veya WebP yükleyebilirsin.");
+      if (f.size > 12 * 1024 * 1024) throw new Error("Dosya çok büyük (en fazla 12 MB).");
+      let kaynak;
+      try { kaynak = await createImageBitmap(f); } catch {
+        kaynak = await new Promise((ok, hata) => { const u = URL.createObjectURL(f), i = new Image(); i.onload = () => { URL.revokeObjectURL(u); ok(i); }; i.onerror = () => { URL.revokeObjectURL(u); hata(new Error("Görsel okunamadı.")); }; i.src = u; });
+      }
+      const w0 = kaynak.width, h0 = kaynak.height;
+      if (w0 < 800 || h0 < 320) throw new Error("Görsel çok küçük. En az 800×320 piksel olmalı.");
+      const k = Math.min(1, 1600 / w0, 1000 / h0), cv = document.createElement("canvas");
+      cv.width = Math.round(w0 * k); cv.height = Math.round(h0 * k);
+      const cx = cv.getContext("2d"); cx.fillStyle = "#0e1527"; cx.fillRect(0, 0, cv.width, cv.height); cx.drawImage(kaynak, 0, 0, cv.width, cv.height);
+      const kodla = (tip, q) => new Promise(ok => cv.toBlob(ok, tip, q));
+      let blob = await kodla("image/webp", .84), ext = "webp";
+      if (!blob || blob.type !== "image/webp") { ext = "jpg"; blob = await kodla("image/jpeg", .86); }
+      for (let q = .74; blob && blob.size > MAX && q >= .4; q -= .12) blob = await kodla(blob.type, q);
+      if (!blob || blob.size > MAX) throw new Error("Görsel yeterince küçültülemedi, daha sade bir görsel dene.");
+      return { blob, ext, url: URL.createObjectURL(blob) };
+    };
+
+    dosya.onchange = async () => {
+      const f = dosya.files && dosya.files[0]; dosya.value = ""; if (!f) return;
+      bildir("Görsel hazırlanıyor…");
+      try { const yeni = await hazirla(f); if (secili) URL.revokeObjectURL(secili.url); secili = yeni; bildir(""); ciz(); }
+      catch (e) { bildir(e && e.message ? e.message : "Görsel okunamadı.", "h"); }
+    };
+
+    const gonder = async () => {
+      if (!secili) return; mesgul(true); bildir("Kaydediliyor…");
+      const yol = kisi.id + "/" + uuid() + "." + secili.ext;
+      try {
+        if (!(await HESAP.yukle(yol, secili.blob))) throw 0;
+        // eski bekleyen / reddedilen talepleri temizle (yeni talep onların yerine geçer)
+        const eski = await HESAP.rest("arkaplan_talepleri?kullanici_id=eq." + encodeURIComponent(kisi.id) + "&durum=in.(bekliyor,reddedildi)",
+          { method: "DELETE", headers: { Prefer: "return=representation" } });
+        if (eski.ok && Array.isArray(eski.v)) eski.v.forEach(x => HESAP.depoSil(x.dosya).catch(() => {}));
+        const ek = await HESAP.rest("arkaplan_talepleri", { method: "POST", headers: { Prefer: "return=representation" }, body: JSON.stringify({ kullanici_id: kisi.id, dosya: yol }) });
+        if (!ek.ok) { HESAP.depoSil(yol).catch(() => {}); throw 0; }
+        URL.revokeObjectURL(secili.url); secili = null;
+        await yenile(); ciz();
+        bildir("Arkaplan kaydedildi. Onay bekliyor; onaylanınca otomatik uygulanacak.", "o");
+      } catch { HESAP.depoSil(yol).catch(() => {}); bildir("Kaydedilemedi. Bağlantını kontrol edip tekrar dene.", "h"); mesgul(false); }
+    };
+
+    const sil = async (filtre, mesaj) => {
+      if (!filtre && !confirm("Arkaplanını kaldırmak istediğine emin misin?")) return;
+      mesgul(true); bildir("");
+      try {
+        const r = await HESAP.rest("arkaplan_talepleri?kullanici_id=eq." + encodeURIComponent(kisi.id) + filtre, { method: "DELETE", headers: { Prefer: "return=representation" } });
+        if (!r.ok) throw 0;
+        if (Array.isArray(r.v)) r.v.forEach(x => HESAP.depoSil(x.dosya).catch(() => {}));
+        await yenile(); ciz(); bildir(mesaj, "o");
+      } catch { bildir("İşlem yapılamadı. Tekrar dene.", "h"); mesgul(false); }
+    };
+
+    resim("", ""); rozetle("", "Yükleniyor…"); not.textContent = "";
+    yenile().then(ok => { if (!ok) return sec.remove(); ciz(); }).catch(() => sec.remove());
+    return sec;
+  };
+
   if (!h) {   // oturum yoksa: giriş penceresini açan sade bir karşılama
     document.title = "Hesap Merkezi – Habbo Arşiv";
     kok.innerHTML = '<div class="hm-misafir hm-in"><svg class="logo" viewBox="0 0 32 32"><defs><linearGradient id="mg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--c1)"/><stop offset="1" style="stop-color:var(--c2)"/></linearGradient></defs><path d="M16 2 30 10v12L16 30 2 22V10z" fill="url(#mg)"/><path d="M16 2v14m0 0 14-6M16 16 2 10m14 6v14" stroke="rgba(255,255,255,.5)" stroke-width="1.4" fill="none"/></svg>' +
@@ -109,13 +232,20 @@ a{color:inherit}
   sat("build", "Otel", S.otelEt(h.otel), "habbo" + alan);
   sat("shield", "Yetki", S.rozet(r), R.acik);
   hero.appendChild(av); hero.appendChild(tx); hero.appendChild(panel); kok.appendChild(hero);
+  kok.appendChild(arkaplanKur(h));
   document.title = h.ad + " – Habbo Arşiv";
 
   // hızlı erişim: sadece yetkisi olanlara
-  if (r === "yazar" || r === "yonetici") {
-    const hz = giris(".14s"); hz.className += " hm-hizli"; hz.appendChild(el("h2", "hm-baslik", "Hızlı erişim"));
-    const k = el("a", "hm-kart", '<span class="hm-ikon">' + S.svg("paper") + '</span><div class="hm-k-tx"><h3>Haber Paneli</h3><p>Haber yaz, taslaklarını düzenle ve yayınla.</p></div><span class="hm-git">Panele git ' + S.svg("arrow") + '</span>');
-    k.href = "/haber-yaz"; hz.appendChild(k); kok.appendChild(hz);
+  const hizli = [];
+  if (r === "yazar" || r === "yonetici") hizli.push(["/haber-yaz", "paper", "Haber Paneli", "Haber yaz, taslaklarını düzenle ve yayınla.", "Panele git"]);
+  if (r === "moderator" || r === "yonetici") hizli.push(["/arkaplan-onay", "verify", "Arkaplan Onayları", "Kullanıcıların gönderdiği profil arkaplanlarını incele.", "Onaylara git"]);
+  if (hizli.length) {
+    const hz = giris(".18s"); hz.className += " hm-hizli"; hz.appendChild(el("h2", "hm-baslik", "Hızlı erişim"));
+    hizli.forEach(([href, ic, ad2, ac, git]) => {
+      const k = el("a", "hm-kart", '<span class="hm-ikon">' + S.svg(ic) + '</span><div class="hm-k-tx"><h3>' + ad2 + '</h3><p>' + ac + '</p></div><span class="hm-git">' + git + ' ' + S.svg("arrow") + '</span>');
+      k.href = href; hz.appendChild(k);
+    });
+    kok.appendChild(hz);
   }
 
   // çıkış: ikincil işlem

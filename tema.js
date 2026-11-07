@@ -1,4 +1,4 @@
-/* Habbo Arşiv - alt bölümdeki bölüm bağlantıları + üst alandaki sayaç şeridi (rozet ve promo sayısı) */
+/* Habbo Arşiv - alt bölümdeki bölüm bağlantıları + üst alandaki bölüm kısayolları */
 (function () {
   document.querySelectorAll("[data-git]").forEach(function (a) {
     a.addEventListener("click", function (e) {
@@ -9,15 +9,16 @@
     });
   });
 })();
+/* Üst alandaki kısayollar: bölümü açar ve sekme çubuğuna kaydırır */
 (function () {
-  var k = document.getElementById("led");
-  if (!k || typeof BADGES === "undefined") return;
-  var f = function (n) { return n.toLocaleString("tr-TR"); };
-  [[f(BADGES.length), "rozet"], [typeof PROMOS !== "undefined" ? f(PROMOS.length) : "", "promo"]].forEach(function (x) {
-    if (!x[0]) return;
-    var c = document.createElement("div"); c.className = "led-c";
-    var b = document.createElement("b"); b.textContent = x[0];
-    var s = document.createElement("span"); s.textContent = x[1];
-    c.appendChild(b); c.appendChild(s); k.appendChild(c);
+  var azalt = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.querySelectorAll("[data-hgit]").forEach(function (a) {
+    a.addEventListener("click", function () {
+      var b = document.getElementById("m" + a.getAttribute("data-hgit"));
+      if (!b) return;
+      b.click();
+      var m = document.querySelector(".modes");
+      if (m) m.scrollIntoView({ behavior: azalt ? "auto" : "smooth", block: "start" });
+    });
   });
 })();

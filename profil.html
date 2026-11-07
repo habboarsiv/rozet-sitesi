@@ -93,6 +93,16 @@ span.pr-th{display:grid;place-items:center;color:var(--c1)}span.pr-th .ic{width:
 .pr-yok p{margin:0 0 18px;color:var(--mute)}
 .pr-yok a{color:var(--c1);font-weight:800}
 
+/* ---- özel arkaplan (onaylanmışsa) ---- */
+.pr-hero::before,.pr-hero::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .6s}
+.pr-hero::before{background:var(--pr-bg) center/cover no-repeat}
+.pr-hero::after{background:linear-gradient(135deg,rgba(6,10,24,.5),rgba(6,10,24,.74))}
+.pr-hero.pr-ozel::before,.pr-hero.pr-ozel::after{opacity:1}
+.pr-hero>.pr-oda,.pr-hero>.pr-kim{z-index:1}
+.pr-hero.pr-ozel{--ink:#f1f5ff;--mute:#c4cde6;border-color:rgba(255,255,255,.18)}
+@media (prefers-color-scheme:light){.pr-ozel .rol-uye{color:#c4cce0;background:rgba(196,204,224,.14);border-color:rgba(196,204,224,.35)}.pr-ozel .rol-yazar{color:#6ff0c8}.pr-ozel .rol-moderator{color:#ffc766}.pr-ozel .pr-on{color:#6ff0c8}}
+@media (prefers-reduced-motion:reduce){.pr-hero::before,.pr-hero::after{transition:none}}
+
 @media (max-width:900px){.pr-govde{grid-template-columns:1fr}.pr-yan{position:static}}
 @media (max-width:760px){
   .pr{padding:18px 14px 70px}
@@ -168,7 +178,6 @@ span.pr-th{display:grid;place-items:center;color:var(--c1)}span.pr-th .ic{width:
     /* kimlik */
     const kim = el("div", "pr-kim"), h1 = el("h1", "pr-ad"); h1.textContent = p.habbo_ad; kim.appendChild(h1);
     const roz = el("div", "pr-rozet", S.rozet(rolK) + S.otelEt(p.otel)); kim.appendChild(roz);
-    const ac = el("p", "pr-acik"); ac.textContent = R.acik; kim.appendChild(ac);
     const ozet = el("dl", "pr-ozet");
     const oge = (de, et) => { const d = el("div"), v = el("dd"); v.textContent = de; d.appendChild(v); d.appendChild(el("dt", "", et)); ozet.appendChild(d); return v; };
     const yorumSay = oge("…", "yorum"), haberSay = oge("…", "habere yorum yaptı");
@@ -176,6 +185,15 @@ span.pr-th{display:grid;place-items:center;color:var(--c1)}span.pr-th .ic{width:
     kim.appendChild(ozet);
     if (kendi) { const a = el("a", "pr-duz", S.svg("pen") + "<span>Mottonu düzenle</span>"); a.href = "/hesap"; const e = el("div", "pr-eylem"); e.appendChild(a); kim.appendChild(e); }
     hero.appendChild(oda); hero.appendChild(kim); kok.appendChild(hero);
+
+    /* onaylanmış özel arkaplan varsa uygula (tablo yoksa ya da okunamazsa sessizce geçer) */
+    HESAP.rest("arkaplan_talepleri?select=dosya&kullanici_id=eq." + encodeURIComponent(p.id) + "&durum=eq.onayli&limit=1").then(({ ok, v }) => {
+      const u = ok && Array.isArray(v) && v[0] ? HESAP.depoUrl(v[0].dosya) : "";
+      if (!u) return;
+      const t = new Image();
+      t.onload = () => { hero.style.setProperty("--pr-bg", 'url("' + u + '")'); hero.classList.add("pr-ozel"); };
+      t.src = u;
+    }).catch(() => { /* arkaplan gösterilemezse varsayılan görünüm kalır */ });
 
     /* gövde: yorumlar + bilgi paneli */
     const govde = el("div", "pr-govde"), akis = el("section"), baslik = el("h2", "pr-baslik", "Yorumları");

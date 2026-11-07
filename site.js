@@ -74,6 +74,7 @@ const SITE = (() => {
     const link = (href, ic, ad2, c) => { const a = el("a", "sh-oge " + (c || ""), svg(ic) + "<span>" + ad2 + "</span>"); a.href = href; a.setAttribute("role", "menuitem"); return a; };
     m.appendChild(link("/hesap", "user", "Hesabım"));
     if (r === "yazar" || r === "moderator" || r === "yonetici") m.appendChild(link("/haber-yaz", "paper", "Haber Paneli"));
+    if (r === "moderator" || r === "yonetici") m.appendChild(link("/arkaplan-onay", "verify", "Arkaplan Onayları"));
     m.appendChild(el("div", "sh-ayrac"));
     const c = el("button", "sh-oge cikis", svg("out") + "<span>Çıkış yap</span>"); c.type = "button"; c.setAttribute("role", "menuitem"); c.onclick = cikis; m.appendChild(c);
     const kap = el("div", "sh-kap"); kap.appendChild(b); kap.appendChild(m); kutu.appendChild(kap);
@@ -85,7 +86,7 @@ const SITE = (() => {
 
   function cikis() {
     HESAP.cikis();
-    if (/^\/(hesap|haber-yaz)/.test(location.pathname)) location.href = "/"; else location.reload();
+    if (/^\/(hesap|haber-yaz|arkaplan-onay)/.test(location.pathname)) location.href = "/"; else location.reload();
   }
 
   /* ---------- giriş / kayıt penceresi (mevcut doğrulama akışı aynen korunur) ---------- */
