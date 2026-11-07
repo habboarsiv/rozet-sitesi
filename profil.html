@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Profil – Habbo Arşiv</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,600..800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070b16;--surface:#0e1527;--surface2:#141d36;--line:#1f2a4a;--line2:#2c3c6b;--ink:#f1f5ff;--mute:#93a3cc}
+*{box-sizing:border-box}
+body{margin:0;color:var(--ink);font:400 15px/1.55 Manrope,system-ui,sans-serif}
+a{color:inherit}
+[hidden]{display:none!important}
+</style>
+<link rel="stylesheet" href="tema-sayfa.css">
+<link rel="stylesheet" href="site.css">
+<style>
+.pr{max-width:1040px;margin:0 auto;padding:28px 18px 90px}
+
+/* ---- oda (üst alan) ---- */
+.pr-hero{position:relative;display:grid;grid-template-columns:minmax(280px,440px) minmax(0,1fr);align-items:center;gap:20px 32px;padding:12px 40px 12px 12px;border-radius:30px;overflow:hidden;background:linear-gradient(135deg,color-mix(in srgb,var(--c1) 20%,var(--surface)),var(--surface) 72%);border:1px solid var(--line2);box-shadow:var(--hi),var(--shadow)}
+.pr-oda{position:relative;height:440px}
+.pr-oda::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 62%,color-mix(in srgb,var(--c1) 32%,transparent),transparent 58%);pointer-events:none}
+.pr-zemin{position:absolute;left:50%;top:76%;width:340px;height:340px;transform:translate(-50%,-50%) rotateX(60deg) rotateZ(45deg);
+  background:conic-gradient(color-mix(in srgb,var(--c1) 38%,var(--surface)) 25%,color-mix(in srgb,var(--c2) 14%,var(--surface)) 0 50%,color-mix(in srgb,var(--c1) 38%,var(--surface)) 0 75%,color-mix(in srgb,var(--c2) 14%,var(--surface)) 0) 0 0/68px 68px;
+  -webkit-mask-image:radial-gradient(circle,#000 36%,transparent 70%);mask-image:radial-gradient(circle,#000 36%,transparent 70%)}
+.pr-golge{position:absolute;left:50%;top:76%;width:84px;height:24px;transform:translate(-50%,-70%);border-radius:50%;background:radial-gradient(ellipse,rgba(0,0,0,.5),transparent 70%)}
+.pr-sahne{position:absolute;left:50%;top:76%;transform:translate(-50%,-100%);display:flex;flex-direction:column;align-items:center;gap:16px;width:max-content;max-width:100%}
+.pr-av{display:block;height:220px;width:auto;image-rendering:pixelated;margin-bottom:-6px;filter:drop-shadow(0 12px 14px rgba(0,0,0,.4))}
+span.pr-av{display:grid;place-items:center;width:120px;color:var(--mute)}
+span.pr-av .ic{width:96px;height:96px}
+.pr-balon{position:relative;margin:0;max-width:min(300px,86vw);padding:10px 16px;border-radius:14px;background:#fff;color:#141a33;border:1px solid rgba(8,12,30,.28);box-shadow:0 10px 24px -10px rgba(0,0,0,.6);font:700 .98rem/1.3 Manrope,system-ui,sans-serif;text-align:center;overflow-wrap:anywhere;transform-origin:50% 100%;animation:prBalon .6s cubic-bezier(.2,.9,.3,1.3) .35s both}
+.pr-balon::after{content:"";position:absolute;left:50%;bottom:-8px;width:14px;height:14px;background:#fff;border-right:1px solid rgba(8,12,30,.28);border-bottom:1px solid rgba(8,12,30,.28);transform:translateX(-50%) rotate(45deg)}
+.pr-balon.yok{background:rgba(255,255,255,.78);color:#56608a;font-weight:600}
+.pr-balon.yok::after{background:#f4f6fb}
+@keyframes prBalon{0%{opacity:0;transform:translateY(12px) scale(.7)}60%{opacity:1;transform:translateY(-3px) scale(1.04)}100%{opacity:1;transform:none}}
+
+/* ---- kimlik ---- */
+.pr-kim{position:relative;min-width:0;padding:20px 0}
+.pr-ad{margin:0 0 14px;font:800 clamp(2.6rem,7vw,4.4rem)/.98 "Bricolage Grotesque",Manrope,sans-serif;letter-spacing:-.055em;word-break:break-word;background:linear-gradient(100deg,var(--ink) 40%,var(--c2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.pr-rozet{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.pr .rol{font-size:.78rem;padding:5px 13px 5px 9px}.pr .rol .ic{width:15px;height:15px}
+.pr .otel{font-size:.78rem;padding:5px 11px 5px 8px}.pr .otel .fl{width:20px;height:14px}
+.pr-on{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border-radius:999px;font-size:.78rem;font-weight:700;color:#6ff0c8;background:rgba(53,224,176,.1);border:1px solid rgba(53,224,176,.3)}
+.pr-on i{width:8px;height:8px;border-radius:50%;background:#35e0b0;box-shadow:0 0 0 0 rgba(53,224,176,.6);animation:prNabiz 2.6s ease-out infinite}
+@media (prefers-color-scheme:light){.pr-on{color:#0a8a66}}
+@keyframes prNabiz{0%{box-shadow:0 0 0 0 rgba(53,224,176,.55)}70%,100%{box-shadow:0 0 0 8px rgba(53,224,176,0)}}
+.pr-acik{margin:14px 0 0;max-width:44ch;color:var(--mute)}
+.pr-ozet{display:flex;flex-wrap:wrap;gap:14px 0;margin:26px 0 0;padding:0}
+.pr-ozet>div{display:flex;flex-direction:column-reverse;padding:0 24px;border-left:1px solid var(--line2)}
+.pr-ozet>div:first-child{padding-left:0;border-left:0}
+.pr-ozet dd{margin:0;font:800 1.6rem/1.15 "Bricolage Grotesque",Manrope,sans-serif;letter-spacing:-.04em}
+.pr-ozet dt{color:var(--mute);font-size:.84rem}
+.pr-eylem{margin-top:24px}
+.pr-duz{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:12px;border:1.5px solid var(--c1);color:var(--c1);font:800 .9rem "Bricolage Grotesque",Manrope,sans-serif;text-decoration:none;transition:background .15s}
+.pr-duz:hover{background:color-mix(in srgb,var(--c1) 14%,transparent)}.pr-duz .ic{width:16px;height:16px}
+.pr-duz:focus-visible,.pr-haber:focus-visible,.pr-daha:focus-visible,.pr-yok a:focus-visible{outline:2px solid var(--c1);outline-offset:3px}
+
+/* ---- gövde ---- */
+.pr-govde{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:32px;margin-top:30px;align-items:start}
+.pr-baslik{display:flex;align-items:center;gap:10px;margin:0;font-size:1.35rem;letter-spacing:-.03em}
+.pr-say{font:700 .8rem Manrope,sans-serif;letter-spacing:0;padding:2px 11px;border-radius:999px;background:color-mix(in srgb,var(--c1) 16%,transparent);color:var(--c1)}
+.pr-liste{position:relative;list-style:none;margin:20px 0 0;padding:0 0 0 28px}
+.pr-liste::before{content:"";position:absolute;left:5px;top:8px;bottom:14px;width:2px;border-radius:2px;background:linear-gradient(180deg,var(--c1),transparent)}
+.pr-yo{position:relative;padding:0 0 24px}
+.pr-yo::before{content:"";position:absolute;left:-28px;top:14px;width:12px;height:12px;border-radius:50%;background:var(--surface);border:2px solid var(--c1);box-shadow:0 0 0 4px color-mix(in srgb,var(--c1) 18%,transparent)}
+.pr-haber{display:flex;align-items:center;gap:12px;margin-bottom:10px;border-radius:12px;color:inherit;text-decoration:none}
+.pr-th{width:48px;height:48px;flex:none;border-radius:12px;object-fit:cover;background:var(--surface2);border:1px solid var(--line2)}
+span.pr-th{display:grid;place-items:center;color:var(--c1)}span.pr-th .ic{width:22px;height:22px}
+.pr-haber b{display:block;font:800 1.02rem/1.25 "Bricolage Grotesque",Manrope,sans-serif;letter-spacing:-.02em;transition:color .15s}
+.pr-haber:hover b{color:var(--c1)}
+.pr-haber time{color:var(--mute);font-size:.82rem}
+.pr-metin{margin:0;padding:12px 16px;border-radius:6px 18px 18px 18px;background:var(--glass);border:1px solid var(--line2);white-space:pre-wrap;word-break:break-word;line-height:1.6}
+.pr-daha{display:block;margin:4px auto 0;padding:10px 22px;border-radius:12px;border:1.5px solid var(--line2);background:transparent;color:var(--ink);font:800 .9rem "Bricolage Grotesque",Manrope,sans-serif;cursor:pointer;transition:border-color .15s,background .15s}
+.pr-daha:hover{border-color:var(--c1);background:color-mix(in srgb,var(--c1) 10%,transparent)}
+.pr-bos{margin:22px 0 0;padding:34px 20px;text-align:center;color:var(--mute);border-radius:18px;border:1px dashed var(--line2)}
+.pr-bos a{color:var(--c1);font-weight:700}
+.pr-yan{position:sticky;top:84px}
+.pr-panel{margin:16px 0 0;padding:4px 20px;border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.045),transparent 42%),var(--surface);border:1px solid var(--line2);box-shadow:var(--hi),var(--shadow)}
+.pr-sat{padding:14px 0;border-bottom:1px solid var(--line)}
+.pr-sat:last-child{border-bottom:0}
+.pr-sat dt{color:var(--mute);font-size:.84rem}
+.pr-sat dd{margin:4px 0 0;display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-weight:700}
+.pr-sat dd small{font:600 .88rem Manrope,sans-serif;color:var(--mute)}
+.pr-nokta{width:8px;height:8px;border-radius:50%;background:var(--mute);opacity:.6;flex:none}
+.pr-nokta.on{background:#35e0b0;opacity:1}
+
+/* ---- yükleniyor / bulunamadı ---- */
+.pr-isk{height:440px;border-radius:30px;background:linear-gradient(90deg,var(--surface) 25%,color-mix(in srgb,var(--c1) 10%,var(--surface)) 50%,var(--surface) 75%);background-size:200% 100%;animation:prIsk 1.4s linear infinite;border:1px solid var(--line)}
+@keyframes prIsk{to{background-position:-200% 0}}
+.pr-yok{max-width:460px;margin:70px auto 0;padding:34px 28px;text-align:center;border-radius:26px;background:linear-gradient(180deg,rgba(255,255,255,.05),transparent 40%),var(--surface);border:1px solid var(--line2);border-top:3px solid var(--c1);box-shadow:var(--hi),var(--shadow)}
+.pr-yok h1{margin:0 0 8px;font-size:1.7rem;letter-spacing:-.04em}
+.pr-yok p{margin:0 0 18px;color:var(--mute)}
+.pr-yok a{color:var(--c1);font-weight:800}
+
+@media (max-width:900px){.pr-govde{grid-template-columns:1fr}.pr-yan{position:static}}
+@media (max-width:760px){
+  .pr{padding:18px 14px 70px}
+  .pr-hero{grid-template-columns:1fr;padding:6px 18px 30px;text-align:center}
+  .pr-oda{height:410px}.pr-kim{padding:0}
+  .pr-rozet,.pr-ozet{justify-content:center}.pr-acik{margin-inline:auto}
+  .pr-ozet>div{padding:0 16px}
+}
+@media (prefers-reduced-motion:reduce){.pr-balon{animation:none}.pr-on i,.pr-isk{animation:none}.pr-haber b,.pr-daha,.pr-duz{transition:none}}
+</style>
+</head>
+<body data-sec="A">
+<main class="pr" id="pr"><div class="pr-isk" aria-label="Profil yükleniyor"></div></main>
+<script src="hesap.js"></script>
+<script src="site.js"></script>
+<script>
+(function () {
+  const S = SITE, el = S.el, kok = document.getElementById("pr"), OTEL = HESAP.OTELLER;
+  const habboUrl = (otel, ad, ek) => "https://www.habbo" + (OTEL[otel] || ".com") + "/habbo-imaging/avatarimage?user=" + encodeURIComponent(ad) + "&" + ek;
+  const tarih = (t, o) => new Date(t).toLocaleDateString("tr-TR", o);
+  function zaman(t) {
+    const d = new Date(t); if (isNaN(d)) return "";
+    const s = Math.max(0, Math.round((Date.now() - d) / 1000));
+    if (s < 60) return "az önce";
+    if (s < 3600) return Math.floor(s / 60) + " dk önce";
+    if (s < 86400) return Math.floor(s / 3600) + " saat önce";
+    if (s < 7 * 86400) return Math.floor(s / 86400) + " gün önce";
+    return tarih(t, d.getFullYear() === new Date().getFullYear() ? { day: "numeric", month: "long" } : { day: "numeric", month: "long", year: "numeric" });
+  }
+  const tamZaman = t => new Date(t).toLocaleString("tr-TR", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" });
+  // Sütun izinleri farklıysa sırayla daha sade sorguyu dener (sayfa bozulmasın diye)
+  async function ilkDeneme(secenekler, yol) {
+    let r = null;
+    for (const s of secenekler) { r = await HESAP.rest(yol(s)); if (r.ok) return r; }
+    return r;
+  }
+  function yok(mesaj) {
+    kok.textContent = "";
+    const d = el("div", "pr-yok"); d.appendChild(el("h1", "", "Profil bulunamadı"));
+    const p = el("p"); p.textContent = mesaj; d.appendChild(p);
+    const a = el("a", "", "Ana sayfaya dön"); a.href = "/"; d.appendChild(a); kok.appendChild(d);
+  }
+
+  (async () => {
+    const q = new URLSearchParams(location.search), id = q.get("id"), ad = q.get("ad"), otel = q.get("otel");
+    let kosul;
+    if (id && /^[0-9a-f-]{36}$/i.test(id)) kosul = "id=eq." + id;
+    else if (ad && OTEL[otel]) kosul = "habbo_ad=ilike." + encodeURIComponent(ad.replace(/[*%\\]/g, "")) + "&otel=eq." + otel;
+    else return yok("Profil adresi eksik ya da hatalı.");
+
+    const r = await ilkDeneme(["id,habbo_ad,otel,rol,olusturma,motto", "id,habbo_ad,otel,rol,olusturma", "id,habbo_ad,otel"],
+      s => "profiller?select=" + s + "&" + kosul + "&limit=1");
+    if (!r || !r.ok) return yok("Profil yüklenemedi. Sayfayı yenile ya da biraz sonra tekrar dene.");
+    const p = r.v && r.v[0]; if (!p) return yok("Bu kullanıcı bulunamadı ya da hesabı silinmiş.");
+
+    const rolK = S.ROL[p.rol] ? p.rol : "uye", R = S.ROL[rolK], kendi = (HESAP.oku() || {}).id === p.id;
+    document.title = p.habbo_ad + " – Habbo Arşiv";
+    kok.textContent = "";
+
+    /* oda: karolu zemin, avatar, motto balonu */
+    const hero = el("section", "pr-hero"), oda = el("div", "pr-oda");
+    oda.appendChild(el("span", "pr-zemin")); oda.appendChild(el("span", "pr-golge"));
+    const sahne = el("div", "pr-sahne");
+    if ("motto" in p) {
+      const b = el("p", "pr-balon" + (p.motto ? "" : " yok"));
+      b.textContent = p.motto || (kendi ? "Henüz motto yazmadın" : "Henüz motto yok"); sahne.appendChild(b);
+    }
+    const im = document.createElement("img"); im.className = "pr-av"; im.alt = p.habbo_ad + " avatarı";
+    im.src = habboUrl(p.otel, p.habbo_ad, "direction=2&head_direction=3&gesture=sml&size=l");
+    im.onerror = () => im.replaceWith(el("span", "pr-av", S.svg("user")));
+    sahne.appendChild(im); oda.appendChild(sahne);
+
+    /* kimlik */
+    const kim = el("div", "pr-kim"), h1 = el("h1", "pr-ad"); h1.textContent = p.habbo_ad; kim.appendChild(h1);
+    const roz = el("div", "pr-rozet", S.rozet(rolK) + S.otelEt(p.otel)); kim.appendChild(roz);
+    const ac = el("p", "pr-acik"); ac.textContent = R.acik; kim.appendChild(ac);
+    const ozet = el("dl", "pr-ozet");
+    const oge = (de, et) => { const d = el("div"), v = el("dd"); v.textContent = de; d.appendChild(v); d.appendChild(el("dt", "", et)); ozet.appendChild(d); return v; };
+    const yorumSay = oge("…", "yorum"), haberSay = oge("…", "habere yorum yaptı");
+    if (p.olusturma) oge(tarih(p.olusturma, { month: "long", year: "numeric" }), "katıldı");
+    kim.appendChild(ozet);
+    if (kendi) { const a = el("a", "pr-duz", S.svg("pen") + "<span>Mottonu düzenle</span>"); a.href = "/hesap"; const e = el("div", "pr-eylem"); e.appendChild(a); kim.appendChild(e); }
+    hero.appendChild(oda); hero.appendChild(kim); kok.appendChild(hero);
+
+    /* gövde: yorumlar + bilgi paneli */
+    const govde = el("div", "pr-govde"), akis = el("section"), baslik = el("h2", "pr-baslik", "Yorumları");
+    akis.appendChild(baslik);
+    const liste = el("ol", "pr-liste"); akis.appendChild(liste);
+    liste.appendChild(el("li", "pr-yo", '<p class="pr-metin">Yükleniyor…</p>'));
+
+    const yan = el("aside", "pr-yan"); yan.appendChild(el("h2", "pr-baslik", "Hakkında"));
+    const panel = el("dl", "pr-panel"); yan.appendChild(panel);
+    const sat = (et, ic) => { const s = el("div", "pr-sat"); s.appendChild(el("dt", "", et)); const d = el("dd"); if (typeof ic === "string") d.textContent = ic; else if (ic) d.appendChild(ic); s.appendChild(d); panel.appendChild(s); return d; };
+    sat("Otel", (() => { const w = el("span", "", S.otelEt(p.otel)); const k = el("small"); k.textContent = "habbo" + (OTEL[p.otel] || ""); const f = document.createDocumentFragment(); f.append(w.firstChild || "", k); return f; })());
+    if (p.olusturma) sat("Üyelik", tarih(p.olusturma, { day: "numeric", month: "long", year: "numeric" }));
+    const habboDd = sat("Habbo'da", "Kontrol ediliyor…"), sonDd = sat("Son yorum", "…");
+    govde.appendChild(akis); govde.appendChild(yan); kok.appendChild(govde);
+
+    /* Habbo çevrimiçi bilgisi (ulaşılamazsa satır gizlenir) */
+    (async () => {
+      const c = new AbortController(), t = setTimeout(() => c.abort(), 4000);
+      try {
+        const x = await fetch("https://www.habbo" + (OTEL[p.otel] || ".com") + "/api/public/users?name=" + encodeURIComponent(p.habbo_ad), { signal: c.signal });
+        const j = x.ok ? await x.json() : null;
+        if (!j || typeof j.online !== "boolean") throw 0;
+        habboDd.textContent = ""; habboDd.appendChild(el("span", "pr-nokta" + (j.online ? " on" : "")));
+        let m = j.online ? "Çevrimiçi" : "Çevrimdışı";
+        const son = typeof j.lastAccessTime === "string" ? zaman(j.lastAccessTime.replace(/([+-]\d{2})(\d{2})$/, "$1:$2")) : "";
+        habboDd.appendChild(document.createTextNode(m));
+        if (!j.online && son) { const s = el("small"); s.textContent = "en son " + son; habboDd.appendChild(s); }
+        if (j.online) roz.appendChild(el("span", "pr-on", "<i></i>Çevrimiçi"));
+      } catch { habboDd.closest(".pr-sat").remove(); } finally { clearTimeout(t); }
+    })();
+
+    /* yorumlar */
+    let yr = null;
+    try {
+      const y = await HESAP.rest("yorumlar?yazar_id=eq." + encodeURIComponent(p.id) + "&select=id,metin,olusturma,haber_id&order=olusturma.desc&limit=100");
+      yr = y.ok && Array.isArray(y.v) ? y.v : null;
+    } catch { /* yr null kalır */ }
+    liste.textContent = "";
+    if (!yr) { yorumSay.textContent = haberSay.textContent = "—"; sonDd.textContent = "—"; liste.replaceWith(el("p", "pr-bos", "Yorumlar yüklenemedi. Sayfayı yenile ya da biraz sonra tekrar dene.")); return; }
+
+    const say = yr.length >= 100 ? "100+" : String(yr.length);
+    yorumSay.textContent = say;
+    const haberIds = [...new Set(yr.map(c => c.haber_id))].filter(x => /^\d+$/.test(String(x)));
+    haberSay.textContent = String(haberIds.length) + (yr.length >= 100 ? "+" : "");
+    baslik.appendChild(el("span", "pr-say", say));
+    sonDd.textContent = yr.length ? zaman(yr[0].olusturma) : "Henüz yok";
+    if (!yr.length) {
+      const b = el("p", "pr-bos"); b.append((kendi ? "Henüz yorum yazmadın. " : "Henüz yorum yazmamış. "));
+      const a = el("a", "", "Haberlere göz at"); a.href = "/#haberler"; b.appendChild(a); liste.replaceWith(b); return;
+    }
+
+    let haberler = {};
+    try {
+      const h = await ilkDeneme(["id,baslik,kapak", "id,baslik"], s => "haberler?id=in.(" + haberIds.join(",") + ")&select=" + s);
+      if (h && h.ok && Array.isArray(h.v)) h.v.forEach(x => haberler[x.id] = x);
+    } catch { /* başlıksız devam */ }
+
+    const SAYFA = 10; let gosterilen = 0;
+    const daha = el("button", "pr-daha"); daha.type = "button";
+    function oge2(c) {
+      const li = el("li", "pr-yo"), hb = haberler[c.haber_id] || {};
+      const a = el("a", "pr-haber"); a.href = "haber?id=" + encodeURIComponent(c.haber_id);
+      if (hb.kapak && hb.kapak.indexOf("https://res.cloudinary.com/") === 0) {
+        const t = document.createElement("img"); t.className = "pr-th"; t.alt = ""; t.loading = "lazy";
+        t.src = hb.kapak.replace("/upload/", "/upload/w_120,h_120,c_fill/"); a.appendChild(t);
+      } else a.appendChild(el("span", "pr-th", S.svg("paper")));
+      const k = el("span"), b = el("b"); b.textContent = hb.baslik || "Habere git"; k.appendChild(b);
+      const tm = el("time"); tm.dateTime = c.olusturma; tm.title = tamZaman(c.olusturma); tm.textContent = zaman(c.olusturma); k.appendChild(tm);
+      a.appendChild(k); li.appendChild(a);
+      const m = el("p", "pr-metin"); m.textContent = c.metin; li.appendChild(m); return li;
+    }
+    function ekle() {
+      const son = Math.min(gosterilen + SAYFA, yr.length);
+      for (let i = gosterilen; i < son; i++) liste.appendChild(oge2(yr[i]));
+      gosterilen = son;
+      if (gosterilen >= yr.length) daha.remove(); else daha.textContent = "Daha fazla göster (" + (yr.length - gosterilen) + ")";
+    }
+    daha.onclick = ekle; akis.appendChild(daha); ekle();
+  })().catch(() => yok("Profil yüklenemedi. Sayfayı yenile ya da biraz sonra tekrar dene."));
+})();
+</script>
+</body>
+</html>
