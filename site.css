@@ -149,3 +149,48 @@ body.gm-kilit{overflow:hidden}
 }
 @media (max-width:380px){.sh-logo span{display:none}}
 @media (prefers-reduced-motion:reduce){.hm-in,.hm-aktif i{animation:none}.sh-menu,.gm,.gm-kart,.hm-kart,.hm-avatar img{transition:none}}
+
+/* ---------- profil mottosu ---------- */
+.hm-motto{position:relative;margin:-6px 0 18px;min-height:40px;transition:opacity .3s}
+.hm-motto.yukleniyor{opacity:0}
+.hm-m-btn{position:relative;display:inline-flex;align-items:center;gap:12px;max-width:100%;padding:7px 14px 7px 18px;border:0;border-radius:14px;background:transparent;color:color-mix(in srgb,var(--ink) 88%,transparent);font:600 1.12rem/1.35 Manrope,system-ui,sans-serif;text-align:left;cursor:pointer;transition:background .2s,color .2s}
+.hm-m-btn::before{content:"";position:absolute;left:0;top:7px;bottom:7px;width:3px;border-radius:3px;background:linear-gradient(180deg,var(--c1),var(--c2));transition:top .2s,bottom .2s,box-shadow .3s}
+.hm-m-tx{min-width:0;overflow-wrap:anywhere}
+.hm-m-btn .ic{width:16px;height:16px;flex:none;color:var(--c2);opacity:0;transform:translateX(-4px) rotate(-8deg);transition:opacity .2s,transform .2s}
+.hm-m-btn:hover,.hm-m-btn:focus-visible{background:color-mix(in srgb,var(--c1) 12%,transparent);color:var(--ink)}
+.hm-m-btn:hover::before,.hm-m-btn:focus-visible::before{top:4px;bottom:4px}
+.hm-m-btn:hover .ic,.hm-m-btn:focus-visible .ic{opacity:1;transform:none}
+.hm-m-btn:focus-visible{outline:2px solid var(--c1);outline-offset:2px}
+.hm-m-btn.bos{color:var(--mute);font-weight:600}
+.hm-m-btn.bos::before{background:var(--line2)}
+.hm-m-btn.bos:hover::before{background:linear-gradient(180deg,var(--c1),var(--c2))}
+.hm-m-btn.parla::before{animation:hmMottoOk 1s ease-out}
+.hm-m-btn.parla .hm-m-tx{animation:hmMottoYaz .5s cubic-bezier(.2,.7,.2,1)}
+@keyframes hmMottoOk{0%{box-shadow:0 0 0 0 var(--cg),0 0 0 0 var(--c1)}35%{box-shadow:0 0 18px 4px var(--c1)}100%{box-shadow:0 0 0 0 transparent}}
+@keyframes hmMottoYaz{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+@media (hover:none){.hm-m-btn .ic{opacity:.7;transform:none}}
+
+.hm-m-form{max-width:520px}
+.hm-m-satir{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.hm-m-kutu{position:relative;flex:1 1 260px;min-width:0}
+.hm-m-in{width:100%;padding:11px 62px 11px 16px;border-radius:14px;border:1px solid var(--line2);background:rgba(6,10,22,.5);backdrop-filter:blur(10px);color:var(--ink);font:600 1.05rem Manrope,system-ui,sans-serif;transition:border-color .2s,box-shadow .2s}
+@media (prefers-color-scheme:light){.hm-m-in{background:rgba(255,255,255,.8)}}
+.hm-m-in::placeholder{color:var(--mute);font-weight:500}
+.hm-m-in:focus{outline:0;border-color:var(--c1);box-shadow:0 0 0 3px var(--cg)}
+.hm-m-say{position:absolute;right:14px;top:50%;transform:translateY(-50%);font:700 .76rem Manrope,sans-serif;font-variant-numeric:tabular-nums;color:var(--mute);pointer-events:none;transition:color .2s}
+.hm-m-say.dolu{color:#ffb454}
+.hm-m-kay,.hm-m-ip{padding:10px 16px;border-radius:12px;font:800 .9rem "Bricolage Grotesque",Manrope,sans-serif;cursor:pointer;transition:transform .15s,filter .15s,border-color .15s,background .15s}
+.hm-m-kay{border:1.5px solid transparent;background:linear-gradient(135deg,var(--c1),var(--c2));color:var(--on,#fff);box-shadow:0 8px 20px -8px var(--c1)}
+.hm-m-kay:hover:not(:disabled){transform:translateY(-1px);filter:brightness(1.08)}
+.hm-m-ip{border:1.5px solid var(--line2);background:transparent;color:var(--mute)}
+.hm-m-ip:hover:not(:disabled){border-color:var(--c1);color:var(--ink)}
+.hm-m-kay:disabled,.hm-m-ip:disabled{opacity:.55;cursor:default}
+.hm-m-kay:focus-visible,.hm-m-ip:focus-visible{outline:2px solid var(--c1);outline-offset:2px}
+.hm-m-msg{min-height:0;margin-top:8px;font-size:.84rem;color:var(--mute)}
+.hm-m-msg.h{color:#ff7684}
+@media (max-width:640px){
+  .hm-motto{margin:-4px 0 16px}
+  .hm-m-btn{padding-left:0;padding-right:0;justify-content:center}.hm-m-btn::before{display:none}
+  .hm-m-form{margin:0 auto}.hm-m-satir{justify-content:center}
+}
+@media (prefers-reduced-motion:reduce){.hm-m-btn::before,.hm-m-btn .ic,.hm-m-btn.parla::before,.hm-m-btn.parla .hm-m-tx{animation:none;transition:none}}

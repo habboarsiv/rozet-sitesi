@@ -23,6 +23,64 @@ a{color:inherit}
   const S = SITE, h = HESAP.oku(), kok = document.getElementById("hm"), el = S.el;
   const giris = (d) => { const b = el("div", "hm-in"); b.style.setProperty("--d", d || "0s"); return b; };
 
+  // Motto: ismin altında, yerinde düzenlenir. Sütun yoksa ya da okunamazsa blok kendini gizler.
+  const mottoKur = (kisi) => {
+    const MAX = 38;   // Habbo'daki sınırla aynı
+    const kap = el("div", "hm-motto yukleniyor");
+    let mevcut = "";
+
+    const goster = (parla) => {
+      kap.className = "hm-motto"; kap.textContent = "";
+      const b = el("button", "hm-m-btn" + (mevcut ? "" : " bos") + (parla ? " parla" : ""));
+      b.type = "button"; b.setAttribute("aria-label", mevcut ? "Mottoyu düzenle" : "Motto ekle");
+      const t = el("span", "hm-m-tx"); t.textContent = mevcut || "Motto ekle";
+      b.appendChild(t); b.insertAdjacentHTML("beforeend", S.svg("pen"));
+      b.onclick = duzenle; kap.appendChild(b);
+    };
+
+    const duzenle = () => {
+      kap.className = "hm-motto duzenle"; kap.textContent = "";
+      const f = el("form", "hm-m-form"); f.autocomplete = "off";
+      const kutu = el("div", "hm-m-kutu");
+      const inp = el("input", "hm-m-in"); inp.type = "text"; inp.maxLength = MAX; inp.value = mevcut;
+      inp.placeholder = "Kendini tek cümleyle anlat"; inp.setAttribute("aria-label", "Motto"); inp.spellcheck = false;
+      const say = el("span", "hm-m-say"); kutu.appendChild(inp); kutu.appendChild(say);
+      const kay = el("button", "hm-m-kay", "Kaydet"); kay.type = "submit";
+      const ip = el("button", "hm-m-ip", "Vazgeç"); ip.type = "button";
+      const satir = el("div", "hm-m-satir"); satir.appendChild(kutu); satir.appendChild(kay); satir.appendChild(ip);
+      const ms = el("div", "hm-m-msg"); ms.setAttribute("role", "status"); ms.setAttribute("aria-live", "polite");
+      f.appendChild(satir); f.appendChild(ms); kap.appendChild(f);
+
+      const guncelle = () => { say.textContent = inp.value.length + "/" + MAX; say.classList.toggle("dolu", inp.value.length >= MAX - 4); };
+      inp.addEventListener("input", guncelle); guncelle();
+      inp.addEventListener("keydown", e => { if (e.key === "Escape") { e.preventDefault(); goster(); } });
+      ip.onclick = () => goster();
+      f.onsubmit = async e => {
+        e.preventDefault();
+        const yeni = inp.value.replace(/\s+/g, " ").trim().slice(0, MAX);
+        if (yeni === mevcut) return goster();
+        kay.disabled = ip.disabled = inp.disabled = true; ms.textContent = ""; ms.className = "hm-m-msg";
+        let ok = false;
+        try {
+          const r = await HESAP.rest("profiller?id=eq." + encodeURIComponent(kisi.id), {
+            method: "PATCH", headers: { Prefer: "return=representation" }, body: JSON.stringify({ motto: yeni || null })
+          });
+          ok = r.ok && Array.isArray(r.v) && r.v.length === 1;
+        } catch { /* ağ hatası */ }
+        if (ok) { mevcut = yeni; goster(true); return; }
+        kay.disabled = ip.disabled = inp.disabled = false; inp.focus();
+        ms.textContent = "Kaydedilemedi. Bağlantını kontrol edip tekrar dene."; ms.className = "hm-m-msg h";
+      };
+      inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length);
+    };
+
+    HESAP.rest("profiller?select=motto&id=eq." + encodeURIComponent(kisi.id)).then(({ ok, v }) => {
+      if (!ok || !Array.isArray(v)) return kap.remove();
+      mevcut = (v[0] && v[0].motto) || ""; goster();
+    }).catch(() => kap.remove());
+    return kap;
+  };
+
   if (!h) {   // oturum yoksa: giriş penceresini açan sade bir karşılama
     document.title = "Hesap Merkezi – Habbo Arşiv";
     kok.innerHTML = '<div class="hm-misafir hm-in"><svg class="logo" viewBox="0 0 32 32"><defs><linearGradient id="mg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--c1)"/><stop offset="1" style="stop-color:var(--c2)"/></linearGradient></defs><path d="M16 2 30 10v12L16 30 2 22V10z" fill="url(#mg)"/><path d="M16 2v14m0 0 14-6M16 16 2 10m14 6v14" stroke="rgba(255,255,255,.5)" stroke-width="1.4" fill="none"/></svg>' +
@@ -41,6 +99,7 @@ a{color:inherit}
   const tx = el("div", "hm-text");
   tx.appendChild(el("p", "hm-hos", "Tekrar hoş geldin,"));
   const ad = el("h1", "hm-ad"); ad.textContent = h.ad; tx.appendChild(ad);
+  tx.appendChild(mottoKur(h));
   tx.appendChild(el("div", "hm-rozetler", S.rozet(r) + S.otelEt(h.otel) + '<span class="hm-aktif"><i></i>Aktif oturum</span>'));
   // hesap bilgileri (profil alanının sağında)
   const panel = el("div", "hm-panel");
