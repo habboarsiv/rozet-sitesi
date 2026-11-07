@@ -30,7 +30,7 @@ const SITE = (() => {
     yazar: { ad: "Yazar", ic: "pen", acik: "Haber yazabilir, kendi haberlerini düzenleyebilir." },
     yonetici: { ad: "Yönetici", ic: "shield", acik: "Tüm haberleri ve yorumları yönetebilir." }
   };
-  const LOGO = '<svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="shg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--c1)"/><stop offset="1" style="stop-color:var(--c2)"/></linearGradient></defs><path d="M16 2 30 10v12L16 30 2 22V10z" fill="url(#shg)"/><path d="M16 2v14m0 0 14-6M16 16 2 10m14 6v14" stroke="rgba(255,255,255,.5)" stroke-width="1.4" fill="none"/></svg>';
+  const LOGO = '<svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2.5 28.5 9.75 16 17 3.5 9.75z" fill="#2a4a92"/><path d="M3.5 9.75 16 17v13.5L3.5 23.25z" fill="#0b1536"/><path d="M28.5 9.75 16 17v13.5l12.5-7.25z" fill="#142760"/><path d="M16 6.7 23.3 10.9 16 15.1 8.7 10.9z" fill="none" stroke="#8cc2ff" stroke-opacity=".4" stroke-width=".6"/><path d="M16 2.5 28.5 9.75v13.5L16 30.5 3.5 23.25V9.75z" fill="none" stroke="#5aa7ff" stroke-width="1.1" stroke-linejoin="round"/><path d="M3.5 9.75 16 17l12.5-7.25M16 17v13.5" fill="none" stroke="#5aa7ff" stroke-opacity=".75" stroke-width="1" stroke-linejoin="round"/></svg>';
 
   const el = (t, c, h) => { const e = document.createElement(t); if (c) e.className = c; if (h) e.innerHTML = h; return e; };
   const rolOf = h => ROL[h.rol] ? h.rol : "uye";
