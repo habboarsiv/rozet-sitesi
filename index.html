@@ -201,10 +201,13 @@ dialog p{margin:0 20px 12px;color:var(--mute)}
 </head>
 <body data-sec="R">
 <header class="hero">
-  <div class="hero-in"><h1 class="sn">Habbo Arşiv</h1><p class="sub">Habbo dünyasına dair aradığın her şey tek bir adreste.</p><div class="led" id="led"></div></div>
+  <div class="hero-in">
+    <div class="hero-tx"><h1 class="sn">Habbo Arşiv</h1><p class="sub">Habbo dünyasına dair aradığın her şey tek bir adreste.</p><div class="led" id="led"></div></div>
+    <div class="hero-kup" id="heroKup"></div>
+  </div>
 </header>
 <div class="wrap">
-  <div class="seg modes" role="group" aria-label="Bölüm"><button class="tg" id="mR" type="button" aria-pressed="true">Rozetler</button><button class="tg" id="mP" type="button" aria-pressed="false">Promolar</button><button class="tg" id="mM" type="button" aria-pressed="false">Mobiler</button><button class="tg" id="mH" type="button" aria-pressed="false">Haberler</button></div>
+  <div class="seg modes" role="group" aria-label="Bölüm"><button class="tg" id="mR" type="button" aria-pressed="true">Rozetler</button><button class="tg" id="mH" type="button" aria-pressed="false">Haberler</button><button class="tg" id="mP" type="button" aria-pressed="false">Promolar</button><button class="tg" id="mM" type="button" aria-pressed="false">Mobiler</button></div>
   <details class="usr" id="usr">
     <summary>Oyuncu rozetlerini sorgula</summary>
     <div class="usr-f">
@@ -259,15 +262,25 @@ dialog p{margin:0 20px 12px;color:var(--mute)}
 
 <footer class="ft">
   <div class="ft-in">
-    <div class="by">
-      <span class="av bd"><img alt="katenai’nin Habbo avatarı" src="https://www.habbo.com.tr/habbo-imaging/avatarimage?user=katenai&action=std&direction=2&head_direction=3&gesture=sml&size=l&img_format=png" onerror="this.parentNode.style.display='none'"></span>
-      <div class="by-t">
-        <span class="by-l">Hazırlayan</span>
-        <strong class="by-n">katenai</strong>
-        <span class="by-h">habbo.com.tr</span>
+    <div class="ft-ust">
+      <div class="ft-marka">
+        <a class="ft-logo" href="/" aria-label="Habbo Arşiv"><svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2.5 28.5 9.75 16 17 3.5 9.75z" fill="#2a4a92"/><path d="M3.5 9.75 16 17v13.5L3.5 23.25z" fill="#0b1536"/><path d="M28.5 9.75 16 17v13.5l12.5-7.25z" fill="#142760"/><path d="M16 6.7 23.3 10.9 16 15.1 8.7 10.9z" fill="none" stroke="#8cc2ff" stroke-opacity=".4" stroke-width=".6"/><path d="M16 2.5 28.5 9.75v13.5L16 30.5 3.5 23.25V9.75z" fill="none" stroke="#5aa7ff" stroke-width="1.1" stroke-linejoin="round"/><path d="M3.5 9.75 16 17l12.5-7.25M16 17v13.5" fill="none" stroke="#5aa7ff" stroke-opacity=".75" stroke-width="1" stroke-linejoin="round"/></svg><span class="sn">Habbo Arşiv</span></a>
+        <p>Habbo dünyasına dair aradığın her şey tek bir adreste.</p>
+      </div>
+      <nav class="ft-nav" aria-label="Bölümler">
+        <span class="ft-bas">Bölümler</span>
+        <div class="ft-lk"><a href="/" data-git="R">Rozetler</a><a href="/#haberler" data-git="H">Haberler</a><a href="/#promolar" data-git="P">Promolar</a><a href="/#mobiler" data-git="M">Mobiler</a></div>
+      </nav>
+      <div class="by ft-kart">
+        <span class="av bd"><img alt="katenai’nin Habbo avatarı" src="https://www.habbo.com.tr/habbo-imaging/avatarimage?user=katenai&action=std&direction=2&head_direction=3&gesture=sml&size=l&img_format=png" onerror="this.parentNode.style.display='none'"></span>
+        <div class="by-t">
+          <span class="by-l">Hazırlayan</span>
+          <strong class="by-n">katenai</strong>
+          <span class="by-h">habbo.com.tr</span>
+        </div>
       </div>
     </div>
-    <p class="legal">Habbo Arşiv, Sulake Oy veya İştirakleri tarafından doğrulanmamış, onaylanmamış ve desteklenmemiştir ve bunlar ile bağlı değildir. Habbo Arşiv, Habbo Fan Sitesi Poliçesi altında izin verilen ticaret markalarını ve diğer Habbo fikrî mülkiyetlerini kullanabilir. Sitemizde yer alan markalar, logolar ve fikri mülkiyet ögeleri Sulake Oy’a ve bağlı ortaklıklarına aittir. <span class="sn">Habbo Arşiv</span> üzerinde sunulan içerikler tamamen topluluk amaçlıdır ve resmi Habbo hizmetleriyle karıştırılmamalıdır.</p>
+    <p class="legal"><strong class="legal-on">Habbo Arşiv, Sulake Oy veya İştirakleri tarafından doğrulanmamış, onaylanmamış ve desteklenmemiştir ve bunlar ile bağlı değildir.</strong> Habbo Arşiv, Habbo Fan Sitesi Poliçesi altında izin verilen ticaret markalarını ve diğer Habbo fikrî mülkiyetlerini kullanabilir. Sitemizde yer alan markalar, logolar ve fikri mülkiyet ögeleri Sulake Oy’a ve bağlı ortaklıklarına aittir. <span class="sn">Habbo Arşiv</span> üzerinde sunulan içerikler tamamen topluluk amaçlıdır ve resmi Habbo hizmetleriyle karıştırılmamalıdır.</p>
   </div>
 </footer>
 

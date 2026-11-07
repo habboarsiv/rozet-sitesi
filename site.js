@@ -26,15 +26,16 @@ const SITE = (() => {
   };
   const svg = (k, c) => '<svg class="ic ' + (c || "") + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + IC[k] + '</svg>';
   const ROL = {
-    uye: { ad: "Üye", ic: "user", acik: "Haberlere yorum yazabilir." },
-    yazar: { ad: "Yazar", ic: "pen", acik: "Haber yazabilir, kendi haberlerini düzenleyebilir." },
-    yonetici: { ad: "Yönetici", ic: "shield", acik: "Tüm haberleri ve yorumları yönetebilir." }
+    uye: { ad: "Üye", ic: "user", acik: "Habbo Arşiv topluluğunun bir parçasıdır, haberlere yorum yapabilir." },
+    yazar: { ad: "Yazar", ic: "pen", acik: "Topluluğu bilgilendirmek adına yeni haberler kaleme alır." },
+    moderator: { ad: "Moderatör", ic: "verify", acik: "Topluluk içi etkileşimi korur, haber ve yorum akışını denetler." },
+    yonetici: { ad: "Yönetici", ic: "shield", acik: "Topluluğu ve platformu yönetir; tüm içeriklerde tam yetkilidir." }
   };
   const LOGO = '<svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2.5 28.5 9.75 16 17 3.5 9.75z" fill="#2a4a92"/><path d="M3.5 9.75 16 17v13.5L3.5 23.25z" fill="#0b1536"/><path d="M28.5 9.75 16 17v13.5l12.5-7.25z" fill="#142760"/><path d="M16 6.7 23.3 10.9 16 15.1 8.7 10.9z" fill="none" stroke="#8cc2ff" stroke-opacity=".4" stroke-width=".6"/><path d="M16 2.5 28.5 9.75v13.5L16 30.5 3.5 23.25V9.75z" fill="none" stroke="#5aa7ff" stroke-width="1.1" stroke-linejoin="round"/><path d="M3.5 9.75 16 17l12.5-7.25M16 17v13.5" fill="none" stroke="#5aa7ff" stroke-opacity=".75" stroke-width="1" stroke-linejoin="round"/></svg>';
 
   const el = (t, c, h) => { const e = document.createElement(t); if (c) e.className = c; if (h) e.innerHTML = h; return e; };
-  const rolOf = h => ROL[h.rol] ? h.rol : "uye";
-  const rozet = r => '<span class="rol rol-' + r + '">' + svg(ROL[r].ic) + '<b>' + ROL[r].ad + '</b></span>';
+  const rolOf = h => { let k = String(h.rol || "").toLowerCase().replace(/ö/g, "o"); if (k === "mod") k = "moderator"; return ROL[k] ? k : "uye"; };
+  const rozet = (r, ip) => '<span class="rol rol-' + r + '"' + (ip === false ? '' : ' tabindex="0" data-ip="' + ROL[r].acik + '"') + '>' + svg(ROL[r].ic) + '<b>' + ROL[r].ad + '</b></span>';
   const otelEt = k => !HESAP.OTELLER[k] ? "" : '<span class="otel"><svg class="fl" viewBox="0 0 30 20" aria-hidden="true">' + (FLAG_SVG[k] || "") + '</svg><b>' + k.toUpperCase() + '</b></span>';
   const avatarUrl = (h, boyut, bas) => "https://www.habbo" + (HESAP.OTELLER[h.otel] || ".com") + "/habbo-imaging/avatarimage?user=" + encodeURIComponent(h.ad) +
     "&direction=2&head_direction=3&gesture=sml&size=" + boyut + (bas ? "&headonly=1" : "");
@@ -49,7 +50,7 @@ const SITE = (() => {
   function ustCubuk() {
     const ana = !!document.getElementById("mR"), aktif = document.body.dataset.nav || "";
     const hd = el("header", "sh"); hd.id = "siteHeader";
-    const nav = ana ? "" : '<nav class="sh-nav" aria-label="Bölümler">' + [["R", "Rozetler", "/"], ["P", "Promolar", "/#promolar"], ["M", "Mobiler", "/#mobiler"], ["H", "Haberler", "/#haberler"]]
+    const nav = ana ? "" : '<nav class="sh-nav" aria-label="Bölümler">' + [["R", "Rozetler", "/"], ["H", "Haberler", "/#haberler"], ["P", "Promolar", "/#promolar"], ["M", "Mobiler", "/#mobiler"]]
       .map(x => '<a href="' + x[2] + '"' + (aktif === x[0] ? ' class="on" aria-current="page"' : "") + '>' + x[1] + '</a>').join("") + '</nav>';
     hd.innerHTML = '<div class="sh-in"><a class="sh-logo" href="/" aria-label="Habbo Arşiv">' + LOGO + '<span>Habbo Arşiv</span></a>' + nav + '<div class="sh-user" id="shUser"></div></div>';
     document.body.prepend(hd); kullanici();
@@ -65,14 +66,14 @@ const SITE = (() => {
     const r = rolOf(h);
     const b = el("button", "sh-prof"); b.type = "button"; b.setAttribute("aria-haspopup", "menu"); b.setAttribute("aria-expanded", "false");
     const meta = el("span", "sh-meta"); const ad = el("b"); ad.textContent = h.ad;
-    meta.appendChild(ad); meta.appendChild(el("span", "sh-alt", rozet(r) + otelEt(h.otel)));
+    meta.appendChild(ad); meta.appendChild(el("span", "sh-alt", rozet(r, false) + otelEt(h.otel)));
     b.appendChild(avatar(h, "m", true, "kucuk")); b.appendChild(meta); b.insertAdjacentHTML("beforeend", svg("down", "ok"));
     const m = el("div", "sh-menu"); m.setAttribute("role", "menu");
     const ust = el("div", "sh-menu-ust"); ust.appendChild(avatar(h, "m", true, "orta"));
     const t = el("div"); const n = el("b"); n.textContent = h.ad; t.appendChild(n); t.appendChild(el("span", "sh-alt", rozet(r) + otelEt(h.otel))); ust.appendChild(t); m.appendChild(ust);
     const link = (href, ic, ad2, c) => { const a = el("a", "sh-oge " + (c || ""), svg(ic) + "<span>" + ad2 + "</span>"); a.href = href; a.setAttribute("role", "menuitem"); return a; };
     m.appendChild(link("/hesap", "user", "Hesabım"));
-    if (r === "yazar" || r === "yonetici") m.appendChild(link("/haber-yaz", "paper", "Haber Paneli"));
+    if (r === "yazar" || r === "moderator" || r === "yonetici") m.appendChild(link("/haber-yaz", "paper", "Haber Paneli"));
     m.appendChild(el("div", "sh-ayrac"));
     const c = el("button", "sh-oge cikis", svg("out") + "<span>Çıkış yap</span>"); c.type = "button"; c.setAttribute("role", "menuitem"); c.onclick = cikis; m.appendChild(c);
     const kap = el("div", "sh-kap"); kap.appendChild(b); kap.appendChild(m); kutu.appendChild(kap);

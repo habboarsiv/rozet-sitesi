@@ -10,11 +10,15 @@
 
   /* ---------- stil ---------- */
   var css = [
-    ".kup-sahne{--s:136px;--k:1.8;position:absolute;right:24px;top:50%;width:calc(var(--s)*var(--k));height:calc(var(--s)*var(--k));margin-top:calc(var(--s)*var(--k)*-.5);z-index:2;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;outline:0;border-radius:24px}",
+    ".kup-sahne{--s:136px;--k:1.8;position:relative;width:calc(var(--s)*var(--k));height:calc(var(--s)*var(--k));z-index:2;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;outline:0;border-radius:24px}",
     ".kup-sahne.tut{cursor:grabbing}",
     ".kup-sahne:focus-visible{box-shadow:0 0 0 2px rgba(90,167,255,.6)}",
     ".kup-hale{position:absolute;inset:-6%;pointer-events:none;background:radial-gradient(closest-side,rgba(61,139,255,calc(.17 + var(--hv,0)*.2)),rgba(61,139,255,calc(.05 + var(--hv,0)*.05)) 60%,transparent)}",
-    ".kup-gol{position:absolute;left:50%;bottom:calc(var(--s)*.12);width:calc(var(--s)*1.1);height:calc(var(--s)*.17);margin-left:calc(var(--s)*-.55);pointer-events:none;background:radial-gradient(closest-side,rgba(50,115,255,.42),rgba(4,9,28,.38) 55%,transparent);filter:blur(7px);animation:kupGol 6.4s ease-in-out infinite}",
+    ".kup-gol{position:absolute;left:50%;bottom:calc(var(--s)*var(--k)*.14 - var(--s)*.085);width:calc(var(--s)*1.1);height:calc(var(--s)*.17);margin-left:calc(var(--s)*-.55);pointer-events:none;background:radial-gradient(closest-side,rgba(50,115,255,.42),rgba(4,9,28,.38) 55%,transparent);filter:blur(7px);animation:kupGol 6.4s ease-in-out infinite}",
+    ".kup-orb{position:absolute;left:50%;top:calc(var(--s)*var(--k)*.86);width:calc(var(--s)*1.7);height:calc(var(--s)*1.7);margin:calc(var(--s)*-.85) 0 0 calc(var(--s)*-.85);border-radius:50%;pointer-events:none;border:1px solid rgba(90,165,255,.32);background:radial-gradient(closest-side,rgba(60,130,255,.15),transparent 72%);box-shadow:0 0 30px rgba(60,130,255,.14),inset 0 0 26px rgba(60,130,255,.14);transform:rotateX(74deg)}",
+    ".kup-orb::before{content:'';position:absolute;inset:13%;border-radius:50%;border:1px dashed rgba(120,180,255,.32);animation:kupOrb 40s linear infinite}",
+    ".kup-orb::after{content:'';position:absolute;inset:31%;border-radius:50%;border:1px solid rgba(120,180,255,.2)}",
+    "@keyframes kupOrb{to{transform:rotate(360deg)}}",
     ".kup-yuz{position:absolute;inset:0;display:grid;place-items:center;perspective:calc(var(--s)*5.2);animation:kupYuz 6.4s ease-in-out infinite}",
     "@keyframes kupYuz{0%,100%{transform:translateY(calc(var(--s)*.04))}50%{transform:translateY(calc(var(--s)*-.05))}}",
     "@keyframes kupGol{0%,100%{transform:scale(1);opacity:.95}50%{transform:scale(.8);opacity:.5}}",
@@ -36,10 +40,10 @@
     ".kup-f[data-f=l]{transform:rotateY(-90deg) translateZ(calc(var(--s)/2))}",
     ".kup-f[data-f=t]{transform:rotateX(90deg) translateZ(calc(var(--s)/2))}",
     ".kup-f[data-f=d]{transform:rotateX(-90deg) translateZ(calc(var(--s)/2))}",
-    "@media (prefers-color-scheme:light){.kup-gol{background:radial-gradient(closest-side,rgba(30,70,170,.34),rgba(10,20,60,.2) 55%,transparent)}.kup-hale{background:radial-gradient(closest-side,rgba(61,120,255,calc(.13 + var(--hv,0)*.15)),transparent)}}",
+    "@media (prefers-color-scheme:light){.kup-orb{border-color:rgba(40,90,220,.38)}.kup-orb::before{border-color:rgba(40,90,220,.34)}.kup-orb::after{border-color:rgba(40,90,220,.24)}.kup-gol{background:radial-gradient(closest-side,rgba(30,70,170,.34),rgba(10,20,60,.2) 55%,transparent)}.kup-hale{background:radial-gradient(closest-side,rgba(61,120,255,calc(.13 + var(--hv,0)*.15)),transparent)}}",
     "@media (max-width:1000px){.kup-sahne{--s:116px;right:12px}}",
-    "@media (max-width:700px){.kup-sahne{--s:82px;--k:1.5;right:8px;top:0;margin-top:0}.hero-in{padding-top:112px!important}}",
-    "@media (prefers-reduced-motion:reduce){.kup-yuz,.kup-gol{animation:none}}"
+    "@media (max-width:700px){.kup-sahne{--s:82px;--k:1.5}}",
+    "@media (prefers-reduced-motion:reduce){.kup-yuz,.kup-gol,.kup-orb::before{animation:none}}"
   ].join("\n");
   var st = document.createElement("style");
   st.textContent = css;
@@ -65,8 +69,8 @@
   var yuzler = ["f", "r", "b", "l", "t", "d"].map(function (k) {
     return '<div class="kup-f" data-f="' + k + '"><svg viewBox="0 0 100 100" aria-hidden="true">' + SVG[k] + '</svg><div class="kup-sh"></div><div class="kup-gl"></div><div class="kup-ed"></div></div>';
   }).join("");
-  sahne.innerHTML = '<div class="kup-hale"></div><div class="kup-gol"></div><div class="kup-yuz"><div class="kup">' + yuzler + '</div></div>';
-  hero.appendChild(sahne);
+  sahne.innerHTML = '<div class="kup-hale"></div><div class="kup-orb"></div><div class="kup-gol"></div><div class="kup-yuz"><div class="kup">' + yuzler + '</div></div>';
+  (document.getElementById("heroKup") || hero).appendChild(sahne);
 
   var kup = sahne.querySelector(".kup");
   /* Yüzlerin normali (n) ve yüzey eksenleri (u: sağ, v: aşağı), küp koordinatında */

@@ -194,3 +194,13 @@ body.gm-kilit{overflow:hidden}
   .hm-m-form{margin:0 auto}.hm-m-satir{justify-content:center}
 }
 @media (prefers-reduced-motion:reduce){.hm-m-btn::before,.hm-m-btn .ic,.hm-m-btn.parla::before,.hm-m-btn.parla .hm-m-tx{animation:none;transition:none}}
+
+/* moderatör rozeti + rol açıklaması (üzerine gelince / dokununca görünür) */
+.rol-moderator{color:#ffc766;background:rgba(255,178,31,.12);border-color:rgba(255,178,31,.42)}
+@media (prefers-color-scheme:light){.rol-moderator{color:#a35f00;background:rgba(240,140,0,.1);border-color:rgba(240,140,0,.4)}}
+.rol[data-ip]{position:relative;cursor:help;outline:0}
+.rol[data-ip]::after{content:attr(data-ip);position:absolute;left:0;top:calc(100% + 10px);z-index:80;width:max-content;max-width:min(270px,calc(100vw - 32px));padding:10px 14px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,.05),transparent 50%),var(--surface);border:1px solid var(--line2);box-shadow:var(--hi),0 18px 40px -14px rgba(0,0,0,.85);color:var(--ink);font:600 .8rem/1.5 Manrope,sans-serif;letter-spacing:0;text-transform:none;white-space:normal;text-align:left;opacity:0;visibility:hidden;transform:translateY(-4px);transition:opacity .16s,transform .16s,visibility .16s;pointer-events:none}
+.rol[data-ip]:hover::after,.rol[data-ip]:focus::after{opacity:1;visibility:visible;transform:none}
+.rol[data-ip]:focus-visible{box-shadow:0 0 0 2px var(--cg)}
+.sh-user .rol[data-ip]::after{left:auto;right:0}
+@media (prefers-reduced-motion:reduce){.rol[data-ip]::after{transition:none}}

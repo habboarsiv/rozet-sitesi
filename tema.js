@@ -1,4 +1,14 @@
-/* Habbo Arşiv - üst alandaki sayaç şeridi (rozet ve promo sayısı) */
+/* Habbo Arşiv - alt bölümdeki bölüm bağlantıları + üst alandaki sayaç şeridi (rozet ve promo sayısı) */
+(function () {
+  document.querySelectorAll("[data-git]").forEach(function (a) {
+    a.addEventListener("click", function (e) {
+      var b = document.getElementById("m" + a.getAttribute("data-git"));
+      if (!b) return;
+      e.preventDefault(); b.click();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  });
+})();
 (function () {
   var k = document.getElementById("led");
   if (!k || typeof BADGES === "undefined") return;
