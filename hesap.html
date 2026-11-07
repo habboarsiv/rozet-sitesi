@@ -131,7 +131,7 @@ a{color:inherit}
         dugme("Değiştir", "", () => dosya.click()); dugme("Arkaplanı kaldır", "kz", () => sil("", "Arkaplan kaldırıldı."));
       } else {
         resim("", ""); rozetle("", "Varsayılan");
-        not.textContent = "Profiline kendi görselini koyabilirsin. Görsel önce yönetici ya da moderatör onayından geçer, onaylanınca otomatik uygulanır.";
+        not.textContent = "Profiline kendi görselini ya da bannerını koyabilirsin (önerilen boyut 1500×500). Görsel önce yönetici ya da moderatör onayından geçer, onaylanınca otomatik uygulanır.";
         dugme("Görsel seç", "", () => dosya.click());
       }
     };
@@ -152,7 +152,7 @@ a{color:inherit}
         kaynak = await new Promise((ok, hata) => { const u = URL.createObjectURL(f), i = new Image(); i.onload = () => { URL.revokeObjectURL(u); ok(i); }; i.onerror = () => { URL.revokeObjectURL(u); hata(new Error("Görsel okunamadı.")); }; i.src = u; });
       }
       const w0 = kaynak.width, h0 = kaynak.height;
-      if (w0 < 800 || h0 < 320) throw new Error("Görsel çok küçük. En az 800×320 piksel olmalı.");
+      if (w0 < 400 || h0 < 100) throw new Error("Görsel çok küçük. En az 400×100 piksel olmalı.");
       const k = Math.min(1, 1600 / w0, 1000 / h0), cv = document.createElement("canvas");
       cv.width = Math.round(w0 * k); cv.height = Math.round(h0 * k);
       const cx = cv.getContext("2d"); cx.fillStyle = "#0e1527"; cx.fillRect(0, 0, cv.width, cv.height); cx.drawImage(kaynak, 0, 0, cv.width, cv.height);
