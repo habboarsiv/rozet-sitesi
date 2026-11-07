@@ -17,15 +17,22 @@ a{color:inherit}
 <style>
 .pr{max-width:1040px;margin:0 auto;padding:28px 18px 90px}
 
-/* ---- oda (üst alan) ---- */
-.pr-hero{position:relative;display:grid;grid-template-columns:minmax(280px,440px) minmax(0,1fr);align-items:center;gap:20px 32px;padding:14px 30px 14px 14px;border-radius:30px;overflow:hidden;background:linear-gradient(135deg,color-mix(in srgb,var(--c1) 20%,var(--surface)),var(--surface) 72%);border:1px solid var(--line2);box-shadow:var(--hi),var(--shadow)}
-.pr-oda{position:relative;height:440px}
-.pr-oda::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 62%,color-mix(in srgb,var(--c1) 32%,transparent),transparent 58%);pointer-events:none}
-.pr-zemin{position:absolute;left:50%;top:76%;width:340px;height:340px;transform:translate(-50%,-50%) rotateX(60deg) rotateZ(45deg);
-  background:conic-gradient(color-mix(in srgb,var(--c1) 38%,var(--surface)) 25%,color-mix(in srgb,var(--c2) 14%,var(--surface)) 0 50%,color-mix(in srgb,var(--c1) 38%,var(--surface)) 0 75%,color-mix(in srgb,var(--c2) 14%,var(--surface)) 0) 0 0/68px 68px;
-  -webkit-mask-image:radial-gradient(circle,#000 36%,transparent 70%);mask-image:radial-gradient(circle,#000 36%,transparent 70%)}
-.pr-golge{position:absolute;left:50%;top:76%;width:84px;height:24px;transform:translate(-50%,-70%);border-radius:50%;background:radial-gradient(ellipse,rgba(0,0,0,.5),transparent 70%)}
-.pr-sahne{position:absolute;left:50%;top:76%;transform:translate(-50%,-100%);display:flex;flex-direction:column;align-items:center;gap:16px;width:max-content;max-width:100%}
+/* ---- üst alan: banner + üstüne binen cam kart ---- */
+.pr-hero{--ov:64px;position:relative}
+.pr-banner{position:relative;height:clamp(210px,28vw,290px);border-radius:28px;overflow:hidden;border:1px solid var(--line2);box-shadow:var(--hi),var(--shadow);
+  background:repeating-linear-gradient(63.43deg,transparent 0 44px,color-mix(in srgb,var(--c1) 16%,transparent) 44px 45px),repeating-linear-gradient(-63.43deg,transparent 0 44px,color-mix(in srgb,var(--c1) 16%,transparent) 44px 45px),linear-gradient(135deg,color-mix(in srgb,var(--c1) 26%,var(--surface)),var(--surface) 78%)}
+.pr-banner::before{content:"";position:absolute;inset:0;background:var(--pr-bg) center 30%/cover no-repeat;opacity:0;transition:opacity .6s}
+.pr-banner::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,transparent 55%,rgba(6,10,24,.38))}
+.pr-ozel .pr-banner::before{opacity:1}
+.pr-kart{position:relative;z-index:1;display:grid;grid-template-columns:200px minmax(0,1fr);align-items:stretch;margin:calc(var(--ov)*-1) 20px 0;border-radius:24px;
+  background:rgba(8,12,28,.42);border:1px solid rgba(255,255,255,.16);box-shadow:var(--hi),0 22px 48px -24px rgba(0,0,0,.8);
+  backdrop-filter:blur(12px) saturate(1.2);-webkit-backdrop-filter:blur(12px) saturate(1.2)}
+@media (prefers-color-scheme:light){.pr-kart{background:rgba(255,255,255,.55);border-color:rgba(255,255,255,.75);box-shadow:var(--hi),0 22px 48px -26px rgba(24,40,100,.45)}}
+.pr-oda{position:relative;min-height:220px}
+.pr-oda::before{content:"";position:absolute;left:0;right:0;bottom:0;height:210px;background:radial-gradient(circle at 50% 72%,color-mix(in srgb,var(--c1) 26%,transparent),transparent 62%);pointer-events:none}
+.pr-golge{position:absolute;left:50%;bottom:10px;width:130px;height:26px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(ellipse,rgba(0,0,0,.5),transparent 70%)}
+.pr-sahne{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:16px;width:max-content;max-width:100%}
+.pr-sahne .pr-balon{max-width:240px}
 .pr-av{display:block;height:220px;width:auto;image-rendering:pixelated;margin-bottom:-6px;filter:drop-shadow(0 12px 14px rgba(0,0,0,.4))}
 span.pr-av{display:grid;place-items:center;width:120px;color:var(--mute)}
 span.pr-av .ic{width:96px;height:96px}
@@ -36,7 +43,7 @@ span.pr-av .ic{width:96px;height:96px}
 @keyframes prBalon{0%{opacity:0;transform:translateY(12px) scale(.7)}60%{opacity:1;transform:translateY(-3px) scale(1.04)}100%{opacity:1;transform:none}}
 
 /* ---- kimlik ---- */
-.pr-kim{position:relative;min-width:0;padding:26px 30px 24px;border-radius:24px;background:color-mix(in srgb,var(--surface) 64%,transparent);border:1px solid var(--line2);box-shadow:var(--hi),0 18px 40px -22px rgba(0,0,0,.7);backdrop-filter:blur(14px) saturate(1.15);-webkit-backdrop-filter:blur(14px) saturate(1.15)}
+.pr-kim{position:relative;min-width:0;padding:calc(var(--ov) + 14px) 30px 22px 6px}
 .pr-ad{margin:0 0 12px;font:800 clamp(2.2rem,5.6vw,3.5rem)/1 "Bricolage Grotesque",Manrope,sans-serif;letter-spacing:-.055em;word-break:break-word;background:linear-gradient(100deg,var(--ink) 40%,var(--c2));-webkit-background-clip:text;background-clip:text;color:transparent}
 .pr-rozet{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .pr .rol{font-size:.78rem;padding:5px 13px 5px 9px}.pr .rol .ic{width:15px;height:15px}
@@ -46,12 +53,13 @@ span.pr-av .ic{width:96px;height:96px}
 @media (prefers-color-scheme:light){.pr-on{color:#0a8a66}}
 @keyframes prNabiz{0%{box-shadow:0 0 0 0 rgba(53,224,176,.55)}70%,100%{box-shadow:0 0 0 8px rgba(53,224,176,0)}}
 .pr-acik{margin:14px 0 0;max-width:44ch;color:var(--mute)}
-.pr-ozet{display:flex;flex-wrap:wrap;gap:12px 0;margin:20px 0 0;padding:16px 0 0;border-top:1px solid var(--line2)}
+.pr-alt{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px 24px;margin-top:18px;padding-top:16px;border-top:1px solid color-mix(in srgb,var(--ink) 14%,transparent)}
+.pr-ozet{display:flex;flex-wrap:wrap;gap:12px 0;margin:0;padding:0}
 .pr-ozet>div{display:flex;flex-direction:column-reverse;gap:2px;padding:0 20px;border-left:1px solid var(--line2)}
 .pr-ozet>div:first-child{padding-left:0;border-left:0}
 .pr-ozet dd{margin:0;font:800 1.35rem/1.15 "Bricolage Grotesque",Manrope,sans-serif;letter-spacing:-.04em}
 .pr-ozet dt{color:var(--mute);font-size:.78rem}
-.pr-eylem{margin-top:18px}
+.pr-eylem{margin:0}
 .pr-duz{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:12px;border:1.5px solid var(--c1);color:var(--c1);font:800 .9rem "Bricolage Grotesque",Manrope,sans-serif;text-decoration:none;transition:background .15s}
 .pr-duz:hover{background:color-mix(in srgb,var(--c1) 14%,transparent)}.pr-duz .ic{width:16px;height:16px}
 .pr-duz:focus-visible,.pr-haber:focus-visible,.pr-daha:focus-visible,.pr-yok a:focus-visible{outline:2px solid var(--c1);outline-offset:3px}
@@ -93,28 +101,19 @@ span.pr-th{display:grid;place-items:center;color:var(--c1)}span.pr-th .ic{width:
 .pr-yok p{margin:0 0 18px;color:var(--mute)}
 .pr-yok a{color:var(--c1);font-weight:800}
 
-/* ---- özel arkaplan (onaylanmışsa) ---- */
-.pr-hero::before,.pr-hero::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .6s}
-.pr-hero::before{background:var(--pr-bg) center/cover no-repeat}
-.pr-hero::after{background:linear-gradient(90deg,rgba(6,10,24,.3),rgba(6,10,24,.5)),radial-gradient(120% 90% at 50% 120%,rgba(6,10,24,.55),transparent 60%)}
-.pr-hero.pr-ozel::before,.pr-hero.pr-ozel::after{opacity:1}
-.pr-hero>.pr-oda,.pr-hero>.pr-kim{z-index:1}
-.pr-hero.pr-ozel{--ink:#f1f5ff;--mute:#c4cde6;--line2:rgba(255,255,255,.16);border-color:rgba(255,255,255,.18)}
-.pr-ozel .pr-kim{background:rgba(8,12,28,.58);border-color:rgba(255,255,255,.14)}
-.pr-zemin{transition:opacity .6s}
-.pr-ozel .pr-zemin{opacity:0}
-.pr-ozel .pr-oda::before{opacity:.35}
-.pr-ozel .pr-golge{width:140px;height:34px;background:radial-gradient(ellipse,rgba(0,0,0,.6),transparent 70%)}
-@media (prefers-color-scheme:light){.pr-kim{background:rgba(255,255,255,.62)}.pr-ozel .pr-kim{background:rgba(8,12,28,.58)}.pr-ozel .rol-uye{color:#c4cce0;background:rgba(196,204,224,.14);border-color:rgba(196,204,224,.35)}.pr-ozel .rol-yazar{color:#6ff0c8}.pr-ozel .rol-moderator{color:#ffc766}.pr-ozel .pr-on{color:#6ff0c8}}
-@media (prefers-reduced-motion:reduce){.pr-hero::before,.pr-hero::after{transition:none}}
+/* ---- özel arkaplan: banner katmanı yukarıda (.pr-ozel .pr-banner::before) ---- */
+@media (prefers-reduced-motion:reduce){.pr-banner::before{transition:none}}
 
 @media (max-width:900px){.pr-govde{grid-template-columns:1fr}.pr-yan{position:static}}
 @media (max-width:760px){
   .pr{padding:18px 14px 70px}
-  .pr-hero{grid-template-columns:1fr;padding:6px 14px 16px;text-align:center}
-  .pr-oda{height:410px}.pr-kim{padding:20px 16px 18px}
-  .pr-rozet,.pr-ozet{justify-content:center}.pr-acik{margin-inline:auto}
-  .pr-ozet{justify-content:center}.pr-ozet>div{padding:0 14px}
+  .pr-hero{--ov:46px}
+  .pr-banner{height:clamp(190px,50vw,240px);border-radius:22px}
+  .pr-kart{grid-template-columns:1fr;margin:calc(var(--ov)*-1) 6px 0;text-align:center}
+  .pr-oda{min-height:0;height:118px}.pr-sahne{bottom:8px}.pr-av{height:170px}
+  .pr-kim{padding:6px 16px 18px}
+  .pr-rozet,.pr-alt,.pr-ozet{justify-content:center}
+  .pr-ozet>div{padding:0 14px}
 }
 @media (prefers-reduced-motion:reduce){.pr-balon{animation:none}.pr-on i,.pr-isk{animation:none}.pr-haber b,.pr-daha,.pr-duz{transition:none}}
 </style>
@@ -167,9 +166,9 @@ span.pr-th{display:grid;place-items:center;color:var(--c1)}span.pr-th .ic{width:
     document.title = p.habbo_ad + " – Habbo Arşiv";
     kok.textContent = "";
 
-    /* oda: karolu zemin, avatar, motto balonu */
+    /* üst alan: banner, üstüne binen cam kart; avatar ve motto balonu kartın solunda banner sınırına taşar */
     const hero = el("section", "pr-hero"), oda = el("div", "pr-oda");
-    oda.appendChild(el("span", "pr-zemin")); oda.appendChild(el("span", "pr-golge"));
+    oda.appendChild(el("span", "pr-golge"));
     const sahne = el("div", "pr-sahne");
     if ("motto" in p) {
       const b = el("p", "pr-balon" + (p.motto ? "" : " yok"));
@@ -187,9 +186,10 @@ span.pr-th{display:grid;place-items:center;color:var(--c1)}span.pr-th .ic{width:
     const oge = (de, et) => { const d = el("div"), v = el("dd"); v.textContent = de; d.appendChild(v); d.appendChild(el("dt", "", et)); ozet.appendChild(d); return v; };
     const yorumSay = oge("…", "yorum"), haberSay = oge("…", "habere yorum yaptı");
     if (p.olusturma) oge(tarih(p.olusturma, { month: "long", year: "numeric" }), "katıldı");
-    kim.appendChild(ozet);
-    if (kendi) { const a = el("a", "pr-duz", S.svg("pen") + "<span>Mottonu düzenle</span>"); a.href = "/hesap"; const e = el("div", "pr-eylem"); e.appendChild(a); kim.appendChild(e); }
-    hero.appendChild(oda); hero.appendChild(kim); kok.appendChild(hero);
+    const alt = el("div", "pr-alt"); alt.appendChild(ozet); kim.appendChild(alt);
+    if (kendi) { const a = el("a", "pr-duz", S.svg("pen") + "<span>Mottonu düzenle</span>"); a.href = "/hesap"; const e = el("div", "pr-eylem"); e.appendChild(a); alt.appendChild(e); }
+    const kart = el("div", "pr-kart"); kart.appendChild(oda); kart.appendChild(kim);
+    hero.appendChild(el("div", "pr-banner")); hero.appendChild(kart); kok.appendChild(hero);
 
     /* onaylanmış özel arkaplan varsa uygula (tablo yoksa ya da okunamazsa sessizce geçer) */
     HESAP.rest("arkaplan_talepleri?select=dosya&kullanici_id=eq." + encodeURIComponent(p.id) + "&durum=eq.onayli&limit=1").then(({ ok, v }) => {
