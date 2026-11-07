@@ -22,6 +22,7 @@ const SITE = (() => {
     build: '<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>',
     arrow: '<path d="M7 7h10v10"/><path d="M7 17 17 7"/>',
     x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+    search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
     verify: '<path d="M12 22c5.5-2 8-6 8-11V5l-8-3-8 3v6c0 5 2.5 9 8 11z"/><path d="m9 12 2 2 4-4"/>'
   };
   const svg = (k, c) => '<svg class="ic ' + (c || "") + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + IC[k] + '</svg>';
@@ -56,8 +57,75 @@ const SITE = (() => {
     document.body.prepend(hd); kullanici();
   }
 
+  /* ---------- üye arama (üst çubuk): kayıtlı üyeleri Habbo adıyla bulur, profiline götürür ---------- */
+  let aramaKap = null;
+  function aramaKur() {
+    if (aramaKap) return aramaKap;
+    const kap = el("div", "sh-ara-kap");
+    const btn = el("button", "sh-ara-btn", svg("search")); btn.type = "button";
+    btn.setAttribute("aria-label", "Üye ara"); btn.setAttribute("aria-expanded", "false"); btn.setAttribute("aria-controls", "shAraPanel"); btn.title = "Üye ara";
+    const panel = el("div", "sh-ara-panel"); panel.id = "shAraPanel";
+    const kutu = el("label", "sh-ara-kutu", svg("search"));
+    const girdi = el("input"); girdi.type = "search"; girdi.maxLength = 30; girdi.placeholder = "Üye ara (Habbo adı)";
+    girdi.autocomplete = "off"; girdi.spellcheck = false; girdi.setAttribute("autocapitalize", "off"); girdi.setAttribute("aria-label", "Üye ara");
+    kutu.appendChild(girdi);
+    const durum = el("p", "sh-ara-durum"); durum.setAttribute("role", "status"); durum.setAttribute("aria-live", "polite");
+    const liste = el("ul", "sh-ara-liste");
+    panel.append(kutu, durum, liste); kap.append(btn, panel);
+
+    const BOS = "Aramak için en az 2 harf yaz.";
+    durum.textContent = BOS;
+    const sade = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    let zamanlayici = 0, sira = 0;
+    const ac = v => { kap.classList.toggle("acik", v); btn.setAttribute("aria-expanded", v); if (v) setTimeout(() => girdi.focus(), 40); };
+
+    // İlk sonucun adresini döndürür (Enter'a basılınca oraya gidilir)
+    async function ara() {
+      const q = girdi.value.trim().replace(/[*%\\_]/g, "").slice(0, 30), n = ++sira;
+      liste.textContent = "";
+      if (q.length < 2) { durum.textContent = BOS; return null; }
+      durum.textContent = "Aranıyor…";
+      let r = null;
+      try { r = await HESAP.rest("profiller?select=id,habbo_ad,otel,rol&habbo_ad=ilike." + encodeURIComponent("*" + q + "*") + "&order=habbo_ad.asc&limit=30"); } catch { /* r null kalır */ }
+      if (n !== sira) return null;                       // daha yeni bir arama başladı
+      if (!r || !r.ok || !Array.isArray(r.v)) { durum.textContent = "Arama şu an yapılamıyor. Biraz sonra tekrar dene."; return null; }
+      const k = sade(q), puan = p => { const x = sade(p.habbo_ad); return x === k ? 0 : x.startsWith(k) ? 1 : 2; };
+      const bulunan = r.v.filter(p => p && p.habbo_ad && /^[0-9a-f-]{36}$/i.test(p.id)).sort((a, b) => puan(a) - puan(b)).slice(0, 10);
+      if (!bulunan.length) { durum.textContent = "Bu adla kayıtlı üye bulunamadı."; return null; }
+      durum.textContent = "";
+      bulunan.forEach(p => {
+        const li = el("li"), a = el("a", "sh-ara-oge"); a.href = "/profil?id=" + p.id;
+        a.appendChild(avatar({ ad: p.habbo_ad, otel: p.otel }, "m", true, "kucuk"));
+        const t = el("span", "sh-ara-t"), b = el("b"); b.textContent = p.habbo_ad; t.appendChild(b);
+        t.appendChild(el("span", "sh-alt", rozet(rolOf(p), false) + otelEt(p.otel)));
+        a.appendChild(t); li.appendChild(a); liste.appendChild(li);
+      });
+      return liste.querySelector("a").href;
+    }
+
+    girdi.addEventListener("input", () => { clearTimeout(zamanlayici); zamanlayici = setTimeout(ara, 280); });
+    girdi.addEventListener("keydown", e => {
+      if (e.key === "Enter") { e.preventDefault(); clearTimeout(zamanlayici); ara().then(u => { if (u) location.href = u; }); }
+      else if (e.key === "ArrowDown") { const a = liste.querySelector("a"); if (a) { e.preventDefault(); a.focus(); } }
+    });
+    liste.addEventListener("keydown", e => {
+      const a = e.target.closest("a"); if (!a) return;
+      if (e.key === "ArrowDown") { const s = a.parentElement.nextElementSibling; if (s) { e.preventDefault(); s.querySelector("a").focus(); } }
+      else if (e.key === "ArrowUp") { e.preventDefault(); const o = a.parentElement.previousElementSibling; (o ? o.querySelector("a") : girdi).focus(); }
+    });
+    btn.onclick = () => ac(!kap.classList.contains("acik"));
+    document.addEventListener("click", e => { if (!kap.contains(e.target)) ac(false); }, true);
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape" && kap.classList.contains("acik")) { ac(false); btn.focus(); return; }
+      const ae = document.activeElement;
+      if (e.key === "/" && !e.ctrlKey && !e.metaKey && !e.altKey && !/^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName) && !ae.isContentEditable && !document.body.classList.contains("gm-kilit")) { e.preventDefault(); ac(true); }
+    });
+    return (aramaKap = kap);
+  }
+
   function kullanici() {
     const kutu = document.getElementById("shUser"), h = HESAP.oku(); kutu.textContent = "";
+    kutu.appendChild(aramaKur());
     if (!h) {
       kutu.appendChild(el("button", "sh-btn ik", "Giriş yap")).dataset.giris = "giris";
       kutu.appendChild(el("button", "sh-btn", "Kayıt ol")).dataset.giris = "kayit";
