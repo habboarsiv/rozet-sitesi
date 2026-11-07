@@ -54,6 +54,7 @@ const SITE = (() => {
     const nav = ana ? "" : '<nav class="sh-nav" aria-label="Bölümler">' + [["R", "Rozetler", "/"], ["H", "Haberler", "/#haberler"], ["P", "Promolar", "/#promolar"], ["M", "Mobiler", "/#mobiler"]]
       .map(x => '<a href="' + x[2] + '"' + (aktif === x[0] ? ' class="on" aria-current="page"' : "") + '>' + x[1] + '</a>').join("") + '</nav>';
     hd.innerHTML = '<div class="sh-in"><a class="sh-logo" href="/" aria-label="Habbo Arşiv">' + LOGO + '<span>Habbo Arşiv</span></a>' + nav + '<div class="sh-user" id="shUser"></div></div>';
+    const ku = hd.querySelector("#shUser"); ku.parentNode.insertBefore(aramaKur(), ku);
     document.body.prepend(hd); kullanici();
   }
 
@@ -62,22 +63,21 @@ const SITE = (() => {
   function aramaKur() {
     if (aramaKap) return aramaKap;
     const kap = el("div", "sh-ara-kap");
-    const btn = el("button", "sh-ara-btn", svg("search")); btn.type = "button";
-    btn.setAttribute("aria-label", "Üye ara"); btn.setAttribute("aria-expanded", "false"); btn.setAttribute("aria-controls", "shAraPanel"); btn.title = "Üye ara";
-    const panel = el("div", "sh-ara-panel"); panel.id = "shAraPanel";
+    kap.setAttribute("role", "search");
     const kutu = el("label", "sh-ara-kutu", svg("search"));
     const girdi = el("input"); girdi.type = "search"; girdi.maxLength = 30; girdi.placeholder = "Üye ara (Habbo adı)";
     girdi.autocomplete = "off"; girdi.spellcheck = false; girdi.setAttribute("autocapitalize", "off"); girdi.setAttribute("aria-label", "Üye ara");
     kutu.appendChild(girdi);
+    const panel = el("div", "sh-ara-panel");
     const durum = el("p", "sh-ara-durum"); durum.setAttribute("role", "status"); durum.setAttribute("aria-live", "polite");
     const liste = el("ul", "sh-ara-liste");
-    panel.append(kutu, durum, liste); kap.append(btn, panel);
+    panel.append(durum, liste); kap.append(kutu, panel);
 
     const BOS = "Aramak için en az 2 harf yaz.";
     durum.textContent = BOS;
     const sade = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
     let zamanlayici = 0, sira = 0;
-    const ac = v => { kap.classList.toggle("acik", v); btn.setAttribute("aria-expanded", v); if (v) setTimeout(() => girdi.focus(), 40); };
+    const ac = v => kap.classList.toggle("acik", v);
 
     // İlk sonucun adresini döndürür (Enter'a basılınca oraya gidilir)
     async function ara() {
@@ -113,19 +113,19 @@ const SITE = (() => {
       if (e.key === "ArrowDown") { const s = a.parentElement.nextElementSibling; if (s) { e.preventDefault(); s.querySelector("a").focus(); } }
       else if (e.key === "ArrowUp") { e.preventDefault(); const o = a.parentElement.previousElementSibling; (o ? o.querySelector("a") : girdi).focus(); }
     });
-    btn.onclick = () => ac(!kap.classList.contains("acik"));
+    kap.addEventListener("focusin", () => ac(true));
+    kap.addEventListener("focusout", e => { if (!e.relatedTarget || !kap.contains(e.relatedTarget)) ac(false); });
     document.addEventListener("click", e => { if (!kap.contains(e.target)) ac(false); }, true);
     document.addEventListener("keydown", e => {
-      if (e.key === "Escape" && kap.classList.contains("acik")) { ac(false); btn.focus(); return; }
+      if (e.key === "Escape" && kap.contains(document.activeElement)) { ac(false); girdi.blur(); return; }
       const ae = document.activeElement;
-      if (e.key === "/" && !e.ctrlKey && !e.metaKey && !e.altKey && !/^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName) && !ae.isContentEditable && !document.body.classList.contains("gm-kilit")) { e.preventDefault(); ac(true); }
+      if (e.key === "/" && !e.ctrlKey && !e.metaKey && !e.altKey && !/^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName) && !ae.isContentEditable && !document.body.classList.contains("gm-kilit")) { e.preventDefault(); girdi.focus(); }
     });
     return (aramaKap = kap);
   }
 
   function kullanici() {
     const kutu = document.getElementById("shUser"), h = HESAP.oku(); kutu.textContent = "";
-    kutu.appendChild(aramaKur());
     if (!h) {
       kutu.appendChild(el("button", "sh-btn ik", "Giriş yap")).dataset.giris = "giris";
       kutu.appendChild(el("button", "sh-btn", "Kayıt ol")).dataset.giris = "kayit";
