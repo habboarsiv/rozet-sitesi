@@ -54,10 +54,10 @@ details.nasil summary{cursor:pointer;font-weight:700}details.nasil ol{margin:8px
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="tema-sayfa.css">
+<link rel="stylesheet" href="site.css">
 </head>
-<body data-sec="H">
+<body data-sec="H" data-nav="H">
 <main>
-<a href="/">← Habbo Arşiv'e dön</a>
 <h1>Haber paneli</h1>
 <div class="card" id="kilit" hidden></div>
 
@@ -100,6 +100,7 @@ details.nasil summary{cursor:pointer;font-weight:700}details.nasil ol{margin:8px
 
 <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
 <script src="hesap.js"></script>
+<script src="site.js"></script>
 <script>
 const CLOUD = "md4etvsz", PRESET = "habboarsiv_haber";
 const $ = id => document.getElementById(id);
@@ -269,7 +270,7 @@ $("geriBtn").onclick = () => { goster("liste"); listele(); };
 
 (function baslat() {
   const h = HESAP.oku(), k = $("kilit");
-  if (!h) { k.hidden = false; k.innerHTML = 'Haber yazmak için <a href="hesap">giriş yapmalısın</a>.'; return; }
+  if (!h) { k.hidden = false; k.innerHTML = 'Haber yazmak için <a href="#" data-giris="giris">giriş yapmalısın</a>.'; return; }
   if (h.rol !== "yazar" && h.rol !== "yonetici") { k.hidden = false; k.textContent = "Bu sayfa sadece yazarlar ve yöneticiler içindir."; return; }
   kurEditor(); ipuclari(); goster("liste"); listele();
 })();

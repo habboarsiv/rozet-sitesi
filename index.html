@@ -6,11 +6,6 @@
 <title>Habbo Arşiv</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-<link rel="manifest" href="site.webmanifest">
-<link rel="icon" href="favicon.ico">
 <style>
 :root{--bg:#f4f6f9;--surface:#fff;--surface2:#f0f3f8;--line:#e2e6ed;--ink:#161a22;--mute:#667085;--acc:#2858d8;--accD:#1e44ab;--accS:#e9effd;--accT:#fff;--red:#d92d20;--tile:#eef1f6;--shadow:0 1px 2px rgba(16,24,40,.06);--r:12px}
 @media (prefers-color-scheme:dark){:root{--bg:#0f1218;--surface:#171b24;--surface2:#1f2430;--line:#2a3040;--ink:#eef1f6;--mute:#98a2b3;--acc:#6b93ff;--accD:#8aa9ff;--accS:#1d2a4d;--accT:#0b1020;--red:#f97066;--tile:#232938;--shadow:none}}
@@ -202,10 +197,11 @@ dialog p{margin:0 20px 12px;color:var(--mute)}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="tema.css">
+<link rel="stylesheet" href="site.css">
 </head>
 <body data-sec="R">
 <header class="hero">
-  <div class="hero-in"><a class="hesap-link" id="hesapLink" href="hesap.html">Giriş / Kayıt</a><h1 class="sn">Habbo Arşiv</h1><p class="sub">Habbo dünyasına dair aradığın her şey tek bir adreste.</p><div class="led" id="led"></div></div>
+  <div class="hero-in"><h1 class="sn">Habbo Arşiv</h1><p class="sub">Habbo dünyasına dair aradığın her şey tek bir adreste.</p><div class="led" id="led"></div></div>
 </header>
 <div class="wrap">
   <div class="seg modes" role="group" aria-label="Bölüm"><button class="tg" id="mR" type="button" aria-pressed="true">Rozetler</button><button class="tg" id="mP" type="button" aria-pressed="false">Promolar</button><button class="tg" id="mM" type="button" aria-pressed="false">Mobiler</button><button class="tg" id="mH" type="button" aria-pressed="false">Haberler</button></div>
@@ -294,6 +290,7 @@ dialog p{margin:0 20px 12px;color:var(--mute)}
 </dialog>
 
 <script src="hesap.js"></script>
+<script src="site.js"></script>
 <script src="dil.js"></script>
 <script src="mobi-ui.js"></script>
 <script src="haber-ui.js"></script>
