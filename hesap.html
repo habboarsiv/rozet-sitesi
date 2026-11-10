@@ -114,7 +114,7 @@ a{color:inherit}
     };
     // Yakınlaştırma çubuğu (yalnızca yeni görsel seçiliyken görünür)
     const zoomKap = el("label", "ark-zoom"), zoom = document.createElement("input");
-    zoomKap.hidden = true; zoomKap.style.cssText = "display:flex;align-items:center;gap:10px;margin:10px 0;font-size:.85rem;color:var(--mute)";
+    zoomKap.style.cssText = "display:none;align-items:center;gap:10px;margin:10px 0;font-size:.85rem;color:var(--mute)";
     zoom.type = "range"; zoom.min = "1"; zoom.max = "3"; zoom.step = "0.01"; zoom.value = "1"; zoom.style.cssText = "flex:1;accent-color:#8b9dff";
     zoomKap.append(document.createTextNode("Yakınlaştır"), zoom); yan.insertBefore(zoomKap, eylem);
     zoom.oninput = () => { if (!secili) return; secili.z = +zoom.value; const im = onizle.querySelector("img"); if (im) yerles(im, secili); };
@@ -144,7 +144,7 @@ a{color:inherit}
     const ciz = () => {
       eylem.textContent = "";
       onizle.style.overflow = "hidden"; onizle.style.cursor = secili ? "grab" : ""; onizle.style.touchAction = secili ? "none" : "";
-      zoomKap.hidden = !secili; if (secili) zoom.value = secili.z;
+      zoomKap.style.display = secili ? "flex" : "none"; if (secili) zoom.value = secili.z;
       const bk = bekleyen(), ak = aktif(), son = satirlar[0];
       if (secili) {
         resim(secili.url, "Önizleme", secili); rozetle("", "Önizleme");
