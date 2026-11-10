@@ -11,12 +11,20 @@
 #     "t" alanıyla işaretlenir ve listenin en başına gelir.
 #   - Görseli bulunamayan eski rozetler listenin sonuna gider.
 #
+# İSİMSİZ ROZETLER:
+#   Habbo bazen rozetin görselini metin dosyasına (ad/açıklama) girmeden önce yayınlar.
+#   Bu rozetler metin dosyasında hiç geçmediği için normal yolla bulunamaz. Bu yüzden
+#   aktif rozet serilerinin (DE68P, PTF87, WSH14 gibi) numarası çevresindeki kodların
+#   görselleri denenir; görseli varsa rozet, adı yerine KODUYLA listeye eklenir.
+#   Ad sonradan metin dosyasına gelince otomatik olarak gerçek adıyla güncellenir.
+#
 # Bu betik her çalıştığında veri değiştiyse dosyayı günceller, değişmediyse dokunmaz.
 # Herhangi bir otel indirilemezse dosyaya hiç yazmaz (eksik veriyle üzerine yazmaz).
 
 import datetime
 import json
 import os
+import re
 import sys
 import time
 import urllib.error
@@ -296,6 +304,70 @@ def gorselleri_denetle(veri, eski_liste, tarihler, bugun):
     return {k: v for k, v in veri.items() if k not in gizli}
 
 
+# ---------------------------------------------------------------- isimsiz rozetleri bul
+
+KESIF_AKTIF_GUN = 90   # Son bu kadar günde rozeti çıkmış seriler "aktif" sayılır
+KESIF_GERI = 15        # Serinin en büyük numarasından kaç numara geriye bakılsın (aradaki boşluklar)
+KESIF_ILERI = 10       # Serinin en büyük numarasından kaç numara ileriye bakılsın
+KOD_DESENI = re.compile(r"^([A-Za-z]{2,5})(\d{2,5})([A-Za-z]?)$")   # DE68P, PTF87, WSH14, TM219
+
+
+def isimsizleri_bul(veri, eski_liste, tarihler, bugun):
+    """Metin dosyasında henüz adı/açıklaması olmayan ama görseli yayınlanmış rozetleri bulur.
+    Bulunanlar adı yerine koduyla ve hotels=[] ile veri'ye eklenir (YENİ sayılır).
+    Metin dosyasına sonradan gelirlerse veri zaten gerçek bilgileriyle dolacağı için güncellenirler.
+    (veri, yeni_bulunan_sayisi) döndürür."""
+    if eski_liste is None:
+        return veri, 0
+
+    # 1) Önceki çalıştırmalarda görselden bulunmuş, metni hâlâ gelmemiş rozetleri koru.
+    #    (hotels boşsa o rozet metinden değil, görselden bulunmuş demektir)
+    for b in eski_liste:
+        if not b.get("hotels") and b["code"] not in veri:
+            veri[b["code"]] = {"code": b["code"], "name": b.get("name") or b["code"],
+                               "desc": b.get("desc", ""), "hotels": [], "_skor": 1.0}
+
+    # 2) Rozetleri serilere ayır: (önek, sonek, hane sayısı) -> {numara: kod}
+    seriler, ornek = {}, {}
+    for kod in veri:
+        x = KOD_DESENI.match(kod)
+        if not x:
+            continue
+        anahtar = (x.group(1).upper(), x.group(3).upper(), len(x.group(2)))
+        seriler.setdefault(anahtar, {})[int(x.group(2))] = kod
+        ornek.setdefault(anahtar, (x.group(1), x.group(3)))
+
+    sinir = (datetime.date.fromisoformat(bugun) - datetime.timedelta(days=KESIF_AKTIF_GUN)).isoformat()
+    bilinen = {k.upper() for k in veri}
+    adaylar = []
+    for anahtar, numaralar in seriler.items():
+        if not any((tarihler.get(k) or "") >= sinir for k in numaralar.values()):
+            continue   # seri uzun süredir durgun, boşuna sorgulama
+        onek, sonek = ornek[anahtar]
+        en_buyuk = max(numaralar)
+        for n in range(max(1, en_buyuk - KESIF_GERI), en_buyuk + KESIF_ILERI + 1):
+            if n in numaralar:
+                continue
+            kod = onek + str(n).zfill(anahtar[2]) + sonek
+            if kod.upper() not in bilinen:
+                adaylar.append(kod)
+    adaylar = sorted(set(adaylar))
+    if not adaylar:
+        return veri, 0
+
+    print("\nİsimsiz rozet taraması: %d kod deneniyor." % len(adaylar))
+    bulunan = []
+    with ThreadPoolExecutor(max_workers=IS_PARCACIGI) as havuz:
+        for kod, var in zip(adaylar, havuz.map(gorsel_var, adaylar)):
+            if var is True:
+                bulunan.append(kod)
+    for kod in bulunan:
+        veri[kod] = {"code": kod, "name": kod, "desc": "", "hotels": [], "_skor": 1.0}
+        tarihler[kod] = bugun
+    print("   Görseli olup metni olmayan yeni rozet: %d" % len(bulunan))
+    return veri, len(bulunan)
+
+
 # ---------------------------------------------------------------- dosya işlemleri
 
 def eski_oku():
@@ -394,6 +466,8 @@ def main():
             if kod not in eski_set and kod not in tarihler:
                 tarihler[kod] = bugun
                 yeni_say += 1
+    # Metin dosyasında henüz adı olmayan ama görseli yayınlanmış rozetleri de ekle.
+    veri, isimsiz_say = isimsizleri_bul(veri, eski_liste, tarihler, bugun)
     # Geri kalanların tarihi görsellerinden bulunur (her rozet için sadece bir kez).
     eksik = sorted(k for k in veri if k not in tarihler)
     bakilan = tarihleri_coz(eksik, tarihler)
