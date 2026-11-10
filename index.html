@@ -689,14 +689,18 @@ var GECMIS_API="https://habbo-gecmis.habboarsiv-api.workers.dev/";
       iste(HABBO_ADRES[otel]+"/api/public/achievements/"+encodeURIComponent(u.uniqueId)).then(function(v){
         var l=liste(v,"achievements");yer.innerHTML="";
         if(!l.length){yer.appendChild(bos("Başarım bilgisi yok."));return}
-        var topla=0,w=div("lst","");
+        var topla=0,w=div("lst",""),achKod={};
+        // Oyuncunun kendi rozetlerinden her başarımın en yüksek seviyeli görselini bul (ACH_RoomEntry6 gibi)
+        rozetler.forEach(function(r){var m=/^ACH_(.+?)(\d+)$/i.exec(String(r.code));if(m){var k=m[1].toLowerCase(),n=+m[2];if(!achKod[k]||n>achKod[k].n)achKod[k]={n:n,c:r.code}}});
         l.forEach(function(x){
           var a=x.achievement||x,ad=a.name||a.title||x.name||x.achievementName||"Başarım";
+          var ham=String(ad).replace(/\s+/g,"");
           ad=String(ad).replace(/([a-z])([A-Z])/g,"$1 $2");
           var skor=x.score!=null?x.score:(a.score!=null?a.score:null);
           if(typeof skor==="number")topla+=skor;
           var alt=x.level!=null?"Seviye "+x.level:(a.level!=null?"Seviye "+a.level:"");
-          w.appendChild(satir("",ad,alt,skor!=null?sayiYaz(skor):""));
+          var lv=x.level!=null?x.level:a.level,ik=achKod[ham.toLowerCase()],kod=ik?ik.c:"ACH_"+ham+(lv!=null?lv:"");
+          w.appendChild(satir(IMG+encodeURIComponent(kod)+".png",ad,alt,skor!=null?sayiYaz(skor):""));
         });
         if(topla){var t=div("msg","");t.textContent="Toplam başarım puanı: "+sayiYaz(topla);t.style.marginBottom="10px";yer.appendChild(t)}
         yer.appendChild(w);
