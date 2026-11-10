@@ -142,10 +142,25 @@ const SITE = (() => {
     const link = (href, ic, ad2, c) => { const a = el("a", "sh-oge " + (c || ""), svg(ic) + "<span>" + ad2 + "</span>"); a.href = href; a.setAttribute("role", "menuitem"); return a; };
     m.appendChild(link("/hesap", "user", "Hesabım"));
     if (r === "yazar" || r === "moderator" || r === "yonetici") m.appendChild(link("/haber-yaz", "paper", "Haber Paneli"));
-    if (r === "moderator" || r === "yonetici") m.appendChild(link("/arkaplan-onay", "verify", "Arkaplan Onayları"));
+    let onayLink = null;
+    if (r === "moderator" || r === "yonetici") { onayLink = link("/arkaplan-onay", "verify", "Arkaplan Onayları"); m.appendChild(onayLink); }
     m.appendChild(el("div", "sh-ayrac"));
     const c = el("button", "sh-oge cikis", svg("out") + "<span>Çıkış yap</span>"); c.type = "button"; c.setAttribute("role", "menuitem"); c.onclick = cikis; m.appendChild(c);
     const kap = el("div", "sh-kap"); kap.appendChild(b); kap.appendChild(m); kutu.appendChild(kap);
+    // Yönetici/moderatör: onay bekleyen arkaplan varsa profil düğmesinde kırmızı nokta, menüde sayı rozeti
+    if (onayLink) {
+      HESAP.rest("arkaplan_talepleri?select=id&durum=eq.bekliyor&limit=100").then(({ ok, v }) => {
+        if (!ok || !Array.isArray(v) || !v.length) return;
+        const say = v.length, yazi = say >= 100 ? "99+" : String(say), ipucu = say + " arkaplan onay bekliyor";
+        if (getComputedStyle(b).position === "static") b.style.position = "relative";
+        const nk = el("i", "sh-bekle-nokta"); nk.title = ipucu;
+        nk.style.cssText = "position:absolute;top:-3px;right:-3px;width:12px;height:12px;border-radius:50%;background:#ff4d5e;border:2px solid #070b16;box-sizing:border-box;pointer-events:none";
+        b.appendChild(nk);
+        const rz = el("span", "sh-bekle", yazi); rz.title = ipucu;
+        rz.style.cssText = "margin-left:auto;display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:#ff4d5e;color:#fff;font:800 .72rem Manrope,system-ui,sans-serif";
+        onayLink.appendChild(rz); onayLink.setAttribute("aria-label", "Arkaplan Onayları, " + ipucu);
+      }).catch(() => {});
+    }
     const ac = v => { kap.classList.toggle("acik", v); b.setAttribute("aria-expanded", v); };
     b.onclick = e => { e.stopPropagation(); ac(!kap.classList.contains("acik")); };
     document.addEventListener("click", e => { if (!kap.contains(e.target)) ac(false); });
