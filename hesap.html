@@ -268,6 +268,18 @@ a{color:inherit}
   kok.appendChild(arkaplanKur(h));
   document.title = h.ad + " – Habbo Arşiv";
 
+  // Onay bekleyen arkaplan sayısını karta kırmızı bildirim rozeti olarak ekler (0 ise görünmez)
+  const bekleyenRozeti = (kart) => {
+    HESAP.rest("arkaplan_talepleri?select=id&durum=eq.bekliyor&limit=100").then(({ ok, v }) => {
+      if (!ok || !Array.isArray(v) || !v.length) return;
+      const n = v.length, b = el("span", "hm-bekle", n >= 100 ? "99+" : String(n));
+      b.title = n + " arkaplan onay bekliyor"; b.setAttribute("aria-label", n + " arkaplan onay bekliyor");
+      b.style.cssText = "display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 7px;margin-left:10px;border-radius:999px;background:#ff4d5e;color:#fff;font:800 .75rem Manrope,system-ui,sans-serif;vertical-align:middle;box-shadow:0 0 0 4px rgba(255,77,94,.22)";
+      const h3 = kart.querySelector("h3"); if (h3) h3.appendChild(b);
+      const p = kart.querySelector(".hm-k-tx p"); if (p) p.textContent = n + " arkaplan inceleme bekliyor.";
+    }).catch(() => {});
+  };
+
   // hızlı erişim: sadece yetkisi olanlara
   const hizli = [];
   if (r === "yazar" || r === "yonetici") hizli.push(["/haber-yaz", "paper", "Haber Paneli", "Haber yaz, taslaklarını düzenle ve yayınla.", "Panele git"]);
@@ -277,6 +289,7 @@ a{color:inherit}
     hizli.forEach(([href, ic, ad2, ac, git]) => {
       const k = el("a", "hm-kart", '<span class="hm-ikon">' + S.svg(ic) + '</span><div class="hm-k-tx"><h3>' + ad2 + '</h3><p>' + ac + '</p></div><span class="hm-git">' + git + ' ' + S.svg("arrow") + '</span>');
       k.href = href; hz.appendChild(k);
+      if (href === "/arkaplan-onay") bekleyenRozeti(k);
     });
     kok.appendChild(hz);
   }
