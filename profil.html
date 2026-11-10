@@ -21,7 +21,7 @@ a{color:inherit}
 .pr-hero{--ov:64px;position:relative}
 .pr-banner{position:relative;width:100%;aspect-ratio:1000/290;border-radius:28px;overflow:hidden;border:1px solid var(--line2);box-shadow:var(--hi),var(--shadow);
   background:repeating-linear-gradient(63.43deg,transparent 0 44px,color-mix(in srgb,var(--c1) 16%,transparent) 44px 45px),repeating-linear-gradient(-63.43deg,transparent 0 44px,color-mix(in srgb,var(--c1) 16%,transparent) 44px 45px),linear-gradient(135deg,color-mix(in srgb,var(--c1) 26%,var(--surface)),var(--surface) 78%)}
-.pr-banner::before{content:"";position:absolute;inset:0;background:var(--pr-bg) center/cover no-repeat;opacity:0;transition:opacity .6s}
+.pr-banner::before{content:"";position:absolute;inset:0;background:var(--pr-bg) var(--pr-x,50%) var(--pr-y,50%)/cover no-repeat;transform:scale(var(--pr-z,1));transform-origin:var(--pr-x,50%) var(--pr-y,50%);opacity:0;transition:opacity .6s}
 .pr-banner::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,transparent 55%,rgba(6,10,24,.38))}
 .pr-ozel .pr-banner::before{opacity:1}
 .pr-kart{position:relative;z-index:1;display:grid;grid-template-columns:200px minmax(0,1fr);align-items:stretch;margin:calc(var(--ov)*-1) 0 0;border-radius:28px;
@@ -195,11 +195,17 @@ span.pr-th{display:grid;place-items:center;color:var(--c1)}span.pr-th .ic{width:
     hero.appendChild(el("div", "pr-banner")); hero.appendChild(kart); kok.appendChild(hero);
 
     /* onaylanmış özel arkaplan varsa uygula (tablo yoksa ya da okunamazsa sessizce geçer) */
-    HESAP.rest("arkaplan_talepleri?select=dosya&kullanici_id=eq." + encodeURIComponent(p.id) + "&durum=eq.onayli&limit=1").then(({ ok, v }) => {
+    HESAP.rest("arkaplan_talepleri?select=dosya,konum_x,konum_y,yakin&kullanici_id=eq." + encodeURIComponent(p.id) + "&durum=eq.onayli&limit=1").then(({ ok, v }) => {
       const u = ok && Array.isArray(v) && v[0] ? HESAP.depoUrl(v[0].dosya) : "";
       if (!u) return;
       const t = new Image();
-      t.onload = () => { hero.style.setProperty("--pr-bg", 'url("' + u + '")'); hero.classList.add("pr-ozel"); };
+      const a = v[0], n = (d, lo, hi, df) => { d = Number(d); return Number.isFinite(d) ? Math.min(hi, Math.max(lo, d)) : df; };
+      t.onload = () => {
+        hero.style.setProperty("--pr-bg", 'url("' + u + '")');
+        hero.style.setProperty("--pr-x", n(a.konum_x, 0, 100, 50) + "%"); hero.style.setProperty("--pr-y", n(a.konum_y, 0, 100, 50) + "%");
+        hero.style.setProperty("--pr-z", n(a.yakin, 1, 3, 1));
+        hero.classList.add("pr-ozel");
+      };
       t.src = u;
     }).catch(() => { /* arkaplan gösterilemezse varsayılan görünüm kalır */ });
 

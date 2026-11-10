@@ -100,33 +100,66 @@ a{color:inherit}
     const uuid = () => crypto.randomUUID ? crypto.randomUUID() :
       "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c => { const r = crypto.getRandomValues(new Uint8Array(1))[0] & 15; return (c === "x" ? r : (r & 3 | 8)).toString(16); });
 
-    const resim = (src, etiket) => {
+    // Görselin hangi bölgesinin görüneceği: x/y (% konum) ve z (yakınlaştırma). Profildeki banner ile aynı formül.
+    const ayarOku = (r) => { r = r || {}; const al = (a, b, d) => { const v = a != null ? a : b; return v != null && Number.isFinite(+v) ? +v : d; }; return { x: al(r.konum_x, r.x, 50), y: al(r.konum_y, r.y, 50), z: al(r.yakin, r.z, 1) }; };
+    const yerles = (im, r) => {
+      const a = ayarOku(r);
+      im.style.cssText = "width:100%;height:100%;object-fit:cover;object-position:" + a.x + "% " + a.y + "%;transform:scale(" + a.z + ");transform-origin:" + a.x + "% " + a.y + "%;-webkit-user-drag:none;user-select:none";
+    };
+    const resim = (src, etiket, ayar) => {
       onizle.textContent = "";
       if (!src) { onizle.classList.remove("dolu"); onizle.appendChild(el("div", "ark-yok", "Henüz özel arkaplanın yok. Bir görsel seçip önizleyebilirsin.")); return; }
-      const im = document.createElement("img"); im.alt = ""; im.src = src; onizle.appendChild(im); onizle.classList.add("dolu");
+      const im = document.createElement("img"); im.alt = ""; im.draggable = false; yerles(im, ayar); im.src = src; onizle.appendChild(im); onizle.classList.add("dolu");
       if (etiket) { const e = el("span"); e.textContent = etiket; onizle.appendChild(e); }
     };
+    // Yakınlaştırma çubuğu (yalnızca yeni görsel seçiliyken görünür)
+    const zoomKap = el("label", "ark-zoom"), zoom = document.createElement("input");
+    zoomKap.hidden = true; zoomKap.style.cssText = "display:flex;align-items:center;gap:10px;margin:10px 0;font-size:.85rem;color:var(--mute)";
+    zoom.type = "range"; zoom.min = "1"; zoom.max = "3"; zoom.step = "0.01"; zoom.value = "1"; zoom.style.cssText = "flex:1;accent-color:#8b9dff";
+    zoomKap.append(document.createTextNode("Yakınlaştır"), zoom); yan.insertBefore(zoomKap, eylem);
+    zoom.oninput = () => { if (!secili) return; secili.z = +zoom.value; const im = onizle.querySelector("img"); if (im) yerles(im, secili); };
+
+    // Önizlemede sürükleyerek konumlandırma
+    let sur = null;
+    const sinir = (v) => Math.max(0, Math.min(100, v));
+    onizle.addEventListener("pointerdown", (e) => {
+      const im = onizle.querySelector("img"); if (!secili || !im || !im.naturalWidth) return;
+      const B = onizle.getBoundingClientRect(), k = Math.max(B.width / im.naturalWidth, B.height / im.naturalHeight);
+      sur = { px: e.clientX, py: e.clientY, x: secili.x, y: secili.y, ox: im.naturalWidth * k * secili.z - B.width, oy: im.naturalHeight * k * secili.z - B.height };
+      onizle.setPointerCapture(e.pointerId); onizle.style.cursor = "grabbing"; e.preventDefault();
+    });
+    onizle.addEventListener("pointermove", (e) => {
+      if (!sur || !secili) return;
+      if (sur.ox > .5) secili.x = sinir(sur.x - (e.clientX - sur.px) / sur.ox * 100);
+      if (sur.oy > .5) secili.y = sinir(sur.y - (e.clientY - sur.py) / sur.oy * 100);
+      const im = onizle.querySelector("img"); if (im) yerles(im, secili);
+    });
+    const birak = () => { sur = null; if (secili) onizle.style.cursor = "grab"; };
+    onizle.addEventListener("pointerup", birak); onizle.addEventListener("pointercancel", birak);
+
     const rozetle = (sinif, metin) => { chip.className = "ark-chip " + sinif; chip.textContent = ""; chip.appendChild(el("i")); chip.appendChild(document.createTextNode(metin)); };
     const dugme = (metin, sinif, tik) => { const b = el("button", "ark-btn " + sinif); b.type = "button"; b.textContent = metin; b.onclick = tik; eylem.appendChild(b); return b; };
     const mesgul = (v) => eylem.querySelectorAll("button").forEach(b => b.disabled = v);
 
     const ciz = () => {
       eylem.textContent = "";
+      onizle.style.overflow = "hidden"; onizle.style.cursor = secili ? "grab" : ""; onizle.style.touchAction = secili ? "none" : "";
+      zoomKap.hidden = !secili; if (secili) zoom.value = secili.z;
       const bk = bekleyen(), ak = aktif(), son = satirlar[0];
       if (secili) {
-        resim(secili.url, "Önizleme"); rozetle("", "Önizleme");
-        not.textContent = "Profilin böyle görünecek. Onaya gönderince yönetici ya da moderatör inceler; onaylanınca arkaplan otomatik uygulanır.";
+        resim(secili.url, "Önizleme", secili); rozetle("", "Önizleme");
+        not.textContent = "Profilin böyle görünecek. Görseli sürükleyerek konumlandır, çubukla yakınlaştır. Onaya gönderince yönetici ya da moderatör aynı ayarlı hâlini görür.";
         dugme("Kaydet ve onaya gönder", "", gonder); dugme("Başka görsel seç", "ik", () => dosya.click()); dugme("Vazgeç", "ik", () => { URL.revokeObjectURL(secili.url); secili = null; bildir(""); ciz(); });
       } else if (bk) {
-        resim(HESAP.depoUrl(bk.dosya), "Onay bekleyen"); rozetle("bk", "Onay bekliyor");
+        resim(HESAP.depoUrl(bk.dosya), "Onay bekleyen", bk); rozetle("bk", "Onay bekliyor");
         not.textContent = "Arkaplanın kaydedildi ve onay bekliyor. Onaylanınca profilinde otomatik uygulanır." + (ak ? " O zamana kadar mevcut arkaplanın korunur." : "");
         dugme("Başka görsel seç", "ik", () => dosya.click()); dugme("Talebi geri çek", "kz", () => sil("&durum=eq.bekliyor", "Talep geri çekildi."));
       } else if (son && son.durum === "reddedildi") {
-        resim(ak ? HESAP.depoUrl(ak.dosya) : "", ak ? "Profilinde uygulanan" : ""); rozetle("rd", "Reddedildi");
+        resim(ak ? HESAP.depoUrl(ak.dosya) : "", ak ? "Profilinde uygulanan" : "", ak); rozetle("rd", "Reddedildi");
         not.textContent = "Son gönderdiğin arkaplan onaylanmadı." + (son.red_nedeni ? " Not: " + son.red_nedeni : "") + " Yeni bir görsel seçip tekrar deneyebilirsin.";
         dugme("Yeni görsel seç", "", () => dosya.click()); if (ak) dugme("Arkaplanı kaldır", "kz", () => sil("", "Arkaplan kaldırıldı."));
       } else if (ak) {
-        resim(HESAP.depoUrl(ak.dosya), "Profilinde uygulanıyor"); rozetle("ok", "Uygulandı");
+        resim(HESAP.depoUrl(ak.dosya), "Profilinde uygulanıyor", ak); rozetle("ok", "Uygulandı");
         not.textContent = "Bu arkaplan profilinde görünüyor. Değiştirmek istersen yeni görsel yüklersin; o da onaydan geçtikten sonra uygulanır.";
         dugme("Değiştir", "", () => dosya.click()); dugme("Arkaplanı kaldır", "kz", () => sil("", "Arkaplan kaldırıldı."));
       } else {
@@ -137,7 +170,7 @@ a{color:inherit}
     };
 
     const yenile = async () => {
-      const r = await HESAP.rest("arkaplan_talepleri?select=id,dosya,durum,red_nedeni,olusturma&kullanici_id=eq." + encodeURIComponent(kisi.id) +
+      const r = await HESAP.rest("arkaplan_talepleri?select=id,dosya,durum,red_nedeni,olusturma,konum_x,konum_y,yakin&kullanici_id=eq." + encodeURIComponent(kisi.id) +
         "&durum=in.(bekliyor,onayli,reddedildi)&order=olusturma.desc&limit=20");
       if (!r.ok || !Array.isArray(r.v)) return false;
       satirlar = r.v; return true;
@@ -161,7 +194,7 @@ a{color:inherit}
       if (!blob || blob.type !== "image/webp") { ext = "jpg"; blob = await kodla("image/jpeg", .86); }
       for (let q = .74; blob && blob.size > MAX && q >= .4; q -= .12) blob = await kodla(blob.type, q);
       if (!blob || blob.size > MAX) throw new Error("Görsel yeterince küçültülemedi, daha sade bir görsel dene.");
-      return { blob, ext, url: URL.createObjectURL(blob) };
+      return { blob, ext, url: URL.createObjectURL(blob), x: 50, y: 50, z: 1 };
     };
 
     dosya.onchange = async () => {
@@ -180,7 +213,7 @@ a{color:inherit}
         const eski = await HESAP.rest("arkaplan_talepleri?kullanici_id=eq." + encodeURIComponent(kisi.id) + "&durum=in.(bekliyor,reddedildi)",
           { method: "DELETE", headers: { Prefer: "return=representation" } });
         if (eski.ok && Array.isArray(eski.v)) eski.v.forEach(x => HESAP.depoSil(x.dosya).catch(() => {}));
-        const ek = await HESAP.rest("arkaplan_talepleri", { method: "POST", headers: { Prefer: "return=representation" }, body: JSON.stringify({ kullanici_id: kisi.id, dosya: yol }) });
+        const ek = await HESAP.rest("arkaplan_talepleri", { method: "POST", headers: { Prefer: "return=representation" }, body: JSON.stringify({ kullanici_id: kisi.id, dosya: yol, konum_x: +secili.x.toFixed(2), konum_y: +secili.y.toFixed(2), yakin: +secili.z.toFixed(2) }) });
         if (!ek.ok) { HESAP.depoSil(yol).catch(() => {}); throw 0; }
         URL.revokeObjectURL(secili.url); secili = null;
         await yenile(); ciz();
