@@ -700,7 +700,10 @@ var GECMIS_API="https://habbo-gecmis.habboarsiv-api.workers.dev/";
           if(typeof skor==="number")topla+=skor;
           var alt=x.level!=null?"Seviye "+x.level:(a.level!=null?"Seviye "+a.level:"");
           var lv=x.level!=null?x.level:a.level,ik=achKod[ham.toLowerCase()],kod=ik?ik.c:"ACH_"+ham+(lv!=null?lv:"");
-          w.appendChild(satir(IMG+encodeURIComponent(kod)+".png",ad,alt,skor!=null?sayiYaz(skor):""));
+          // Oyundaki Türkçe ad: o seviyenin rozet adı (yoksa en yüksek sahip olunan seviye, o da yoksa İngilizce ad)
+          var tb=arsiv[("ACH_"+ham+(lv!=null?lv:"")).toLowerCase()]||arsiv[String(kod).toLowerCase()],
+              gad=tb&&tb.name&&tb.name!==tb.code?tb.name:ad;
+          w.appendChild(satir(IMG+encodeURIComponent(kod)+".png",gad,alt,skor!=null?sayiYaz(skor):""));
         });
         if(topla){var t=div("msg","");t.textContent="Toplam başarım puanı: "+sayiYaz(topla);t.style.marginBottom="10px";yer.appendChild(t)}
         yer.appendChild(w);
