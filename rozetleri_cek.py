@@ -37,6 +37,7 @@ from email.utils import parsedate_to_datetime
 KLASOR = os.path.dirname(os.path.abspath(__file__))
 CIKTI = os.path.join(KLASOR, "rozetler.js")
 TARIH_DOSYASI = os.path.join(KLASOR, "rozet_tarihleri.json")
+DIL_KLASORU = os.path.join(KLASOR, "rozet_dil")   # her otelin kendi dilindeki ad/açıklama dosyaları
 
 GORSEL = "https://images.habbo.com/c_images/album1584/"
 UA = {"User-Agent": "Mozilla/5.0 (kisisel rozet arsivi projesi)"}
@@ -368,6 +369,42 @@ def isimsizleri_bul(veri, eski_liste, tarihler, bugun):
     return veri, len(bulunan)
 
 
+# ---------------------------------------------------------------- otel dillerindeki ad ve açıklamalar
+
+def dilleri_yaz(sonuclar, liste):
+    """Her otel için rozet_dil/<otel>.js yazar: o otelin kendi dilindeki ad ve açıklama.
+    Sadece sitede gösterilen (Türkçe) metinden FARKLI olanlar yazılır, dosya küçük kalır.
+    Site bu dosyaları rozet penceresinde bir otelin bayrağına basılınca yükler.
+    İçerik değişmediyse dosyaya dokunmaz. Kaç dosyanın yazıldığını döndürür."""
+    os.makedirs(DIL_KLASORU, exist_ok=True)
+    yazilan = 0
+    for otel, (adlar, aciklamalar, _sira) in sonuclar.items():
+        if otel == "tr":
+            continue   # sitenin kendi dili
+        kayit = {}
+        for b in liste:
+            kod = b["code"]
+            ad = adlar.get(kod, "")
+            ac = aciklamalar.get(kod, "")
+            ad = ad if ad and ad != b["name"] else ""
+            ac = ac if ac and ac != b["desc"] else ""
+            if ad or ac:
+                kayit[kod] = [ad, ac]
+        icerik = ("var ROZET_DIL=window.ROZET_DIL||{};ROZET_DIL[%s]=%s;\n"
+                  % (json.dumps(otel), json.dumps(kayit, ensure_ascii=False, separators=(",", ":"))))
+        yol = os.path.join(DIL_KLASORU, otel + ".js")
+        if os.path.exists(yol):
+            with open(yol, encoding="utf-8") as f:
+                if f.read() == icerik:
+                    continue
+        gecici = yol + ".tmp"
+        with open(gecici, "w", encoding="utf-8") as f:
+            f.write(icerik)
+        os.replace(gecici, yol)
+        yazilan += 1
+    return yazilan
+
+
 # ---------------------------------------------------------------- dosya işlemleri
 
 def eski_oku():
@@ -475,6 +512,9 @@ def main():
     tarih_yaz(tarihler)
 
     liste, yeni_kodlar = sirala(gorunur, eski_liste, tarihler, bugun)
+    dil_say = dilleri_yaz(sonuclar, liste)
+    if dil_say:
+        print("Otel dili dosyaları güncellendi: %d (rozet_dil klasörü)." % dil_say)
 
     if eski_liste is not None and liste == eski_liste:
         print("Değişiklik yok. rozetler.js aynı kaldı (%d rozet)." % len(liste))

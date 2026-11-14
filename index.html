@@ -429,8 +429,27 @@ function sahipCiz(b,sec,durum){
   $("dhot").innerHTML='<div class="own"><span class="ol">Sahipler</span><strong class="ov">'+deger+'</strong></div><div class="oh">'+NAMES[sec]+'</div><div class="fbr">'+bay+"</div>"+(n==null&&durum==="yok"?'<p class="nt">Sahip sayısı şu an alınamadı.</p>':"");
 }
 // Seçilen otelin sayısını gösterir; kayıtlı değilse yalnızca o otel için Habbo'ya sorar
+// Rozet penceresinde seçili otelin kendi dilindeki ad ve açıklama (rozet_dil/<otel>.js, ilk tıklamada yüklenir)
+var dilDurum={};   // otel -> "yukleniyor" | "tamam" | "yok"
+function dilMetni(b,h){
+  var d=window.ROZET_DIL&&ROZET_DIL[h]&&ROZET_DIL[h][b.code];
+  $("dname").textContent=d&&d[0]?d[0]:b.name;
+  $("ddesc").textContent=d&&d[1]?d[1]:(b.desc||"Bu rozet için açıklama yok.");
+}
+function dilUygula(b,h){
+  dilMetni(b,h);                                  // yüklüyse hemen, değilse Türkçe metin
+  if(h==="tr"||dilDurum[h]==="tamam"||dilDurum[h]==="yok")return;
+  if(dilDurum[h]==="yukleniyor")return;
+  dilDurum[h]="yukleniyor";
+  var s=document.createElement("script");
+  s.src="rozet_dil/"+h+".js"+(typeof BUILD!=="undefined"&&BUILD.tarih?"?v="+BUILD.tarih:"");
+  s.onload=function(){dilDurum[h]="tamam";if(aktifB&&secili===h)dilMetni(aktifB,h)};
+  s.onerror=function(){dilDurum[h]="yok"};
+  document.head.appendChild(s);
+}
 function sahipAc(b,h){
   secili=h;
+  dilUygula(b,h);
   var sy=sahipler(b.code)||{};
   var hazir=sy[h]!=null||canli[b.code+"|"+h]!=null;
   if(hazir||!CANLI_SAHIP||!HABBO_ADRES[h]){sahipCiz(b,h,hazir?"tamam":"yok");return}
