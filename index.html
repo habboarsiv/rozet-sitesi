@@ -640,10 +640,13 @@ var GECMIS_API="https://habbo-gecmis.habboarsiv-api.workers.dev/";
     if(p){e("Arkadaş",liste(p.friends,"friends").length.toLocaleString("tr-TR"))}
     var w=div("ust","");a.forEach(function(x){w.appendChild(x)});return w;
   }
-  function gorselli(src,ad){var g=div("gi","");if(src){var i=new Image();i.alt="";i.loading="lazy";i.src=src;i.onerror=function(){i.remove()};g.appendChild(i)}return g}
-  function satir(src,ad,alt,sag){
+  function gorselli(src,ad){var g=div("gi","");if(src){var i=new Image();i.alt="";i.loading="lazy";i.src=src;i.onerror=function(){i.remove();g.classList.add("bos")};g.appendChild(i)}else g.classList.add("bos");return g}
+  function satir(src,ad,alt,sag,meta){
     var el=div("li","");el.appendChild(gorselli(src));
-    var t=div("lt","");t.append(div("ln",ad),div("ls",alt||""));el.appendChild(t);
+    var t=div("lt","");t.appendChild(div("ln",ad));
+    if(alt){var s=div("ls",alt);s.title=alt;t.appendChild(s)}
+    if(meta&&meta.length){var m=div("lm","");meta.forEach(function(x){var e=document.createElement("span");e.textContent=x;m.appendChild(e)});t.appendChild(m)}
+    el.appendChild(t);
     if(sag!=null&&sag!=="")el.appendChild(div("lr",sag));return el;
   }
   function bos(t){var p=document.createElement("p");p.className="msg";p.textContent=t;return p}
@@ -731,10 +734,10 @@ var GECMIS_API="https://habbo-gecmis.habboarsiv-api.workers.dev/";
       if(!odalar.length){kok.appendChild(bos("Odası yok."));return}
       var w=div("lst","");
       odalar.forEach(function(o){
-        var alt=[];if(o.description)alt.push(o.description);
-        if(o.maximumVisitors)alt.push("Kapasite "+o.maximumVisitors);
-        if(o.creationTime&&gun(o.creationTime))alt.push(gun(o.creationTime));
-        w.appendChild(satir(o.imageUrl||"",o.name||"Adsız oda",alt.join(" · "),o.rating!=null?"★ "+o.rating:""));
+        var meta=[];
+        if(o.maximumVisitors)meta.push("Kapasite "+o.maximumVisitors);
+        if(o.creationTime&&gun(o.creationTime))meta.push(gun(o.creationTime));
+        w.appendChild(satir(o.imageUrl||"",o.name||"Adsız oda",o.description||"",o.rating!=null?"★ "+o.rating:"",meta));
       });
       kok.appendChild(w);
     }
