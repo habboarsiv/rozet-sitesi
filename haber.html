@@ -97,6 +97,40 @@ b.yo-ad{cursor:default;color:var(--mute)}
   .yrm{padding:18px 16px 8px}.yf{gap:10px}.yf>.av{width:38px;height:38px}.yo{gap:11px}
 }
 @media (prefers-reduced-motion:reduce){.yo,.yo.yeni,.yrm-isk i{animation:none;transition:none}}
+/* ---- yanıtlar, emoji, GIF ---- */
+.yf-sag{position:relative}
+.yf-alt{flex-wrap:wrap}
+.ybtn{all:unset;box-sizing:border-box;cursor:pointer;min-width:38px;height:36px;padding:0 10px;display:grid;place-items:center;border:1px solid var(--line2);border-radius:10px;background:var(--glass);color:var(--mute);font:800 .78rem Manrope,sans-serif;transition:border-color .15s,color .15s}
+.ybtn:hover,.ybtn:focus-visible{border-color:var(--c1);color:var(--ink)}
+.ybtn:focus-visible{outline:2px solid var(--c1);outline-offset:2px}
+.yrm .btn.ik{background:transparent;border:1.5px solid var(--line2);color:var(--ink)}
+.yp{position:absolute;left:0;right:0;top:100%;z-index:30;margin-top:6px;padding:10px;border-radius:14px;background:var(--surface);border:1px solid var(--line2);box-shadow:0 18px 40px -14px rgba(0,0,0,.8)}
+.yp[hidden]{display:none!important}
+.yp-emoji{display:grid;grid-template-columns:repeat(auto-fill,minmax(36px,1fr));gap:2px;max-height:220px;overflow-y:auto}
+.yp-emoji button{all:unset;box-sizing:border-box;cursor:pointer;height:36px;display:grid;place-items:center;border-radius:8px;font-size:1.3rem}
+.yp-emoji button:hover,.yp-emoji button:focus-visible{background:color-mix(in srgb,var(--c1) 16%,transparent)}
+.yp-gif input{width:100%;margin-bottom:8px;padding:9px 12px;border-radius:10px;border:1px solid var(--line2);background:var(--surface2);color:var(--ink);font:inherit}
+.yp-izgara{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:6px;max-height:260px;overflow-y:auto;color:var(--mute);font-size:.88rem}
+.yp-izgara button{all:unset;box-sizing:border-box;cursor:pointer;border-radius:8px;overflow:hidden;background:var(--surface2);aspect-ratio:4/3}
+.yp-izgara button:hover,.yp-izgara button:focus-visible{outline:2px solid var(--c1)}
+.yp-izgara img{display:block;width:100%;height:100%;object-fit:cover}
+.yp-kay{display:block;margin-top:8px;color:var(--mute);font-size:.72rem;text-align:right}
+.yf-gif{position:relative;display:inline-block;margin-top:8px}
+.yf-gif img{display:block;max-height:160px;max-width:100%;border-radius:10px}
+.yf-gk{all:unset;box-sizing:border-box;cursor:pointer;position:absolute;top:6px;right:6px;width:26px;height:26px;display:grid;place-items:center;border-radius:50%;background:rgba(6,10,24,.75);color:#fff;font-size:.8rem}
+.yo-gif{display:block;max-width:min(100%,280px);max-height:220px;margin-top:8px;border-radius:12px}
+.yo .yan{margin-left:4px;padding:2px 6px;border:0;border-radius:8px;background:none;color:var(--mute);font:700 .8rem Manrope,sans-serif;cursor:pointer;transition:color .15s}
+.yo .yan:hover,.yo .yan:focus-visible{color:var(--c1)}
+.yo-yk{margin-top:10px}
+.yo-yk:empty{display:none}
+.yf.yanit>.av{width:38px;height:38px}
+.yf.yanit .yf-sag textarea{min-height:68px}
+.yy{margin:0 0 6px 58px;padding-left:14px;border-left:2px solid color-mix(in srgb,var(--c1) 30%,var(--line))}
+.yy .yo{padding:12px 10px;margin:0 -10px}
+.yy .yo.alt .yo-av .av{width:36px;height:36px}
+.yt+.yt{border-top:1px solid var(--line)}
+.yt .yo:first-child{border-top-color:transparent}
+@media (max-width:560px){.yy{margin-left:18px;padding-left:10px}}
 </style>
 </head>
 <body data-sec="H" data-nav="H">
@@ -145,12 +179,121 @@ async function ilkDeneme(secenekler, yol) {
 }
 
 /* ---------- yorumlar ---------- */
-const YSEC = ["id,metin,olusturma,yazar_id,profiller(habbo_ad,otel,rol)", "id,metin,olusturma,yazar_id,profiller(habbo_ad,otel)"];
+const YMAX = 300;                       // yorum karakter sınırı
+const GIPHY_KEY = "";                   // Giphy API anahtarını buraya yaz. Boşsa GIF düğmesi görünmez.
+const GIF_URL = /^https:\/\/media\d*\.giphy\.com\//;
+// Yeni sütunlar (ust_id, gif) henüz eklenmediyse eski sorguya düşer, sayfa bozulmaz
+const YSEC = [
+  "id,metin,olusturma,yazar_id,ust_id,gif,profiller(habbo_ad,otel,rol)",
+  "id,metin,olusturma,yazar_id,profiller(habbo_ad,otel,rol)",
+  "id,metin,olusturma,yazar_id,profiller(habbo_ad,otel)"
+];
+const EMOJILER = "😀 😃 😄 😁 😆 😅 😂 🤣 🙂 😉 😊 😇 🥰 😍 🤩 😘 😋 😜 🤪 😎 🤓 🥳 😏 😒 😔 😢 😭 😤 😡 🤯 😱 😴 🤔 🤗 🙄 😬 🥺 😳 🫡 🫶 🤝 👍 👎 👏 🙌 🙏 💪 👀 🔥 ✨ ⭐ 💯 ❤️ 🧡 💛 💚 💙 💜 🖤 💔 🎉 🎁 🏆 🎮 👑 🍀 🌈 ☀️ 🌙 ⚡ 💎 🚀 🐱 🐶 🐸 🐧 🦄 😈 💀 👻 🤡 🤖".split(" ");
 
-function yorumKarti(c, h, vurgu, yenile) {
+// Açık emoji / GIF kutuları dışarı tıklayınca kapansın
+document.addEventListener("click", e => {
+  document.querySelectorAll(".yp").forEach(p => { if (!p.hidden && !p.contains(e.target) && !e.target.closest(".ybtn")) p.hidden = true; });
+});
+
+/* Yorum yazma kutusu: ana yorum ve yanıt için aynı kutu kullanılır.
+   ust: yanıtlanan ana yorumun id'si (ana yorumda null). yeni(id): gönderilince çağrılır. */
+function yorumKutusu(n, h, o) {
+  const kap = el("div", "yf" + (o.ust ? " yanit" : ""));
+  const sag = el("div", "yf-sag");
+  const ta = el("textarea"); ta.maxLength = YMAX; ta.rows = 2; ta.value = o.baslangic || "";
+  ta.placeholder = o.ust ? "Yanıtını yaz..." : "Bu habere ne düşünüyorsun?";
+  let gif = null;
+  const onizle = el("div", "yf-gif"); onizle.hidden = true;
+  const alt = el("div", "yf-alt"), say = el("span", "yf-say");
+  const bilgi = el("div", "ym"); bilgi.setAttribute("role", "status"); bilgi.setAttribute("aria-live", "polite");
+  const gonder = el("button", "btn", "Gönder"); gonder.type = "button"; gonder.disabled = true;
+
+  const guncelle = () => {
+    ta.style.height = "auto"; ta.style.height = Math.min(ta.scrollHeight, 320) + "px";
+    say.textContent = ta.value.length + "/" + YMAX;
+    gonder.disabled = !ta.value.trim() && !gif;
+  };
+  ta.addEventListener("input", guncelle);
+  ta.addEventListener("keydown", e => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey) && !gonder.disabled) gonder.click(); });
+
+  // ---- emoji ----
+  const eb = el("button", "ybtn", "😊"); eb.type = "button"; eb.title = "Emoji ekle"; eb.setAttribute("aria-label", "Emoji ekle");
+  const ep = el("div", "yp yp-emoji"); ep.hidden = true;
+  EMOJILER.forEach(x => {
+    const b = el("button", "", x); b.type = "button";
+    b.onclick = () => {
+      const i = ta.selectionStart == null ? ta.value.length : ta.selectionStart, j = ta.selectionEnd == null ? i : ta.selectionEnd;
+      if (ta.value.length - (j - i) + x.length > YMAX) return;
+      ta.setRangeText(x, i, j, "end"); guncelle(); ta.focus();
+    };
+    ep.appendChild(b);
+  });
+  eb.onclick = () => { const ac = ep.hidden; document.querySelectorAll(".yp").forEach(p => p.hidden = true); ep.hidden = !ac; };
+
+  alt.append(say, eb);
+  const kutular = [ep];
+
+  // ---- GIF (Giphy) ----
+  if (GIPHY_KEY) {
+    const gb = el("button", "ybtn gifb", "GIF"); gb.type = "button"; gb.title = "GIF ekle"; gb.setAttribute("aria-label", "GIF ekle");
+    const gp = el("div", "yp yp-gif"); gp.hidden = true;
+    const ara = el("input"); ara.type = "search"; ara.placeholder = "GIF ara..."; ara.autocomplete = "off"; ara.setAttribute("aria-label", "GIF ara");
+    const izgara = el("div", "yp-izgara"), kaynak = el("small", "yp-kay", "Powered by GIPHY");
+    gp.append(ara, izgara, kaynak);
+    let gz = 0, sira = 0;
+    async function gifAra(q) {
+      const no = ++sira; izgara.textContent = "Yükleniyor...";
+      const u = "https://api.giphy.com/v1/gifs/" + (q ? "search?q=" + encodeURIComponent(q) + "&" : "trending?") + "api_key=" + GIPHY_KEY + "&limit=24&rating=g&lang=tr";
+      let v = null; try { v = await (await fetch(u)).json(); } catch { /* boş kalır */ }
+      if (no !== sira) return; izgara.textContent = "";
+      const l = ((v && v.data) || []).filter(x => x.images && x.images.fixed_height && GIF_URL.test(x.images.fixed_height.url));
+      if (!l.length) { izgara.textContent = "Sonuç bulunamadı."; return; }
+      l.forEach(x => {
+        const b = el("button", "", ""); b.type = "button"; b.title = x.title || "GIF";
+        const im = el("img"); im.loading = "lazy"; im.alt = x.title || "GIF"; im.src = (x.images.fixed_height_small || x.images.fixed_height).url;
+        b.appendChild(im);
+        b.onclick = () => { gif = x.images.fixed_height.url; gp.hidden = true; gifGoster(); guncelle(); };
+        izgara.appendChild(b);
+      });
+    }
+    ara.addEventListener("input", () => { clearTimeout(gz); gz = setTimeout(() => gifAra(ara.value.trim()), 350); });
+    gb.onclick = () => { const ac = gp.hidden; document.querySelectorAll(".yp").forEach(p => p.hidden = true); gp.hidden = !ac; if (ac) { ara.focus(); if (!izgara.firstChild) gifAra(""); } };
+    alt.appendChild(gb); kutular.push(gp);
+  }
+  function gifGoster() {
+    onizle.textContent = ""; onizle.hidden = !gif; if (!gif) return;
+    const im = el("img"); im.alt = "Seçilen GIF"; im.src = gif;
+    const k = el("button", "yf-gk", "✕"); k.type = "button"; k.setAttribute("aria-label", "GIF'i kaldır");
+    k.onclick = () => { gif = null; gifGoster(); guncelle(); };
+    onizle.append(im, k);
+  }
+
+  if (o.iptal) { const ip = el("button", "btn ik", "Vazgeç"); ip.type = "button"; ip.onclick = o.iptal; alt.appendChild(ip); }
+  alt.appendChild(gonder);
+
+  gonder.onclick = async () => {
+    const metin = ta.value.trim(); if (!metin && !gif) return;
+    gonder.disabled = true;
+    const govde = { haber_id: n.id, yazar_id: h.id, metin };
+    if (o.ust) govde.ust_id = o.ust; if (gif) govde.gif = gif;
+    const r = await HESAP.rest("yorumlar", { method: "POST", body: JSON.stringify(govde), headers: { Prefer: "return=representation" } });
+    if (!r.ok) { gonder.disabled = false; bilgi.className = "ym h"; bilgi.textContent = (r.v && r.v.message) || "Yorum gönderilemedi. Tekrar dene."; return; }
+    ta.value = ""; gif = null; gifGoster(); guncelle();
+    bilgi.className = "ym ok"; bilgi.textContent = o.ust ? "Yanıtın yayınlandı." : "Yorumun yayınlandı.";
+    o.yeni(r.v && r.v[0] ? r.v[0].id : null);
+  };
+
+  sag.append(ta, onizle, alt, ...kutular, bilgi);
+  kap.append(S.avatar(h, "m", true, o.ust ? "kucuk" : "orta"), sag);
+  guncelle();
+  return kap;
+}
+
+// c: yorum, ctx: { n, ust (yanıtın bağlanacağı ana yorum id'si), alt (yanıt mı) }
+function yorumKarti(c, h, vurgu, yenile, ctx) {
   const p = c.profiller || {}, ben = !!h && h.id === c.yazar_id;
   const kisi = { id: c.yazar_id, ad: p.habbo_ad || "" }, acilir = !!kisi.ad && !!kisi.id, href = "profil?id=" + encodeURIComponent(kisi.id);
-  const d = el("div", "yo" + (ben ? " ben" : "") + (vurgu ? " yeni" : ""));
+  const d = el("div", "yo" + (ben ? " ben" : "") + (vurgu ? " yeni" : "") + (ctx.alt ? " alt" : ""));
   let av;
   if (acilir) {
     av = el("a", "yo-av"); av.href = href; av.setAttribute("aria-label", kisi.ad + " profilini aç");
@@ -170,17 +313,30 @@ function yorumKarti(c, h, vurgu, yenile) {
     const s = el("button", "sil", "Sil"); s.type = "button"; let zm;
     s.onclick = async () => {   // iki adım: önce "Emin misin?", sonra siler
       if (!s.classList.contains("sor")) {
-        s.classList.add("sor"); s.textContent = "Emin misin?";
+        s.classList.add("sor"); s.textContent = ctx.alt ? "Emin misin?" : "Yanıtlarla birlikte sil?";
         zm = setTimeout(() => { s.classList.remove("sor"); s.textContent = "Sil"; }, 3000); return;
       }
       clearTimeout(zm); s.disabled = true;
       const x = await HESAP.rest("yorumlar?id=eq." + c.id, { method: "DELETE" });
-      if (x.ok) yenile(); else { s.disabled = false; s.classList.remove("sor"); s.textContent = "Sil"; }
+      if (x.ok) yenile(null); else { s.disabled = false; s.classList.remove("sor"); s.textContent = "Sil"; }
     };
     bas.appendChild(s);
   }
-  const t = el("p", "yo-metin"); t.textContent = c.metin;
-  k.append(bas, t); d.append(av, k); return d;
+  k.appendChild(bas);
+  if (c.metin) { const t = el("p", "yo-metin"); t.textContent = c.metin; k.appendChild(t); }
+  if (c.gif && GIF_URL.test(c.gif)) { const g = el("img", "yo-gif"); g.loading = "lazy"; g.alt = "GIF"; g.src = c.gif; k.appendChild(g); }
+
+  // Yanıtla: yanıt kutusu yorumun altında açılır. Yanıta yanıt, aynı ana yorumun altına bağlanır
+  if (h && ctx.n.durum === "yayinda") {
+    const slot = el("div", "yo-yk"), yb = el("button", "yan", "Yanıtla"); yb.type = "button";
+    yb.onclick = () => {
+      if (slot.firstChild) { slot.textContent = ""; return; }
+      const kutu = yorumKutusu(ctx.n, h, { ust: ctx.ust, baslangic: ctx.alt && kisi.ad ? "@" + kisi.ad + " " : "", yeni: id => yenile(id), iptal: () => { slot.textContent = ""; } });
+      slot.appendChild(kutu); const ta = kutu.querySelector("textarea"); ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length);
+    };
+    bas.appendChild(yb); k.appendChild(slot);
+  }
+  d.append(av, k); return d;
 }
 
 async function yorumlariKur(n) {
@@ -190,38 +346,33 @@ async function yorumlariKur(n) {
   baslik();
   liste.innerHTML = '<div class="yrm-isk"><i class="a"></i><div><i class="b"></i><i class="c"></i></div></div><div class="yrm-isk"><i class="a"></i><div><i class="b"></i><i class="c"></i></div></div>';
 
-  async function yukle(vurgu) {
+  async function yukle(vurguId) {
     const r = await ilkDeneme(YSEC, s => "yorumlar?haber_id=eq." + n.id + "&select=" + s + "&order=olusturma.desc&limit=200");
     liste.textContent = "";
     if (!r || !r.ok) { liste.appendChild(el("p", "yrm-bos", "Yorumlar yüklenemedi. Sayfayı yenileyip tekrar dene.")); return; }
-    baslik(r.v.length);
-    if (!r.v.length) { liste.appendChild(el("p", "yrm-bos", "Henüz yorum yok. İlk yorumu sen yaz.")); return; }
-    r.v.forEach((c, i) => liste.appendChild(yorumKarti(c, h, vurgu && i === 0, () => yukle(false))));
+    const hepsi = r.v; baslik(hepsi.length);
+    if (!hepsi.length) { liste.appendChild(el("p", "yrm-bos", "Henüz yorum yok. İlk yorumu sen yaz.")); return; }
+    const var_ = new Set(hepsi.map(c => c.id)), yanit = {}, ana = [];
+    hepsi.forEach(c => { if (c.ust_id && var_.has(c.ust_id)) (yanit[c.ust_id] = yanit[c.ust_id] || []).push(c); else ana.push(c); });
+    ana.forEach(c => {
+      const dal = el("div", "yt");
+      dal.appendChild(yorumKarti(c, h, c.id === vurguId, yukle, { n, ust: c.id, alt: false }));
+      const ys = (yanit[c.id] || []).slice().reverse();   // yanıtlar eskiden yeniye
+      if (ys.length) {
+        const kutu = el("div", "yy");
+        ys.forEach(y => kutu.appendChild(yorumKarti(y, h, y.id === vurguId, yukle, { n, ust: c.id, alt: true })));
+        dal.appendChild(kutu);
+      }
+      liste.appendChild(dal);
+    });
   }
 
   if (!h) {
     form.innerHTML = '<div class="yf-misafir"><div><b>Sohbete katıl</b><p>Yorum yazmak için Habbo Arşiv hesabınla giriş yap. Habbo şifren hiçbir zaman istenmez.</p></div>' +
       '<div class="yf-btn"><button class="btn" data-giris="giris" type="button">Giriş yap</button><button class="btn ik" data-giris="kayit" type="button">Kayıt ol</button></div></div>';
   } else if (n.durum !== "yayinda") form.textContent = "Taslağa yorum yazılamaz.";
-  else {
-    form.innerHTML = '<div class="yf"><div class="yf-sag"><textarea id="ym" maxlength="1000" rows="2" placeholder="Bu habere ne düşünüyorsun?"></textarea>' +
-      '<div class="yf-alt"><span class="yf-say" id="ys">0/1000</span><button class="btn" id="yg" type="button" disabled>Gönder</button></div><div class="ym" id="yi" role="status" aria-live="polite"></div></div></div>';
-    form.firstChild.prepend(S.avatar(h, "m", true, "orta"));
-    const ta = $("ym"), yg = $("yg");
-    const guncelle = () => { ta.style.height = "auto"; ta.style.height = Math.min(ta.scrollHeight, 320) + "px"; $("ys").textContent = ta.value.length + "/1000"; yg.disabled = !ta.value.trim(); };
-    ta.addEventListener("input", guncelle);
-    ta.addEventListener("keydown", e => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey) && !yg.disabled) yg.click(); });
-    yg.onclick = async () => {
-      const metin = ta.value.trim(); if (!metin) return;
-      yg.disabled = true;
-      const r = await HESAP.rest("yorumlar", { method: "POST", body: JSON.stringify({ haber_id: n.id, yazar_id: h.id, metin }) });
-      if (!r.ok) { yg.disabled = false; $("yi").className = "ym h"; $("yi").textContent = (r.v && r.v.message) || "Yorum gönderilemedi. Tekrar dene."; return; }
-      ta.value = ""; guncelle(); $("yi").className = "ym ok"; $("yi").textContent = "Yorumun yayınlandı.";
-      setTimeout(() => { if ($("yi")) $("yi").textContent = ""; }, 3500);
-      yukle(true);
-    };
-  }
-  yukle(false);
+  else form.appendChild(yorumKutusu(n, h, { ust: null, yeni: id => yukle(id) }));
+  yukle(null);
 }
 (async () => {
   const id = new URLSearchParams(location.search).get("id");
