@@ -241,7 +241,7 @@ async function listele() {
     const sag = document.createElement("div"); sag.className = "sat"; sag.style.margin = 0;
     const d = document.createElement("button"); d.className = "btn ik"; d.type = "button"; d.textContent = "Düzenle"; d.onclick = () => ac(n.id);
     const s = document.createElement("button"); s.className = "btn kz"; s.type = "button"; s.textContent = "Sil"; s.onclick = () => sil(n.id);
-    if (rol === "moderator") sag.append(d); else sag.append(d, s);   // moderatör düzenler ve yayınlar, silemez
+    sag.append(d, s);   // yazar kendi haberini, moderatör ve yönetici tüm haberleri düzenleyip silebilir (asıl yetki Supabase kurallarında)
     sat.append(sol, sag); kutu.append(sat);
   }
 }
