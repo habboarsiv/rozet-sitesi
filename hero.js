@@ -4,7 +4,7 @@
    sekme sayaçları, yapışkan başlık ölçüsü, oyuncu sorgu sonucunu kapatma. */
 (function () {
   "use strict";
-  var form = document.getElementById("heroCip");
+  var form = document.getElementById("heroStat");
   if (!form || typeof BADGES === "undefined") return;
   var $ = function (id) { return document.getElementById(id); };
   var azalt = window.matchMedia && matchMedia("(prefers-reduced-motion:reduce)").matches;
@@ -85,9 +85,6 @@
     };
     $("heroCip").appendChild(b); cipler.push([b, anahtar]);
   }
-  if (SIRALI) cip("Yeni eklenenler", "yeni");
-  cip("Sadece tek otelde olanlar", "tek");
-  cip("Açıklamalı rozetler", "desc");
 
   function senkron() {
     cipler.forEach(function (c) { c[0].setAttribute("aria-pressed", !!S[c[1]]); });
