@@ -224,11 +224,11 @@ dialog p{margin:0 20px 12px;color:var(--mute)}
       <h1 class="sn">Habbo Arşiv</h1>
       <p class="sub">Habbo dünyasına dair aradığın her şey tek bir adreste.</p>
       <div class="hs" id="heroForm" role="search">
-        <div class="hs-bas"><strong>Habbo oyuncusu sorgula</strong><span>Rozetler, odalar ve daha fazlası</span></div>
+        <div class="hs-bas"><strong>Habbo rozeti ara</strong><span>Ad, kod veya açıklamada ara</span></div>
         <div class="hs-kutu">
-          <select id="uh" aria-label="Otel"></select>
-          <input id="un" type="search" placeholder="Oyuncu adını yaz" aria-label="Oyuncu adı" autocomplete="off" spellcheck="false" autocapitalize="off">
-          <button class="more" id="ug" type="button">Sorgula</button>
+          <select id="hh" aria-label="Otel"></select>
+          <input id="hq" type="search" placeholder="Rozet adı, kodu veya açıklaması" aria-label="Rozet ara" autocomplete="off" spellcheck="false" autocapitalize="off">
+          <button class="more" id="hb" type="button">Ara</button>
         </div>
       </div>
       <div class="hc-sat" id="heroCip" aria-label="Hızlı erişim"></div>
@@ -243,11 +243,7 @@ dialog p{margin:0 20px 12px;color:var(--mute)}
   </div></div>
 </header>
 <div class="wrap">
-    <section class="usr" id="usr" aria-label="Oyuncu sorgu sonucu">
-    <button class="usr-kapat" id="usrKapat" type="button" aria-label="Sonucu kapat">✕</button>
-    <div class="ud" id="ud" aria-live="polite"></div>
-  </section>
-  <div class="seg modes" role="group" aria-label="Bölüm"><button class="tg" id="mR" type="button" aria-pressed="true">Rozetler</button><button class="tg" id="mH" type="button" aria-pressed="false">Haberler</button><button class="tg" id="mP" type="button" aria-pressed="false">Promolar</button><button class="tg" id="mM" type="button" aria-pressed="false">Mobiler</button></div>
+  <div class="seg modes" role="group" aria-label="Bölüm"><button class="tg" id="mR" type="button" aria-pressed="true">Rozetler</button><button class="tg" id="mH" type="button" aria-pressed="false">Haberler</button><button class="tg" id="mP" type="button" aria-pressed="false">Promolar</button><button class="tg" id="mM" type="button" aria-pressed="false">Mobiler</button><button class="tg" id="mO" type="button" aria-pressed="false">Oyuncular</button></div>
   <div class="layout">
     <details class="side" id="side">
       <summary>Filtreler</summary>
@@ -289,6 +285,24 @@ dialog p{margin:0 20px 12px;color:var(--mute)}
   </section>
   <section id="ms" hidden></section>
   <section id="hs" hidden></section>
+  <section id="os" hidden>
+    <div class="os-bas"><h2>Oyuncu sorgula</h2><p>Habbo oyuncusunun rozetlerine, odalarına, gruplarına ve geçmişine bak.</p></div>
+    <div class="hs-kutu">
+      <select id="uh" aria-label="Otel"></select>
+      <input id="un" type="search" placeholder="Oyuncu adını yaz" aria-label="Oyuncu adı" autocomplete="off" spellcheck="false" autocapitalize="off">
+      <button class="more" id="ug" type="button">Sorgula</button>
+    </div>
+    <div class="os-ipucu">
+      <div><b>Rozetler</b><span>Sahip olduğu tüm rozetler, arşivdeki adlarıyla</span></div>
+      <div><b>Gruplar ve odalar</b><span>Üye olduğu gruplar, açtığı odalar</span></div>
+      <div><b>Başarımlar</b><span>Seviyeleri ve toplam puanı</span></div>
+      <div><b>Geçmiş</b><span>Kayıtlı ad, motto ve görünüş değişiklikleri</span></div>
+    </div>
+    <section class="usr" id="usr" aria-label="Oyuncu sorgu sonucu">
+      <button class="usr-kapat" id="usrKapat" type="button" aria-label="Sonucu kapat">✕</button>
+      <div class="ud" id="ud" aria-live="polite"></div>
+    </section>
+  </section>
 </div>
 
 <footer class="ft">
@@ -300,7 +314,7 @@ dialog p{margin:0 20px 12px;color:var(--mute)}
       </div>
       <nav class="ft-nav" aria-label="Bölümler">
         <span class="ft-bas">Bölümler</span>
-        <div class="ft-lk"><a href="/" data-git="R">Rozetler</a><a href="/#haberler" data-git="H">Haberler</a><a href="/#promolar" data-git="P">Promolar</a><a href="/#mobiler" data-git="M">Mobiler</a></div>
+        <div class="ft-lk"><a href="/" data-git="R">Rozetler</a><a href="/#haberler" data-git="H">Haberler</a><a href="/#promolar" data-git="P">Promolar</a><a href="/#mobiler" data-git="M">Mobiler</a><a href="/#oyuncular" data-git="O">Oyuncular</a></div>
       </nav>
     </div>
     <p class="legal"><strong class="legal-on">Habbo Arşiv, Sulake Oy veya İştirakleri tarafından doğrulanmamış, onaylanmamış ve desteklenmemiştir ve bunlar ile bağlı değildir.</strong> Habbo Arşiv, Habbo Fan Sitesi Poliçesi altında izin verilen ticaret markalarını ve diğer Habbo fikrî mülkiyetlerini kullanabilir. Sitemizde yer alan markalar, logolar ve fikri mülkiyet ögeleri Sulake Oy’a ve bağlı ortaklıklarına aittir. <span class="sn">Habbo Arşiv</span> üzerinde sunulan içerikler tamamen topluluk amaçlıdır ve resmi Habbo hizmetleriyle karıştırılmamalıdır.</p>
@@ -828,17 +842,17 @@ var GECMIS_API="https://habbo-gecmis.habboarsiv-api.workers.dev/";
     var r=k==="R",p=k==="P";
     $("usr").hidden=!KULLANICI_SORGU;
     document.querySelector(".layout").hidden=!r;
-    $("ps").hidden=!p;$("ms").hidden=k!=="M";$("hs").hidden=k!=="H";
-    ["R","P","M","H"].forEach(function(x){$("m"+x).setAttribute("aria-pressed",x===k)});
+    $("ps").hidden=!p;$("ms").hidden=k!=="M";$("hs").hidden=k!=="H";$("os").hidden=k!=="O";
+    ["R","P","M","H","O"].forEach(function(x){$("m"+x).setAttribute("aria-pressed",x===k)});
     document.body.setAttribute("data-sec",k);
     if(p&&!kuruldu){kuruldu=true;kur();ciz()}
     if(k==="M"&&window.MOBI_UI)MOBI_UI.ac();
     if(k==="H"&&window.HABER_UI)HABER_UI.ac();
   }
-  var HASH={R:"",P:"#promolar",M:"#mobiler",H:"#haberler"};
+  var HASH={R:"",P:"#promolar",M:"#mobiler",H:"#haberler",O:"#oyuncular"};
   function modGit(k){mod(k);try{history.replaceState(null,"",location.pathname+location.search+HASH[k])}catch(e){}}
-  ["R","P","M","H"].forEach(function(x){$("m"+x).onclick=function(){modGit(x)}});
-  var ilk={"#promolar":"P","#mobiler":"M","#haberler":"H"}[location.hash];
+  ["R","P","M","H","O"].forEach(function(x){$("m"+x).onclick=function(){modGit(x)}});
+  var ilk={"#promolar":"P","#mobiler":"M","#haberler":"H","#oyuncular":"O"}[location.hash];
   if(ilk)mod(ilk);
 })();
 go();

@@ -35,7 +35,7 @@
 .hs-kutu select:focus,.hs-kutu input[type=search]:focus{border-color:transparent}
 .hs-kutu input[type=search]:focus{box-shadow:none}
 .hs-kutu select:focus{box-shadow:inset -1px 0 0 var(--line2)}
-.hs-kutu #ug{flex:none;margin:0;height:44px;padding:0 22px;border-radius:12px}
+.hs-kutu .more{flex:none;margin:0;height:44px;padding:0 22px;border-radius:12px}
 .hs-kutu select:focus-visible,.hs-kutu input:focus-visible{outline:0}
 
 /* ---------- hızlı erişim çipleri ---------- */
@@ -93,11 +93,31 @@
   .hs-kutu{flex-wrap:wrap}
   .hs-kutu select{flex:1 1 38%;max-width:none;border-radius:11px}
   .hs-kutu input[type=search]{flex:1 1 52%}
-  .hs-kutu #ug{flex:1 1 100%}
+  .hs-kutu .more{flex:1 1 100%}
   .hero-stat .hs-in{padding:9px 16px;font-size:.84rem;gap:2px 14px}
   .hero-stat .nk{display:none}
   .modes .say{display:none}
   .wrap .modes{padding:3px;gap:0}
   .wrap .modes .tg{height:40px;padding:0 8px;font-size:.8rem}
   .wrap .modes .tg::before{margin-right:5px;width:7px;height:7px}
+}
+
+/* ---------- Oyuncular sekmesi ---------- */
+body[data-sec=O]{--c1:#ff5d6c;--c2:#ff9a6b;--cg:rgba(255,93,108,.4);--on:#fff}
+@media (prefers-color-scheme:light){body[data-sec=O]{--c1:#e0334a;--c2:#f0703a;--cg:rgba(224,51,74,.28)}}
+#mO{--t1:#ff5d6c;--t2:#ff9a6b;--to:#fff}
+.os-bas h2{margin:0;font-size:1.6rem;letter-spacing:-.02em}
+.os-bas p{margin:4px 0 14px;color:var(--mute)}
+#os .hs-kutu{max-width:760px}
+.os-ipucu{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:10px;max-width:760px;margin-top:16px}
+.os-ipucu div{padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--glass)}
+.os-ipucu b{display:block;margin-bottom:2px;font-weight:800}
+.os-ipucu span{font-size:.88rem;color:var(--mute)}
+#os:has(#ud:not(:empty)) .os-ipucu{display:none}
+#os #usr{margin-top:18px;margin-bottom:0}
+@media (max-width:560px){
+  /* 5 sekme: satır kayar, alt satıra düşmez */
+  .wrap .modes{width:100%;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+  .wrap .modes::-webkit-scrollbar{display:none}
+  .wrap .modes .tg{flex:none}
 }

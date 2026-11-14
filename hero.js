@@ -91,6 +91,8 @@
 
   function senkron() {
     cipler.forEach(function (c) { c[0].setAttribute("aria-pressed", !!S[c[1]]); });
+    if (document.activeElement !== $("hq")) $("hq").value = S.q;
+    $("hh").value = S.hotel;
     // "Yeni eklenenler" açıkken, sonuç satırında kaldırılabilir etiket göster
     if (S.yeni && $("stat")) {
       var b = document.createElement("button"); b.className = "chip"; b.type = "button"; b.textContent = "Son eklenenler ×";
@@ -100,9 +102,6 @@
   }
   senkron();
 
-  /* Dokunmatik cihazda klavye ipucu anlamsız: kısa yazı */
-  if (window.matchMedia && matchMedia("(hover:none)").matches) $("un").placeholder = "Oyuncu adını yaz";
-
   /* ---- 6) "/" tuşu oyuncu arama kutusuna odaklanır ---- */
   document.addEventListener("keydown", function (e) {
     if (e.key !== "/" || e.ctrlKey || e.metaKey || e.altKey) return;
@@ -111,20 +110,33 @@
     if (document.body.classList.contains("gm-kilit") || document.querySelector("dialog[open]")) return;
     e.preventDefault();
     scrollTo({ top: 0, behavior: davranis });
-    $("un").focus({ preventScroll: true });
+    $("hq").focus({ preventScroll: true });
   });
 
-  /* ---- 7) Oyuncu sorgusu: sonuç alanına kaydır, kapatma düğmesi ---- */
-  function sonuca() {
-    setTimeout(function () {
-      var u = $("usr");
-      if (u && !u.hidden && $("ud").firstChild) u.scrollIntoView({ behavior: davranis, block: "start" });
-    }, 150);
-  }
-  $("ug").addEventListener("click", sonuca);
-  $("un").addEventListener("keydown", function (e) { if (e.key === "Enter") sonuca(); });
+  /* ---- 7) Hero'daki rozet araması: yazdıkça Rozetler sekmesindeki listeyi süzer ---- */
+  var hq = $("hq"), hh = $("hh");
+  hh.appendChild(new Option("Tüm oteller", ""));
+  HOTELS.forEach(function (x) { hh.appendChild(new Option(x[1], x[0])); });
+  function rozetModu() { if ($("mR").getAttribute("aria-pressed") !== "true") $("mR").click(); }
+  function listeyeGit() { var l = document.querySelector(".layout"); if (l) l.scrollIntoView({ behavior: davranis, block: "start" }); }
+  var tq;
+  hq.addEventListener("input", function () {
+    clearTimeout(tq); var v = hq.value;
+    tq = setTimeout(function () { rozetModu(); S.q = v; go(); }, 200);
+  });
+  function ara() { clearTimeout(tq); rozetModu(); S.q = hq.value; go(); listeyeGit(); }
+  hq.addEventListener("keydown", function (e) { if (e.key === "Enter") ara(); });
+  $("hb").addEventListener("click", ara);
+  hh.addEventListener("change", function () { rozetModu(); S.hotel = hh.value; go(); });
+
+  /* ---- Oyuncular sekmesi ---- */
   if ($("usrKapat")) $("usrKapat").onclick = function () { $("ud").innerHTML = ""; $("un").focus(); };
-  if (typeof KULLANICI_SORGU !== "undefined" && !KULLANICI_SORGU) form.hidden = true;
+  $("mO").addEventListener("click", function () { setTimeout(function () { $("un").focus({ preventScroll: true }); }, 50); });
+  if (typeof KULLANICI_SORGU !== "undefined" && !KULLANICI_SORGU) { $("mO").hidden = true; }
+  // Telefonda sekme satırı kayar: seçili sekme görünür kalsın
+  var modes = document.querySelector(".modes");
+  function sekmeGor() { var s = modes && modes.querySelector('[aria-pressed="true"]'); if (s && s.scrollIntoView) s.scrollIntoView({ inline: "center", block: "nearest" }); }
+  if (modes) { modes.addEventListener("click", function () { setTimeout(sekmeGor, 30); }); setTimeout(sekmeGor, 100); }
 
   /* ---- 8) Rozet şeridi: arşivden rastgele, her ziyarette farklı ---- */
   var sag = $("heroSag");

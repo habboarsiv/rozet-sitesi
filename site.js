@@ -51,7 +51,7 @@ const SITE = (() => {
   function ustCubuk() {
     const ana = !!document.getElementById("mR"), aktif = document.body.dataset.nav || "";
     const hd = el("header", "sh"); hd.id = "siteHeader";
-    const nav = ana ? "" : '<nav class="sh-nav" aria-label="Bölümler">' + [["R", "Rozetler", "/"], ["H", "Haberler", "/#haberler"], ["P", "Promolar", "/#promolar"], ["M", "Mobiler", "/#mobiler"]]
+    const nav = ana ? "" : '<nav class="sh-nav" aria-label="Bölümler">' + [["R", "Rozetler", "/"], ["H", "Haberler", "/#haberler"], ["P", "Promolar", "/#promolar"], ["M", "Mobiler", "/#mobiler"], ["O", "Oyuncular", "/#oyuncular"]]
       .map(x => '<a href="' + x[2] + '"' + (aktif === x[0] ? ' class="on" aria-current="page"' : "") + '>' + x[1] + '</a>').join("") + '</nav>';
     hd.innerHTML = '<div class="sh-in"><a class="sh-logo" href="/" aria-label="Habbo Arşiv">' + LOGO + '<span>Habbo Arşiv</span></a>' + nav + '<div class="sh-user" id="shUser"></div></div>';
     const ku = hd.querySelector("#shUser"); ku.parentNode.insertBefore(aramaKur(), ku);
