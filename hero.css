@@ -125,4 +125,4 @@ body[data-sec=O]{--c1:#ff5d6c;--c2:#ff9a6b;--cg:rgba(255,93,108,.4);--on:#fff}
 /* ---------- açılır listeler (otel seçimi) okunabilir olsun ---------- */
 select{color-scheme:light dark}
 select option,select optgroup{background:var(--surface);color:var(--ink)}
-select option:checked,select option:hover{background:var(--accS,#2a3a66);color:var(--ink)}
+select option:checked{background:color-mix(in srgb,var(--c1,#5b86ff) 35%,var(--surface));color:var(--ink)}
