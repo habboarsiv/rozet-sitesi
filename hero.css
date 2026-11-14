@@ -1,0 +1,103 @@
+/* Habbo Arşiv - ana sayfa üst alanı (hero), hızlı erişim çipleri, rozet şeridi, istatistik satırı, yapışkan sekmeler.
+   tema.css'ten SONRA yüklenir (index.html'de site.css'in altında), bu yüzden gerekirse onun kurallarını ezer. */
+
+/* ---------- arka plan: Habbo'nun izometrik karo zemini (çok soluk) ---------- */
+.hero::before{
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='32'%3E%3Cpath d='M0 16L32 0L64 16L32 32Z' fill='rgba(140,170,255,0.035)' stroke='rgba(140,170,255,0.12)'/%3E%3C/svg%3E") 0 -8px/64px 32px repeat;
+  -webkit-mask-image:radial-gradient(78% 150% at 76% 50%,#000 8%,transparent 76%);
+  mask-image:radial-gradient(78% 150% at 76% 50%,#000 8%,transparent 76%);
+}
+@media (prefers-color-scheme:light){
+  .hero::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='32'%3E%3Cpath d='M0 16L32 0L64 16L32 32Z' fill='rgba(30,60,160,0.04)' stroke='rgba(30,60,160,0.14)'/%3E%3C/svg%3E")}
+}
+
+/* ---------- yerleşim: solda yazı + arama, sağda rozet şeridi ---------- */
+.hero .hero-in{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,470px);gap:36px;align-items:center;padding:16px 20px 14px}
+.hero .hero-tx{display:flex;flex-direction:column;min-width:0;max-width:640px}
+
+/* başlık: "Arşiv" renkli */
+.hero h1.sn{margin:0;font-size:clamp(2.1rem,5.2vw,2.9rem);line-height:1;letter-spacing:-.045em;background:none;-webkit-background-clip:border-box;background-clip:border-box;color:var(--ink)}
+.hero h1 .vurgu{background:linear-gradient(100deg,var(--c2),var(--c1) 75%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;padding-right:.05em}
+
+/* slogan: daha açık renk, bir kademe büyük */
+.hero .sub{margin:4px 0 0;max-width:46ch;font-size:1.2rem;line-height:1.35;color:color-mix(in srgb,var(--ink) 84%,transparent)}
+
+/* ---------- oyuncu sorgulama kutusu ---------- */
+.hs{margin-top:12px}
+.hs-bas{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px;margin:0 0 7px}
+.hs-bas strong{font:800 1rem "Bricolage Grotesque",Manrope,system-ui,sans-serif;color:var(--ink)}
+.hs-bas span{font-size:.87rem;color:var(--mute)}
+.hs-kutu{display:flex;align-items:center;gap:6px;padding:5px;border:1px solid var(--line2);border-radius:16px;background:color-mix(in srgb,var(--surface) 88%,transparent);box-shadow:var(--hi),0 12px 30px -16px rgba(0,0,0,.7);backdrop-filter:blur(8px);transition:border-color .2s,box-shadow .2s}
+.hs-kutu:focus-within{border-color:var(--c1);box-shadow:var(--hi),0 0 0 3px var(--cg)}
+.hs-kutu select,.hs-kutu input[type=search]{height:44px;margin:0;border:0;background:transparent;box-shadow:none;border-radius:11px}
+.hs-kutu select{flex:none;width:auto;max-width:150px;padding:0 10px 0 12px;font-weight:700;border-radius:11px 0 0 11px;box-shadow:inset -1px 0 0 var(--line2);cursor:pointer}
+.hs-kutu input[type=search]{flex:1;min-width:0;width:auto;padding:0 12px;font-size:1rem}
+.hs-kutu select:focus,.hs-kutu input[type=search]:focus{border-color:transparent}
+.hs-kutu input[type=search]:focus{box-shadow:none}
+.hs-kutu select:focus{box-shadow:inset -1px 0 0 var(--line2)}
+.hs-kutu #ug{flex:none;margin:0;height:44px;padding:0 22px;border-radius:12px}
+.hs-kutu select:focus-visible,.hs-kutu input:focus-visible{outline:0}
+
+/* ---------- hızlı erişim çipleri ---------- */
+.hc-sat{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px}
+.hc{all:unset;box-sizing:border-box;cursor:pointer;padding:5px 13px;border:1px solid var(--line2);border-radius:999px;background:var(--glass);color:var(--ink);font:600 .84rem Manrope,system-ui,sans-serif;transition:border-color .15s,background .15s,transform .15s}
+.hc:hover{border-color:var(--c1);transform:translateY(-1px)}
+.hc[aria-pressed="true"]{background:color-mix(in srgb,var(--c1) 24%,transparent);border-color:var(--c1)}
+.hc:focus-visible{outline:2px solid var(--c1);outline-offset:2px}
+
+/* ---------- rozet şeridi (marquee) ---------- */
+.hero-sag{position:relative;min-width:0;display:flex;align-items:center}
+.mq{display:flex;flex-direction:column;gap:6px;width:100%;overflow:hidden;opacity:0;transition:opacity .7s;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent);mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent)}
+.mq.hazir{opacity:1}
+.mq-sat{overflow:hidden;padding:3px 0}
+.mq-iz{display:flex;width:max-content;animation:mqKay var(--sure,60s) linear infinite}
+.mq-sat.ters .mq-iz{animation-direction:reverse}
+.mq-sat:hover .mq-iz{animation-play-state:paused}
+.mq-t{all:unset;box-sizing:border-box;flex:none;width:54px;height:54px;margin-right:10px;display:grid;place-items:center;cursor:pointer;border:1px solid var(--line);border-radius:14px;box-shadow:var(--hi);
+  background:radial-gradient(circle at 50% 38%,color-mix(in srgb,var(--c1) 26%,transparent),transparent 68%),var(--tile);transition:transform .15s,border-color .15s}
+.mq-t:hover{transform:translateY(-3px);border-color:var(--c1)}
+.mq-t img{display:block;max-width:40px;max-height:40px;image-rendering:pixelated}
+@keyframes mqKay{to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.mq-iz{animation:none}.mq{transition:none}.hc,.hc:hover{transition:none;transform:none}}
+
+/* ---------- istatistik satırı ---------- */
+.hero-stat{position:relative;border-top:1px solid color-mix(in srgb,var(--line2) 70%,transparent);background:color-mix(in srgb,var(--bg) 45%,transparent)}
+.hero-stat .hs-in{max-width:1180px;margin:0 auto;padding:10px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:2px 14px;color:var(--mute);font-size:.92rem}
+.hero-stat b{color:var(--ink);font-weight:800;font-variant-numeric:tabular-nums}
+.hero-stat .nk{font-style:normal;opacity:.5}
+
+/* ---------- oyuncu sorgu sonucu ---------- */
+.wrap #usr{position:relative;margin-bottom:22px;scroll-margin-top:calc(var(--sh-h,64px) + 12px)}
+#usr:has(#ud:empty){display:none}
+.usr-kapat{all:unset;box-sizing:border-box;position:absolute;top:10px;right:12px;z-index:2;width:30px;height:30px;display:grid;place-items:center;cursor:pointer;border-radius:8px;color:var(--mute);font-size:.95rem}
+.usr-kapat:hover{background:var(--glass);color:var(--ink)}
+.usr-kapat:focus-visible{outline:2px solid var(--c1);outline-offset:2px}
+
+/* ---------- yapışkan sekmeler + sayaçlar ---------- */
+.wrap .modes{position:sticky;top:calc(var(--sh-h,64px) + 10px);z-index:40;background:color-mix(in srgb,var(--surface) 86%,transparent);backdrop-filter:blur(12px)}
+.modes .say{margin-left:8px;padding:1px 7px;border-radius:999px;background:color-mix(in srgb,var(--ink) 9%,transparent);color:var(--mute);font:700 .72rem Manrope,system-ui,sans-serif;font-variant-numeric:tabular-nums}
+.modes .tg[aria-pressed="true"] .say{background:rgba(0,0,0,.2);color:var(--to)}
+.layout{scroll-margin-top:calc(var(--sh-h,64px) + 84px)}
+/* sol filtre paneli yapışkan başlığın ve sekmelerin altında kalsın */
+@media (min-width:861px){.side{top:calc(var(--sh-h,64px) + 84px);max-height:calc(100vh - var(--sh-h,64px) - 100px)}}
+
+/* ---------- mobil ---------- */
+@media (max-width:860px){
+  .hero .hero-in{grid-template-columns:1fr;gap:0;padding:18px 16px 16px}
+  .hero-sag{display:none}
+  .hero .hero-tx{max-width:none}
+}
+@media (max-width:560px){
+  .hero .sub{font-size:1.08rem}
+  .hs-kutu{flex-wrap:wrap}
+  .hs-kutu select{flex:1 1 38%;max-width:none;border-radius:11px}
+  .hs-kutu input[type=search]{flex:1 1 52%}
+  .hs-kutu #ug{flex:1 1 100%}
+  .hero-stat .hs-in{padding:9px 16px;font-size:.84rem;gap:2px 14px}
+  .hero-stat .nk{display:none}
+  .modes .say{display:none}
+  .wrap .modes{padding:3px;gap:0}
+  .wrap .modes .tg{height:40px;padding:0 8px;font-size:.8rem}
+  .wrap .modes .tg::before{margin-right:5px;width:7px;height:7px}
+}

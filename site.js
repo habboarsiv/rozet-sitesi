@@ -65,8 +65,8 @@ const SITE = (() => {
     const kap = el("div", "sh-ara-kap");
     kap.setAttribute("role", "search");
     const kutu = el("label", "sh-ara-kutu", svg("search"));
-    const girdi = el("input"); girdi.type = "search"; girdi.maxLength = 30; girdi.placeholder = "Üye ara (Habbo adı)";
-    girdi.autocomplete = "off"; girdi.spellcheck = false; girdi.setAttribute("autocapitalize", "off"); girdi.setAttribute("aria-label", "Üye ara");
+    const girdi = el("input"); girdi.type = "search"; girdi.maxLength = 30; girdi.placeholder = "Sitedeki üyeleri ara";
+    girdi.autocomplete = "off"; girdi.spellcheck = false; girdi.setAttribute("autocapitalize", "off"); girdi.setAttribute("aria-label", "Sitedeki üyeleri ara");
     kutu.appendChild(girdi);
     const panel = el("div", "sh-ara-panel");
     const durum = el("p", "sh-ara-durum"); durum.setAttribute("role", "status"); durum.setAttribute("aria-live", "polite");
@@ -119,7 +119,7 @@ const SITE = (() => {
     document.addEventListener("keydown", e => {
       if (e.key === "Escape" && kap.contains(document.activeElement)) { ac(false); girdi.blur(); return; }
       const ae = document.activeElement;
-      if (e.key === "/" && !e.ctrlKey && !e.metaKey && !e.altKey && !/^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName) && !ae.isContentEditable && !document.body.classList.contains("gm-kilit")) { e.preventDefault(); girdi.focus(); }
+      if (e.key === "/" && !e.ctrlKey && !e.metaKey && !e.altKey && !/^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName) && !ae.isContentEditable && !document.body.classList.contains("gm-kilit") && !document.getElementById("heroForm")) { e.preventDefault(); girdi.focus(); }
     });
     return (aramaKap = kap);
   }

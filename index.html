@@ -3,7 +3,24 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Habbo Arşiv</title>
+<title>Habbo Arşiv – Habbo rozetleri, promolar ve mobiler</title>
+<meta name="description" content="Tüm Habbo otellerinin rozetleri, promoları ve mobileri tek arşivde. Rozet ara, oyuncu sorgula, yeni eklenenleri takip et.">
+<meta name="theme-color" content="#070b16">
+<link rel="canonical" href="https://habboarsiv.com/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Habbo Arşiv">
+<meta property="og:locale" content="tr_TR">
+<meta property="og:title" content="Habbo Arşiv – Habbo rozetleri, promolar ve mobiler">
+<meta property="og:description" content="Habbo dünyasına dair aradığın her şey tek bir adreste: rozetler, promolar, mobiler ve oyuncu sorgulama.">
+<meta property="og:url" content="https://habboarsiv.com/">
+<meta property="og:image" content="https://habboarsiv.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Habbo Arşiv – Habbo rozetleri, promolar ve mobiler tek arşivde">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Habbo Arşiv – Habbo rozetleri, promolar ve mobiler">
+<meta name="twitter:description" content="Habbo dünyasına dair aradığın her şey tek bir adreste.">
+<meta name="twitter:image" content="https://habboarsiv.com/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -198,25 +215,39 @@ dialog p{margin:0 20px 12px;color:var(--mute)}
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="tema.css">
 <link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="hero.css">
 </head>
 <body data-sec="R">
 <header class="hero">
   <div class="hero-in">
-    <div class="hero-tx"><h1 class="sn">Habbo Arşiv</h1><p class="sub">Habbo dünyasına dair aradığın her şey tek bir adreste.</p></div>
-    <div class="hero-kup" id="heroKup"></div>
+    <div class="hero-tx">
+      <h1 class="sn">Habbo Arşiv</h1>
+      <p class="sub">Habbo dünyasına dair aradığın her şey tek bir adreste.</p>
+      <div class="hs" id="heroForm" role="search">
+        <div class="hs-bas"><strong>Habbo oyuncusu sorgula</strong><span>Rozetler, odalar ve daha fazlası</span></div>
+        <div class="hs-kutu">
+          <select id="uh" aria-label="Otel"></select>
+          <input id="un" type="search" placeholder="Oyuncu adını yaz  ( / ile ara )" aria-label="Oyuncu adı" autocomplete="off" spellcheck="false" autocapitalize="off">
+          <button class="more" id="ug" type="button">Sorgula</button>
+        </div>
+      </div>
+      <div class="hc-sat" id="heroCip" aria-label="Hızlı erişim"></div>
+    </div>
+    <div class="hero-sag" id="heroSag" aria-hidden="true"></div>
   </div>
+  <div class="hero-stat"><div class="hs-in" id="heroStat">
+    <span><b data-say="rozet">–</b> rozet</span><i class="nk">·</i>
+    <span><b data-say="otel">–</b> otel</span><i class="nk" data-promo>·</i>
+    <span data-promo><b data-say="promo">–</b> promo</span><i class="nk">·</i>
+    <span>Son güncelleme: <b data-say="tarih">–</b></span>
+  </div></div>
 </header>
 <div class="wrap">
-  <div class="seg modes" role="group" aria-label="Bölüm"><button class="tg" id="mR" type="button" aria-pressed="true">Rozetler</button><button class="tg" id="mH" type="button" aria-pressed="false">Haberler</button><button class="tg" id="mP" type="button" aria-pressed="false">Promolar</button><button class="tg" id="mM" type="button" aria-pressed="false">Mobiler</button></div>
-  <details class="usr" id="usr">
-    <summary>Oyuncu rozetlerini sorgula</summary>
-    <div class="usr-f">
-      <input id="un" type="search" placeholder="Kullanıcı adı" aria-label="Kullanıcı adı" autocomplete="off">
-      <select id="uh" aria-label="Otel"></select>
-      <button class="more" id="ug" type="button">Sorgula</button>
-    </div>
+    <section class="usr" id="usr" aria-label="Oyuncu sorgu sonucu">
+    <button class="usr-kapat" id="usrKapat" type="button" aria-label="Sonucu kapat">✕</button>
     <div class="ud" id="ud" aria-live="polite"></div>
-  </details>
+  </section>
+  <div class="seg modes" role="group" aria-label="Bölüm"><button class="tg" id="mR" type="button" aria-pressed="true">Rozetler</button><button class="tg" id="mH" type="button" aria-pressed="false">Haberler</button><button class="tg" id="mP" type="button" aria-pressed="false">Promolar</button><button class="tg" id="mM" type="button" aria-pressed="false">Mobiler</button></div>
   <div class="layout">
     <details class="side" id="side">
       <summary>Filtreler</summary>
@@ -303,10 +334,9 @@ dialog p{margin:0 20px 12px;color:var(--mute)}
 <script src="rozetler.js"></script>
 <script src="rozet_sahipler.js"></script>
 <script src="tema.js"></script>
-<script src="kup.js"></script>
 <script>
 var SITE_ADI="Habbo Arşiv";   // Site adını yalnızca buradan değiştirmeniz yeterli (başlık, sekme adı ve alt yazı)
-document.title=SITE_ADI;
+document.title=SITE_ADI+" – Habbo rozetleri, promolar ve mobiler";
 document.querySelectorAll(".sn").forEach(function(e){e.textContent=SITE_ADI});
 var FLAG_SVG={
  it:"<rect width=\"10\" height=\"20\" fill=\"#009246\"/><rect x=\"10\" width=\"10\" height=\"20\" fill=\"#fff\"/><rect x=\"20\" width=\"10\" height=\"20\" fill=\"#ce2b37\"/>",
@@ -796,7 +826,7 @@ var GECMIS_API="https://habbo-gecmis.habboarsiv-api.workers.dev/";
   function mod(k){
     if(k===true)k="P";if(k===false)k="R";
     var r=k==="R",p=k==="P";
-    $("usr").hidden=!r||!KULLANICI_SORGU;
+    $("usr").hidden=!KULLANICI_SORGU;
     document.querySelector(".layout").hidden=!r;
     $("ps").hidden=!p;$("ms").hidden=k!=="M";$("hs").hidden=k!=="H";
     ["R","P","M","H"].forEach(function(x){$("m"+x).setAttribute("aria-pressed",x===k)});
@@ -813,5 +843,6 @@ var GECMIS_API="https://habbo-gecmis.habboarsiv-api.workers.dev/";
 })();
 go();
 </script>
+<script src="hero.js"></script>
 </body>
 </html>
