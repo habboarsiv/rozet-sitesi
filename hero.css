@@ -121,3 +121,8 @@ body[data-sec=O]{--c1:#ff5d6c;--c2:#ff9a6b;--cg:rgba(255,93,108,.4);--on:#fff}
   .wrap .modes::-webkit-scrollbar{display:none}
   .wrap .modes .tg{flex:none}
 }
+
+/* ---------- açılır listeler (otel seçimi) okunabilir olsun ---------- */
+select{color-scheme:light dark}
+select option,select optgroup{background:var(--surface);color:var(--ink)}
+select option:checked,select option:hover{background:var(--accS,#2a3a66);color:var(--ink)}
