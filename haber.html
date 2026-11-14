@@ -131,6 +131,10 @@ b.yo-ad{cursor:default;color:var(--mute)}
 .yt+.yt{border-top:1px solid var(--line)}
 .yt .yo:first-child{border-top-color:transparent}
 @media (max-width:560px){.yy{margin-left:18px;padding-left:10px}}
+/* yorum içindeki GIF'ler: eski ".yo img" (40x40 avatar) kuralını ezer */
+.yo .yo-gif{display:block;width:auto;height:auto;max-width:min(100%,280px);max-height:220px;object-fit:contain;image-rendering:auto;background:none;border-radius:12px;margin-top:8px;flex:none}
+.yo .yf-gif img{display:block;width:auto;height:auto;max-width:100%;max-height:160px;object-fit:contain;image-rendering:auto;background:none;border-radius:10px;margin:0}
+.yo .yp-izgara img{display:block;width:100%;height:100%;object-fit:cover;image-rendering:auto;background:none;border-radius:0;margin:0}
 </style>
 </head>
 <body data-sec="H" data-nav="H">
@@ -180,7 +184,7 @@ async function ilkDeneme(secenekler, yol) {
 
 /* ---------- yorumlar ---------- */
 const YMAX = 300;                       // yorum karakter sınırı
-const GIPHY_KEY = "XQ3AWYjiTAyzZUZ4XzHZFHZWbfSGAdWU";                   // Giphy API anahtarını buraya yaz. Boşsa GIF düğmesi görünmez.
+const GIPHY_KEY = "";                   // Giphy API anahtarını buraya yaz. Boşsa GIF düğmesi görünmez.
 const GIF_URL = /^https:\/\/media\d*\.giphy\.com\//;
 // Yeni sütunlar (ust_id, gif) henüz eklenmediyse eski sorguya düşer, sayfa bozulmaz
 const YSEC = [
