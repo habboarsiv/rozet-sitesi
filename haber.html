@@ -135,6 +135,9 @@ b.yo-ad{cursor:default;color:var(--mute)}
 .yo .yo-gif{display:block;width:auto;height:auto;max-width:min(100%,280px);max-height:220px;object-fit:contain;image-rendering:auto;background:none;border-radius:12px;margin-top:8px;flex:none}
 .yo .yf-gif img{display:block;width:auto;height:auto;max-width:100%;max-height:160px;object-fit:contain;image-rendering:auto;background:none;border-radius:10px;margin:0}
 .yo .yp-izgara img{display:block;width:100%;height:100%;object-fit:cover;image-rendering:auto;background:none;border-radius:0;margin:0}
+.yy-d{all:unset;box-sizing:border-box;cursor:pointer;margin:6px 0 10px;padding:4px 2px;color:var(--c1);font:800 .84rem Manrope,sans-serif}
+.yy-d:hover,.yy-d:focus-visible{text-decoration:underline}
+.yy-d:focus-visible{outline:2px solid var(--c1);outline-offset:2px}
 </style>
 </head>
 <body data-sec="H" data-nav="H">
@@ -183,7 +186,8 @@ async function ilkDeneme(secenekler, yol) {
 }
 
 /* ---------- yorumlar ---------- */
-const YMAX = 300;                       // yorum karakter sınırı
+const YMAX = 300;
+const YANIT_ILK = 3;                    // her yorumun altında ilk görünen yanıt sayısı                       // yorum karakter sınırı
 const GIPHY_KEY = "XQ3AWYjiTAyzZUZ4XzHZFHZWbfSGAdWU";                   // Giphy API anahtarını buraya yaz. Boşsa GIF düğmesi görünmez.
 const GIF_URL = /^https:\/\/media\d*\.giphy\.com\//;
 // Yeni sütunlar (ust_id, gif) henüz eklenmediyse eski sorguya düşer, sayfa bozulmaz
@@ -345,7 +349,7 @@ function yorumKarti(c, h, vurgu, yenile, ctx) {
 
 async function yorumlariKur(n) {
   $("yrm").hidden = false;
-  const h = HESAP.oku(), liste = $("yliste"), form = $("yform");
+  const h = HESAP.oku(), liste = $("yliste"), form = $("yform"), acik = new Set();   // yanıtları açılmış ana yorumlar
   const baslik = say => { const b = $("yb"); b.textContent = "Yorumlar"; if (say != null) b.appendChild(el("span", "yrm-say", String(say))); };
   baslik();
   liste.innerHTML = '<div class="yrm-isk"><i class="a"></i><div><i class="b"></i><i class="c"></i></div></div><div class="yrm-isk"><i class="a"></i><div><i class="b"></i><i class="c"></i></div></div>';
@@ -362,10 +366,19 @@ async function yorumlariKur(n) {
       const dal = el("div", "yt");
       dal.appendChild(yorumKarti(c, h, c.id === vurguId, yukle, { n, ust: c.id, alt: false }));
       const ys = (yanit[c.id] || []).slice().reverse();   // yanıtlar eskiden yeniye
+      if (ys.some(y => y.id === vurguId)) acik.add(c.id);   // yeni yazılan yanıt görünsün
       if (ys.length) {
         const kutu = el("div", "yy");
-        ys.forEach(y => kutu.appendChild(yorumKarti(y, h, y.id === vurguId, yukle, { n, ust: c.id, alt: true })));
-        dal.appendChild(kutu);
+        const ciz = () => {
+          kutu.textContent = "";
+          (acik.has(c.id) ? ys : ys.slice(0, YANIT_ILK)).forEach(y => kutu.appendChild(yorumKarti(y, h, y.id === vurguId, yukle, { n, ust: c.id, alt: true })));
+          if (ys.length > YANIT_ILK) {
+            const d = el("button", "yy-d", acik.has(c.id) ? "Yanıtları gizle" : (ys.length - YANIT_ILK) + " yanıtı daha göster"); d.type = "button";
+            d.onclick = () => { if (acik.has(c.id)) acik.delete(c.id); else acik.add(c.id); ciz(); };
+            kutu.appendChild(d);
+          }
+        };
+        ciz(); dal.appendChild(kutu);
       }
       liste.appendChild(dal);
     });
