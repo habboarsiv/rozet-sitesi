@@ -209,7 +209,7 @@ function yorumKutusu(n, h, o) {
   const kap = el("div", "yf" + (o.ust ? " yanit" : ""));
   const sag = el("div", "yf-sag");
   const ta = el("textarea"); ta.maxLength = YMAX; ta.rows = 2; ta.value = o.baslangic || "";
-  ta.placeholder = o.ust ? "Yanıtını yaz..." : "Bu habere ne düşünüyorsun?";
+  ta.placeholder = o.ust ? "Yanıtını yaz..." : "Düşüncelerini yorumlarda belirt!";
   let gif = null;
   const onizle = el("div", "yf-gif"); onizle.hidden = true;
   const alt = el("div", "yf-alt"), say = el("span", "yf-say");
