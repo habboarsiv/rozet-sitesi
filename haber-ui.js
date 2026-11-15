@@ -58,7 +58,7 @@
       girdi.setAttribute("aria-label", "Haberlerde ara");
       etiket.appendChild(girdi); ust.appendChild(etiket);
       // Yazar, moderatör ve yönetici için haber paneli kısayolu
-      var h = window.HESAP && HESAP.oku ? HESAP.oku() : null;
+      var h = typeof HESAP !== "undefined" && HESAP.oku ? HESAP.oku() : null;   // HESAP "const" olduğu için window.HESAP değil
       if (h && typeof SITE !== "undefined" && ["yazar", "moderator", "yonetici"].indexOf(SITE.rolOf(h)) > -1) {
         var yaz = el("a", "hb-yaz", "Haber yaz"); yaz.href = "/haber-yaz"; ust.appendChild(yaz);
       }
