@@ -317,7 +317,8 @@ function yorumKarti(c, h, vurgu, yenile, ctx) {
   if (ben) bas.appendChild(el("span", "yo-ben", "Sen"));
   const tm = el("time"); tm.dateTime = c.olusturma; tm.title = tamZaman(c.olusturma); tm.textContent = zaman(c.olusturma); bas.appendChild(tm);
 
-  if (h && (ben || h.rol === "yonetici")) {
+  const rol = h ? S.rolOf(h) : "";   // yorumu yazan, moderatör ve yönetici silebilir
+  if (h && (ben || rol === "yonetici" || rol === "moderator")) {
     const s = el("button", "sil", "Sil"); s.type = "button"; let zm;
     s.onclick = async () => {   // iki adım: önce "Emin misin?", sonra siler
       if (!s.classList.contains("sor")) {
