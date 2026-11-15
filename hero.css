@@ -137,3 +137,52 @@ select option:checked{background:color-mix(in srgb,var(--c1,#5b86ff) 35%,var(--s
 .li .lm{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
 .li .lm span{padding:1px 9px;border-radius:999px;background:var(--surface2);color:var(--mute);font-size:.74rem;font-weight:600}
 .li .lr{align-self:center;color:var(--c1)}
+
+/* ---------- HABERLER: arama, kısayol, kart altlığı, haber sayısına göre yerleşim ---------- */
+.hb-top{display:flex;flex-wrap:wrap;align-items:center;gap:12px 16px;margin:0 0 18px}
+.hb-top .mb-alt{margin:0;flex:1 1 220px}
+.hb-ara{position:relative;flex:1 1 280px;max-width:380px;margin:0}
+.hb-ara svg{position:absolute;left:14px;top:50%;width:18px;height:18px;transform:translateY(-50%);color:var(--mute);pointer-events:none}
+.hb-ara input[type=search]{display:block;width:100%;height:44px;margin:0;padding:0 14px 0 42px;color:var(--ink);font:600 .95rem Manrope,system-ui,sans-serif}
+.hb-ara input[type=search]::placeholder{color:var(--mute);font-weight:500;opacity:1}
+.hb-yaz{display:inline-flex;align-items:center;height:44px;padding:0 20px;border-radius:12px;background:linear-gradient(135deg,var(--c1),var(--c2));color:var(--on);font:800 .92rem "Bricolage Grotesque",Manrope,sans-serif;text-decoration:none;box-shadow:0 10px 24px -8px var(--c1);transition:transform .15s,filter .15s}
+.hb-yaz:hover{transform:translateY(-2px);filter:brightness(1.1)}
+.hb-yaz:focus-visible{outline:2px solid var(--c1);outline-offset:3px}
+.hb-bos{margin:0;padding:30px 0;text-align:center;color:var(--mute)}
+.hb-bos:empty{display:none}
+
+/* kart numaraları (01, 02 ...) kalktı */
+.hb-ic::before{display:none}
+
+/* kart altlığı: yazar avatarı, tarih, yorum sayısı */
+.hb-grid .hb-kart{display:flex;flex-direction:column}
+.hb-grid .hb-kap{flex:none}
+.hb-grid .hb-ic{flex:1;display:flex;flex-direction:column}
+.hb-grid .hb-ic p{margin-bottom:12px}
+.hb-pie{display:flex;align-items:center;gap:10px;margin-top:auto;padding-top:12px;border-top:1px solid var(--line);color:var(--mute)}
+.hb-yz{display:flex;align-items:center;gap:9px;flex:1 1 auto;min-width:0}
+.hb-pie .av.hb-av{width:32px;height:32px}
+.hb-yk{display:flex;flex-direction:column;min-width:0;line-height:1.3}
+.hb-yk b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink);font-size:.88rem;font-weight:700}
+.hb-yk time{font-size:.76rem;white-space:nowrap}
+.hb-yo{display:inline-flex;align-items:center;flex:none;gap:5px;font-size:.84rem;font-weight:700;white-space:nowrap}
+.hb-yo svg{width:15px;height:15px}
+
+/* ilk görünen haber büyük kart (arama yapınca da doğru kart büyür) ve haber sayısına göre yerleşim */
+.hb-kart.hb-ilk{grid-column:span 2}
+.hb-kart.hb-ilk .hb-kap{aspect-ratio:21/9}
+.hb-kart.hb-ilk h3{font-size:1.7rem;line-height:1.15}
+.hb-grid[data-n="1"]{grid-template-columns:minmax(0,760px)}
+.hb-grid[data-n="2"]{grid-template-columns:minmax(0,2fr) minmax(0,1fr)}
+.hb-grid[data-n="3"]{grid-template-columns:minmax(0,2fr) repeat(2,minmax(0,1fr))}
+.hb-grid[data-n="1"] .hb-kart.hb-ilk,.hb-grid[data-n="2"] .hb-kart.hb-ilk,.hb-grid[data-n="3"] .hb-kart.hb-ilk{grid-column:auto}
+@media (max-width:900px){
+  .hb-grid[data-n="2"],.hb-grid[data-n="3"]{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .hb-grid[data-n="3"] .hb-kart.hb-ilk{grid-column:span 2}
+}
+@media (max-width:700px){
+  .hb-grid[data-n]{grid-template-columns:minmax(0,1fr)}
+  .hb-grid[data-n] .hb-kart.hb-ilk{grid-column:auto}
+  .hb-kart.hb-ilk h3{font-size:1.35rem}
+  .hb-ara{max-width:none}
+}
