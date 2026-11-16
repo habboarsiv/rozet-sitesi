@@ -283,3 +283,34 @@ body.gm-kilit{overflow:hidden}
   .sh-ara-kutu input{font-size:16px}
 }
 @media (prefers-reduced-motion:reduce){.sh-ara-panel,.sh-ara-kutu,.sh-ara-oge{transition:none}}
+
+/* ---------- LOGO: küp bölümün rengini alır; parıltı, üzerine gelince hareket, giriş animasyonu ---------- */
+.logo path{transition:fill .4s,stroke .4s}
+.logo .lg-t{fill:color-mix(in srgb,var(--c1) 62%,#0a1230)}
+.logo .lg-l{fill:color-mix(in srgb,var(--c1) 10%,#070b16)}
+.logo .lg-r{fill:color-mix(in srgb,var(--c1) 30%,#070b16)}
+.logo .lg-i{fill:none;stroke:color-mix(in srgb,var(--c2) 70%,#fff);stroke-opacity:.4;stroke-width:.6}
+.logo .lg-s{fill:#fff;fill-opacity:.92}
+.logo .lg-o,.logo .lg-e{fill:none;stroke:color-mix(in srgb,var(--c2) 55%,var(--c1));stroke-linejoin:round}
+.logo .lg-o{stroke-width:1.1}
+.logo .lg-e{stroke-width:1;stroke-opacity:.75}
+.logo .lg-g{transform-box:fill-box;transform-origin:center;transition:transform .35s cubic-bezier(.2,.7,.2,1)}
+/* üst çubuk: yazı tek satırda kalsın, küp biraz büyük, üzerine gelince hafifçe kalkıp döner */
+.sh-logo{flex:none;white-space:nowrap}
+.sh-logo .logo{width:34px;height:34px;transition:transform .3s cubic-bezier(.2,.7,.2,1),filter .3s}
+.sh-logo:hover .logo,.sh-logo:focus-visible .logo{transform:translateY(-2px) rotate(-5deg) scale(1.07);filter:drop-shadow(0 8px 16px var(--cg))}
+.sh-logo:hover .lg-g,.sh-logo:focus-visible .lg-g{transform:scale(1.45) rotate(18deg)}
+.sh-logo:focus-visible{outline:2px solid var(--c1);outline-offset:4px;border-radius:10px}
+/* giriş animasyonu (ziyaret başına bir kez): yüzler yerine oturur, parıltı belirir */
+.logo-giris .logo path,.logo-giris .logo .lg-g{transform-box:fill-box;transform-origin:center}
+.logo-giris .lg-l{animation:lgL .55s cubic-bezier(.2,.8,.2,1) both}
+.logo-giris .lg-r{animation:lgR .55s cubic-bezier(.2,.8,.2,1) .06s both}
+.logo-giris .lg-t{animation:lgT .6s cubic-bezier(.2,.8,.2,1) .16s both}
+.logo-giris .lg-o,.logo-giris .lg-e,.logo-giris .lg-i{animation:lgO .5s ease-out .35s both}
+.logo-giris .lg-s{animation:lgS .55s cubic-bezier(.2,.8,.2,1) .65s both}
+@keyframes lgL{from{opacity:0;transform:translate(-5px,5px)}}
+@keyframes lgR{from{opacity:0;transform:translate(5px,5px)}}
+@keyframes lgT{from{opacity:0;transform:translateY(-8px)}}
+@keyframes lgO{from{opacity:0}}
+@keyframes lgS{from{opacity:0;transform:scale(.2) rotate(-60deg)}}
+@media (prefers-reduced-motion:reduce){.logo path,.logo .lg-g,.sh-logo .logo{transition:none}.sh-logo:hover .logo,.sh-logo:focus-visible .logo{transform:none}.logo-giris .logo *{animation:none!important}}

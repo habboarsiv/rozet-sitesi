@@ -32,7 +32,7 @@ const SITE = (() => {
     moderator: { ad: "Moderatör", ic: "verify", acik: "Topluluk içi etkileşimi korur, haber ve yorum akışını denetler." },
     yonetici: { ad: "Yönetici", ic: "shield", acik: "Topluluğu ve platformu yönetir; tüm içeriklerde tam yetkilidir." }
   };
-  const LOGO = '<svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2.5 28.5 9.75 16 17 3.5 9.75z" fill="#2a4a92"/><path d="M3.5 9.75 16 17v13.5L3.5 23.25z" fill="#0b1536"/><path d="M28.5 9.75 16 17v13.5l12.5-7.25z" fill="#142760"/><path d="M16 6.7 23.3 10.9 16 15.1 8.7 10.9z" fill="none" stroke="#8cc2ff" stroke-opacity=".4" stroke-width=".6"/><path d="M16 2.5 28.5 9.75v13.5L16 30.5 3.5 23.25V9.75z" fill="none" stroke="#5aa7ff" stroke-width="1.1" stroke-linejoin="round"/><path d="M3.5 9.75 16 17l12.5-7.25M16 17v13.5" fill="none" stroke="#5aa7ff" stroke-opacity=".75" stroke-width="1" stroke-linejoin="round"/></svg>';
+  const LOGO = '<svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><path class="lg-l" d="M3.5 9.75 16 17v13.5L3.5 23.25z"/><path class="lg-r" d="M28.5 9.75 16 17v13.5l12.5-7.25z"/><path class="lg-t" d="M16 2.5 28.5 9.75 16 17 3.5 9.75z"/><path class="lg-i" d="M16 6.7 23.3 10.9 16 15.1 8.7 10.9z"/><g class="lg-g"><path class="lg-s" d="M16 6.5 16.85 9.15 19.5 10 16.85 10.85 16 13.5 15.15 10.85 12.5 10 15.15 9.15z"/></g><path class="lg-o" d="M16 2.5 28.5 9.75v13.5L16 30.5 3.5 23.25V9.75z"/><path class="lg-e" d="M3.5 9.75 16 17l12.5-7.25M16 17v13.5"/></svg>';
 
   const el = (t, c, h) => { const e = document.createElement(t); if (c) e.className = c; if (h) e.innerHTML = h; return e; };
   const rolOf = h => { let k = String(h.rol || "").toLowerCase().replace(/ö/g, "o"); if (k === "mod") k = "moderator"; return ROL[k] ? k : "uye"; };
@@ -51,6 +51,8 @@ const SITE = (() => {
   function ustCubuk() {
     const ana = !!document.getElementById("mR"), aktif = document.body.dataset.nav || "";
     const hd = el("header", "sh"); hd.id = "siteHeader";
+    // Logo giriş animasyonu: ziyaret (sekme) başına bir kez oynar, her sayfada tekrar etmez
+    try { if (!sessionStorage.getItem("logoGiris")) { hd.classList.add("logo-giris"); sessionStorage.setItem("logoGiris", "1"); } } catch { /* depolama kapalıysa animasyon atlanır */ }
     const nav = ana ? "" : '<nav class="sh-nav" aria-label="Bölümler">' + [["R", "Rozetler", "/"], ["H", "Haberler", "/#haberler"], ["P", "Promolar", "/#promolar"], ["M", "Mobiler", "/#mobiler"], ["O", "Oyuncular", "/#oyuncular"]]
       .map(x => '<a href="' + x[2] + '"' + (aktif === x[0] ? ' class="on" aria-current="page"' : "") + '>' + x[1] + '</a>').join("") + '</nav>';
     hd.innerHTML = '<div class="sh-in"><a class="sh-logo" href="/" aria-label="Habbo Arşiv">' + LOGO + '<span>Habbo Arşiv</span></a>' + nav + '<div class="sh-user" id="shUser"></div></div>';
