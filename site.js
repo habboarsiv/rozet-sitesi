@@ -23,7 +23,10 @@ const SITE = (() => {
     arrow: '<path d="M7 7h10v10"/><path d="M7 17 17 7"/>',
     x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
     search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
-    verify: '<path d="M12 22c5.5-2 8-6 8-11V5l-8-3-8 3v6c0 5 2.5 9 8 11z"/><path d="m9 12 2 2 4-4"/>'
+    verify: '<path d="M12 22c5.5-2 8-6 8-11V5l-8-3-8 3v6c0 5 2.5 9 8 11z"/><path d="m9 12 2 2 4-4"/>',
+    copy: '<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>',
+    eye: '<path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/>',
+    eyeoff: '<path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/><path d="m2 2 20 20"/>'
   };
   const svg = (k, c) => '<svg class="ic ' + (c || "") + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + IC[k] + '</svg>';
   const ROL = {
@@ -176,6 +179,7 @@ const SITE = (() => {
 
   /* ---------- giriş / kayıt penceresi (mevcut doğrulama akışı aynen korunur) ---------- */
   let gm, mod = "giris", kodAlindi = false;
+  let sayac = 0, bitis = 0, bitti = false, avZ = 0, kopyaZ = 0;   // kod geri sayımı, kod süresi doldu mu, avatar bekletmesi, "Kopyalandı" yazısı
   const $g = id => gm.querySelector("#" + id);
   function msg(t, c) { $g("gmMsg").textContent = t || ""; $g("gmMsg").className = "gm-msg " + (c || ""); }
 
@@ -185,13 +189,17 @@ const SITE = (() => {
       '<button class="gm-x" type="button" aria-label="Kapat">' + svg("x") + '</button>' +
       '<div class="gm-ust">' + LOGO + '<h2 id="gmBaslik">Giriş yap</h2><p id="gmAlt">Habbo hesabınla devam et.</p></div>' +
       '<form id="gmF" autocomplete="off"><label for="gmOtel">Otel</label><select id="gmOtel"></select>' +
-      '<label for="gmNick">Habbo adın</label><input id="gmNick" maxlength="30" autocapitalize="off" spellcheck="false">' +
-      '<div id="gmKodKutu" hidden><div class="gm-kod"><b id="gmKod"></b><span>Bu kodu oyunda mottona yaz, kaydet ve 1-2 dakika bekle. Kod <span id="gmDk"></span> dakika geçerli.</span></div></div>' +
-      '<div id="gmSifreAlani"><label for="gmSifre" id="gmSifreEt">Şifre</label><input id="gmSifre" type="password" autocomplete="new-password"></div>' +
-      '<div id="gmSifre2Alani" hidden><label for="gmSifre2">Şifre (tekrar)</label><input id="gmSifre2" type="password" autocomplete="new-password"></div>' +
+      '<label for="gmNick">Habbo adın</label><div class="gm-ad"><input id="gmNick" maxlength="30" autocapitalize="off" spellcheck="false"><span class="gm-av" id="gmAv"></span></div>' +
+      '<div id="gmKodKutu" hidden><div class="gm-kod" id="gmKodK">' +
+        '<div class="gm-kod-s"><b class="gm-kodu" id="gmKod"></b><button class="gm-kp" id="gmKopya" type="button">' + svg("copy") + '<span id="gmKopyaEt" aria-live="polite">Kopyala</span></button></div>' +
+        '<p class="gm-kod-a">Bu kodu oyunda mottona yaz, kaydet ve 1-2 dakika bekle.</p>' +
+        '<p class="gm-say" id="gmSay" role="timer">Kalan süre: <b id="gmDk"></b></p>' +
+        '<p class="gm-say bit" id="gmBitti" hidden>Kodun süresi doldu.</p>' +
+        '<button class="gm-btn ik gm-yeni" id="gmYeni" type="button" hidden>Yeni kod al</button></div></div>' +
+      '<div id="gmSifreAlani"><label for="gmSifre" id="gmSifreEt">Şifre</label><div class="gm-sf"><input id="gmSifre" type="password" autocomplete="new-password"><button class="gm-goz" id="gmGoz" type="button" aria-label="Şifreyi göster" aria-pressed="false">' + svg("eye") + '</button></div><p class="gm-ip" id="gmIp" hidden>En az 8 karakter</p></div>' +
+      '<div class="gm-msg" id="gmMsg" role="status" aria-live="polite"></div>' +
       '<div class="gm-satir"><button class="gm-btn" id="gmBtn" type="submit">Giriş yap</button><button class="gm-btn ik" id="gmKayit" type="button">Kayıt ol</button></div>' +
-      '<div class="gm-alt"><a href="#" id="gmUnuttum">Şifremi unuttum</a><a href="#" id="gmGeri" hidden>← Girişe dön</a></div>' +
-      '<div class="gm-msg" id="gmMsg" role="status" aria-live="polite"></div></form></div>';
+      '<div class="gm-alt"><a href="#" id="gmUnuttum">Şifremi unuttum</a><a href="#" id="gmGeri" hidden>← Girişe dön</a></div></form></div>';
     document.body.appendChild(gm);
     for (const [k, v] of Object.entries(HESAP.OTELLER)) $g("gmOtel").add(new Option(v, k));
     gm.addEventListener("click", e => { if (e.target === gm || e.target.closest(".gm-x")) kapat(); });
@@ -200,11 +208,80 @@ const SITE = (() => {
     $g("gmUnuttum").onclick = e => { e.preventDefault(); gec("sifre"); };
     $g("gmGeri").onclick = e => { e.preventDefault(); gec("giris"); };
     $g("gmF").onsubmit = gonder;
+    $g("gmGoz").onclick = sifreGoster;
+    $g("gmSifre").addEventListener("input", sifreIpucu);
+    $g("gmKopya").onclick = kopyala;
+    $g("gmYeni").onclick = yeniKod;
+    $g("gmNick").addEventListener("input", avGuncelle);
+    $g("gmOtel").addEventListener("change", avGuncelle);
+    avCiz();
   }
+
+  /* ---------- pencere yardımcıları: şifre göster/gizle, kod geri sayımı, kopyala, avatar önizleme ---------- */
+  function sifreGizle() {
+    $g("gmSifre").type = "password"; $g("gmGoz").setAttribute("aria-pressed", "false");
+    $g("gmGoz").setAttribute("aria-label", "Şifreyi göster"); $g("gmGoz").innerHTML = svg("eye");
+  }
+  function sifreGoster() {
+    const gor = $g("gmSifre").type === "password";
+    $g("gmSifre").type = gor ? "text" : "password"; $g("gmGoz").setAttribute("aria-pressed", String(gor));
+    $g("gmGoz").setAttribute("aria-label", gor ? "Şifreyi gizle" : "Şifreyi göster"); $g("gmGoz").innerHTML = svg(gor ? "eyeoff" : "eye");
+    $g("gmSifre").focus();
+  }
+  function sifreIpucu() {
+    const n = $g("gmSifre").value.length;
+    $g("gmIp").className = "gm-ip" + (n === 0 ? "" : n < 8 ? " h" : " o");
+  }
+
+  function sayacDurdur() { clearInterval(sayac); sayac = 0; }
+  function kodDurum() {
+    $g("gmKodK").classList.toggle("bitti", bitti);
+    $g("gmSay").hidden = bitti; $g("gmBitti").hidden = !bitti; $g("gmYeni").hidden = !bitti;
+    $g("gmKopya").hidden = bitti; $g("gmBtn").disabled = bitti;
+  }
+  function sureYaz() {
+    const k = Math.max(0, Math.round((bitis - Date.now()) / 1000));
+    $g("gmDk").textContent = Math.floor(k / 60) + ":" + String(k % 60).padStart(2, "0");
+    if (k <= 0 && !bitti) { bitti = true; sayacDurdur(); kodDurum(); }
+  }
+  function kodBaslat(v) {
+    $g("gmKod").textContent = v.kod;
+    bitis = Date.now() + (Number(v.dakika) || 15) * 60000;   // bitiş anına göre sayılır, sekme arka plandayken de şaşmaz
+    bitti = false; sayacDurdur(); kodDurum(); sureYaz();
+    if (!bitti) sayac = setInterval(sureYaz, 1000);
+  }
+  async function yeniKod() {
+    const b = $g("gmYeni"); msg(""); b.disabled = true;
+    try {
+      const { ok, v } = await HESAP.fn({ islem: "kod", otel: $g("gmOtel").value, nick: $g("gmNick").value.trim(), amac: mod });
+      if (!ok) msg(v.hata || "Bir hata oluştu.", "h"); else kodBaslat(v);
+    } catch { msg("Bağlantı kurulamadı. İnternetini kontrol edip tekrar dene.", "h"); }
+    b.disabled = false;
+  }
+  async function kopyala() {
+    const t = $g("gmKod").textContent; let ok = false;
+    try { await navigator.clipboard.writeText(t); ok = true; }
+    catch {
+      try {   // eski tarayıcılar / izin verilmeyen durumlar için yedek yöntem
+        const ta = document.createElement("textarea"); ta.value = t; ta.setAttribute("readonly", ""); ta.style.cssText = "position:fixed;opacity:0";
+        gm.appendChild(ta); ta.select(); ok = document.execCommand("copy"); ta.remove();
+      } catch { /* kopyalama desteklenmiyor */ }
+    }
+    const et = $g("gmKopyaEt"); et.textContent = ok ? "Kopyalandı" : "Kopyalanamadı";
+    clearTimeout(kopyaZ); kopyaZ = setTimeout(() => { et.textContent = "Kopyala"; }, 1800);
+  }
+
+  function avCiz() {
+    const kap = $g("gmAv"), ad = $g("gmNick").value.trim();
+    kap.textContent = "";
+    if (ad.length < 2) { kap.appendChild(el("span", "av onizle yok", svg("user"))); return; }
+    kap.appendChild(avatar({ ad, otel: $g("gmOtel").value }, "m", true, "onizle"));
+  }
+  function avGuncelle() { clearTimeout(avZ); avZ = setTimeout(avCiz, 450); }
 
   function goster() {
     const g = mod === "giris";
-    $g("gmSifreAlani").hidden = !(g || kodAlindi); $g("gmSifre2Alani").hidden = g || !kodAlindi; $g("gmKodKutu").hidden = g || !kodAlindi;
+    $g("gmSifreAlani").hidden = !(g || kodAlindi); $g("gmKodKutu").hidden = g || !kodAlindi; $g("gmIp").hidden = g;
     $g("gmKayit").hidden = !g; $g("gmUnuttum").hidden = !g; $g("gmGeri").hidden = g;
     $g("gmOtel").disabled = $g("gmNick").disabled = kodAlindi && !g;
     $g("gmSifreEt").textContent = mod === "sifre" ? "Yeni şifre" : "Şifre";
@@ -212,7 +289,7 @@ const SITE = (() => {
     $g("gmBaslik").textContent = g ? "Giriş yap" : mod === "kayit" ? "Kayıt ol" : "Şifreni yenile";
     $g("gmAlt").textContent = g ? "Habbo hesabınla devam et." : mod === "kayit" ? "Habbo hesabını mottonla doğrula." : "Mottonla doğrulayıp yeni şifre belirle.";
   }
-  function gec(m) { mod = m; kodAlindi = false; msg(""); goster(); }
+  function gec(m) { mod = m; kodAlindi = false; sayacDurdur(); bitti = false; $g("gmBtn").disabled = false; sifreGizle(); sifreIpucu(); msg(""); goster(); }
 
   async function gonder(e) {
     e.preventDefault(); msg("");
@@ -220,7 +297,6 @@ const SITE = (() => {
     if (!nick) return msg("Habbo adını yaz.", "h");
     if (mod === "giris" && !sifre) return msg("Şifreni yaz.", "h");
     if (kodAlindi && sifre.length < 8) return msg("Şifre en az 8 karakter olmalı.", "h");
-    if (kodAlindi && sifre !== $g("gmSifre2").value) return msg("Şifreler aynı değil.", "h");
     $g("gmBtn").disabled = true;
     try {
       if (mod === "giris") {
@@ -229,7 +305,7 @@ const SITE = (() => {
       } else if (!kodAlindi) {
         const { ok, v } = await HESAP.fn({ islem: "kod", otel, nick, amac: mod });
         if (!ok) msg(v.hata || "Bir hata oluştu.", "h");
-        else { kodAlindi = true; $g("gmKod").textContent = v.kod; $g("gmDk").textContent = v.dakika; goster(); }
+        else { kodAlindi = true; kodBaslat(v); goster(); }
       } else {
         const { ok, v } = await HESAP.fn({ islem: "dogrula", otel, nick, amac: mod, sifre });
         if (!ok) msg(v.hata || "Bir hata oluştu.", "h");
@@ -239,7 +315,7 @@ const SITE = (() => {
         }
       }
     } catch { msg("Bağlantı kurulamadı. İnternetini kontrol edip tekrar dene.", "h"); }
-    $g("gmBtn").disabled = false;
+    $g("gmBtn").disabled = bitti;   // kodun süresi dolduysa düğme "Yeni kod al" ile açılana kadar kapalı kalır
   }
 
   function girisAc(m) {
@@ -247,7 +323,7 @@ const SITE = (() => {
     gec(m || "giris"); gm.classList.add("acik"); gm.setAttribute("aria-hidden", "false"); document.body.classList.add("gm-kilit");
     setTimeout(() => $g("gmNick").focus(), 60);
   }
-  function kapat() { gm.classList.remove("acik"); gm.setAttribute("aria-hidden", "true"); document.body.classList.remove("gm-kilit"); }
+  function kapat() { sayacDurdur(); gm.classList.remove("acik"); gm.setAttribute("aria-hidden", "true"); document.body.classList.remove("gm-kilit"); }
 
   document.addEventListener("click", e => {
     const t = e.target.closest("[data-giris]");

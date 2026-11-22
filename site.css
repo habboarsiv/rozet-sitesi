@@ -74,9 +74,25 @@ body.gm-kilit{overflow:hidden}
 .gm-btn:disabled{opacity:.6;cursor:wait}
 .gm-alt{margin-top:12px;text-align:center;font-size:.82rem}.gm-alt a{color:var(--mute);text-decoration:underline}
 .gm-msg{margin-top:12px;font-size:.9rem;color:var(--mute)}.gm-msg.h{color:#ff7684}.gm-msg.o{color:#35e0b0}
-.gm-kod{margin-top:16px;padding:14px;border-radius:12px;text-align:center;background:color-mix(in srgb,var(--c1) 14%,transparent);border:1px dashed var(--c1)}
-.gm-kod b{display:block;font:800 1.7rem ui-monospace,Consolas,monospace;letter-spacing:.06em;color:var(--c2);user-select:all}
-.gm-kod span{display:block;margin-top:6px;font-size:.85rem;color:var(--mute)}
+.gm-msg:empty{display:none}
+/* Habbo adı + avatar önizleme */
+.gm-ad{display:flex;align-items:center;gap:10px}.gm-ad input{flex:1;min-width:0}
+.gm-av{flex:none;display:flex}.av.onizle{width:46px;height:46px}
+/* şifre göster/gizle ve kural notu */
+.gm-sf{position:relative}.gm-sf input{box-sizing:border-box;padding-right:48px}
+.gm-goz{position:absolute;top:50%;right:6px;transform:translateY(-50%);width:34px;height:34px;display:grid;place-items:center;border:0;border-radius:9px;background:transparent;color:var(--mute);cursor:pointer;transition:color .15s,background .15s}
+.gm-goz:hover{color:var(--ink);background:var(--glass)}.gm-goz:focus-visible{outline:2px solid var(--c1);outline-offset:1px}.gm-goz .ic{width:18px;height:18px}
+.gm-ip{margin:6px 2px 0;font-size:.78rem;color:var(--mute)}.gm-ip.h{color:#ff7684}.gm-ip.o{color:#35e0b0}
+/* doğrulama kodu kutusu: kopyala düğmesi, geri sayım, süre dolunca "Yeni kod al" */
+.gm-kod{margin-top:16px;padding:14px;border-radius:12px;text-align:center;background:color-mix(in srgb,var(--c1) 14%,transparent);border:1px dashed var(--c1);transition:border-color .2s,background .2s}
+.gm-kod-s{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}
+.gm-kodu{font:800 1.7rem ui-monospace,Consolas,monospace;letter-spacing:.06em;color:var(--c2);user-select:all}
+.gm-kp{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid var(--line2);border-radius:9px;background:var(--glass);color:var(--ink);font-family:inherit;font-weight:700;font-size:.78rem;cursor:pointer;transition:border-color .15s}
+.gm-kp:hover{border-color:var(--c1)}.gm-kp:focus-visible{outline:2px solid var(--c1);outline-offset:1px}.gm-kp .ic{width:14px;height:14px}
+.gm-kod-a{margin:8px 0 0;font-size:.85rem;color:var(--mute)}
+.gm-say{margin:6px 0 0;font-size:.82rem;color:var(--mute)}.gm-say b{color:var(--ink);font-variant-numeric:tabular-nums}.gm-say.bit{color:#ff7684;font-weight:700}
+.gm-kod.bitti{border-color:var(--line2);background:var(--surface2)}.gm-kod.bitti .gm-kodu{color:var(--mute);text-decoration:line-through;user-select:none}
+.gm-yeni{flex:none;margin-top:10px;padding:8px 16px}
 .gm [hidden]{display:none!important}
 
 /* HESAP MERKEZİ */
