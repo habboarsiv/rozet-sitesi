@@ -56,7 +56,7 @@ const SITE = (() => {
     const hd = el("header", "sh"); hd.id = "siteHeader";
     // Logo giriş animasyonu: ziyaret (sekme) başına bir kez oynar, her sayfada tekrar etmez
     try { if (!sessionStorage.getItem("logoGiris")) { hd.classList.add("logo-giris"); sessionStorage.setItem("logoGiris", "1"); } } catch { /* depolama kapalıysa animasyon atlanır */ }
-    const nav = ana ? "" : '<nav class="sh-nav" aria-label="Bölümler">' + [["R", "Rozetler", "/"], ["H", "Haberler", "/#haberler"], ["P", "Promolar", "/#promolar"], ["M", "Mobiler", "/#mobiler"], ["O", "Oyuncular", "/#oyuncular"]]
+    const nav = ana ? "" : '<nav class="sh-nav" aria-label="Bölümler">' + [["R", "Rozetler", "/"], ["H", "Haberler", "/#haberler"], ["P", "Promolar", "/#promolar"], ["M", "Mobiler", "/#mobiler"], ["O", "Oyuncular", "/#oyuncular"], ["F", "Fotoğraflar", "/#fotolar"]]
       .map(x => '<a href="' + x[2] + '"' + (aktif === x[0] ? ' class="on" aria-current="page"' : "") + '>' + x[1] + '</a>').join("") + '</nav>';
     hd.innerHTML = '<div class="sh-in"><a class="sh-logo" href="/" aria-label="Habbo Arşiv">' + LOGO + '<span>Habbo Arşiv</span></a>' + nav + '<div class="sh-user" id="shUser"></div></div>';
     const ku = hd.querySelector("#shUser"); ku.parentNode.insertBefore(aramaKur(), ku);

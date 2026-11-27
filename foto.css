@@ -1,0 +1,105 @@
+/* Habbo Arşiv - Fotoğraflar bölümü. index.html'de tema.css, site.css ve hero.css'ten SONRA yüklenir.
+   Renkler tema.css'teki değişkenlerden gelir (açık ve koyu temaya kendiliğinden uyar). */
+
+/* bölümün kendi rengi: mercan / gül */
+body[data-sec=F]{--c1:#ff5470;--c2:#ff8fa3;--cg:rgba(255,84,112,.4);--on:#fff}
+@media (prefers-color-scheme:light){body[data-sec=F]{--c1:#e5254b;--c2:#ff6483;--cg:rgba(229,37,75,.26)}}
+#mF{--t1:#ff5470;--t2:#ff9aab;--to:#fff}
+
+/* üst alan ve araçlar */
+.fo-bas{margin-bottom:18px}
+.fo-bas h2{margin:0 0 4px;font-size:1.5rem;letter-spacing:-.02em}
+.fo-bas p{margin:0;color:var(--mute)}
+.fo-tools{flex-wrap:wrap;align-items:center}
+.fo-tools select{width:auto;flex:0 0 auto;max-width:none}
+.fo-tools input[type=search]{width:auto;flex:1 1 240px}
+#fts .chip{border:1px solid color-mix(in srgb,var(--c1) 40%,var(--line));background:color-mix(in srgb,var(--c1) 12%,transparent);color:var(--ink)}
+.fo-uyari{font-size:.82rem;color:var(--mute)}
+
+/* kart ızgarası */
+.fo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.fo-bos{grid-column:1/-1;text-align:center}
+.fo-bos .empty{padding:24px 0 8px}
+.fo-k{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;overflow:hidden;
+  border:1px solid var(--line);border-radius:16px;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--c1) 8%,transparent),transparent 55%),var(--surface);
+  box-shadow:var(--hi),var(--shadow);transition:transform .18s,border-color .18s,box-shadow .18s}
+.fo-k:hover{transform:translateY(-4px);border-color:var(--c1);box-shadow:0 18px 40px -14px var(--cg)}
+.fo-k:focus-visible{outline:2px solid var(--c1);outline-offset:3px}
+.fo-k.sk{pointer-events:none}
+.fo-k.sk .fo-alt{height:58px}
+
+.fo-img{position:relative;display:block;aspect-ratio:1;overflow:hidden;
+  background:radial-gradient(circle at 50% 40%,color-mix(in srgb,var(--c1) 18%,transparent),transparent 70%),var(--tile)}
+.fo-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .35s}
+.fo-k:hover .fo-img img{transform:scale(1.05)}
+.fo-yok{position:absolute;inset:0;display:grid;place-items:center;font-size:.78rem;color:var(--mute)}
+.fo-img.yuk::after{content:"";position:absolute;inset:0;transform:translateX(-100%);
+  background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.09) 50%,transparent 70%);animation:fo-par 1.3s infinite}
+@keyframes fo-par{to{transform:translateX(100%)}}
+
+.fo-bayrak{position:absolute;left:8px;top:8px;display:flex;padding:3px 5px;border-radius:7px;
+  background:rgba(5,8,18,.62);backdrop-filter:blur(6px)}
+.fo-bayrak:empty{display:none}
+.fo-bayrak svg{width:22px;height:15px;display:block;border-radius:2px}
+.fo-begeni{position:absolute;right:8px;bottom:8px;display:inline-flex;align-items:center;gap:5px;
+  padding:3px 10px 3px 7px;border-radius:999px;background:rgba(5,8,18,.72);backdrop-filter:blur(6px);
+  color:#fff;font:700 .78rem Manrope,system-ui,sans-serif}
+.fo-begeni svg{width:14px;height:14px;color:#ff6b85}
+.fo-begeni.sifir svg{color:rgba(255,255,255,.5)}
+
+.fo-alt{display:flex;align-items:center;gap:10px;padding:10px 12px}
+.fo-alt .av{flex:none}
+.fo-met{min-width:0;display:flex;flex-direction:column}
+.fo-met b{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fo-met small{color:var(--mute);font-size:.78rem}
+
+/* büyütme penceresi (dialog'un genel stillerini bu pencere için değiştirir) */
+#fdlg{position:relative;max-width:980px;width:calc(100% - 24px);padding:0;overflow:hidden}
+#fdlg::before{content:attr(data-bas)}
+#fdlg>.fd-x{all:unset;position:absolute;right:12px;top:9px;z-index:2;width:30px;height:30px;display:grid;place-items:center;
+  border-radius:9px;cursor:pointer;color:var(--mute);font-size:1rem;margin:0}
+#fdlg>.fd-x:hover{color:var(--ink);background:var(--glass)}
+#fdlg>.fd-in{margin:0;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(260px,1fr);
+  max-height:calc(100dvh - 24px - 50px);overflow:auto}
+.fd-sahne{position:relative;display:grid;place-items:center;min-height:240px;background:#04060d}
+.fd-img{display:block;max-width:100%;max-height:min(72vh,680px);object-fit:contain}
+.fd-ok{all:unset;position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;display:grid;place-items:center;
+  border-radius:50%;background:rgba(5,8,18,.62);color:#fff;font-size:1.7rem;line-height:1;cursor:pointer;
+  transition:background .15s}
+.fd-ok:hover{background:var(--c1);color:var(--on)}
+.fd-ok[hidden]{display:none}
+.fd-on{left:10px}.fd-sn{right:10px}
+.fd-yan{display:flex;flex-direction:column;gap:14px;min-width:0;padding:18px 20px}
+.fd-ceken{display:flex;align-items:center;gap:12px}
+.fd-kim{display:flex;flex-direction:column;min-width:0}
+.fd-kim small{color:var(--mute);font-size:.8rem}
+.fd-ad{all:unset;cursor:pointer;font:800 1.15rem "Bricolage Grotesque",Manrope,system-ui,sans-serif;color:var(--ink);overflow-wrap:anywhere}
+.fd-ad:hover{color:var(--c1);text-decoration:underline}
+.fd-bilgi{display:grid;grid-template-columns:max-content 1fr;gap:6px 14px;margin:0;font-size:.9rem}
+.fd-bilgi dt{color:var(--mute)}
+.fd-bilgi dd{margin:0;display:flex;align-items:center;gap:6px;min-width:0}
+.fd-bilgi dd svg{width:20px;height:14px;border-radius:2px}
+.fd-bilgi a,.fd-ac{color:var(--c1);font-weight:700}
+.fd-bas{margin:0;font:800 1rem "Bricolage Grotesque",Manrope,system-ui,sans-serif}
+.fd-liste{display:flex;flex-wrap:wrap;gap:6px;max-height:260px;overflow:auto;align-content:flex-start}
+.fd-yok{margin:0!important;color:var(--mute)}
+.fd-lk,.fd-daha{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;gap:7px;
+  padding:3px 11px 3px 3px;border:1px solid var(--line2);border-radius:999px;background:var(--glass);
+  font-weight:600;font-size:.85rem;transition:border-color .15s,box-shadow .15s}
+.fd-daha{padding:5px 12px;color:var(--c1)}
+.fd-lk:hover,.fd-daha:hover{border-color:var(--c1);box-shadow:0 0 0 3px var(--cg)}
+.fd-lk:focus-visible,.fd-daha:focus-visible,.fd-ad:focus-visible{outline:2px solid var(--c1);outline-offset:2px}
+.fd-lk .av.kucuk{width:28px;height:28px}
+
+@media (max-width:760px){
+  #fdlg>.fd-in{grid-template-columns:1fr}
+  .fd-img{max-height:56vh}
+  .fo-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+}
+@media (prefers-reduced-motion:reduce){
+  .fo-k,.fo-img img{transition:none}
+  .fo-k:hover{transform:none}
+  .fo-k:hover .fo-img img{transform:none}
+  .fo-img.yuk::after{animation:none}
+}
