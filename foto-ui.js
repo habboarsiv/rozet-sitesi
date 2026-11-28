@@ -24,7 +24,8 @@
     f_ac: "Görseli yeni sekmede aç", f_sorgula: "Oyuncuyu sorgula", f_otelYok: "Yanıt vermeyen oteller:",
     f_say: "fotoğraf", f_cekti: "Çektikleri", f_begendi: "Beğendikleri", f_stCekti: "Çektiği fotoğraf", f_stAlinan: "Aldığı beğeni",
     f_stBegendi: "Beğendiği fotoğraf", f_oyuncuFoto: "Bu oyuncunun fotoğrafları", f_oyBos: "Bu oyuncunun burada gösterilecek fotoğrafı yok.",
-    f_kapsam: "Yalnızca son paylaşılan fotoğraflar arasında aranır.", f_kapat: "Kapat", f_onceki: "Önceki", f_sonraki: "Sonraki", f_tekrar: "Tekrar dene", f_otel: "Otel",
+    f_kapsam: "Yalnızca son paylaşılan fotoğraflar arasında aranır.",
+    f_habboAra: "Habbo'da ara", f_bulunamadi: "Bu adda bir oyuncu bulunamadı.", f_aramaHata: "Oyuncu şu an aranamadı. Biraz sonra tekrar dene.", f_kapat: "Kapat", f_onceki: "Önceki", f_sonraki: "Sonraki", f_tekrar: "Tekrar dene", f_otel: "Otel",
     tumOtel: "Tüm oteller", yeni: "Yeniden eskiye", daha: "Daha fazla göster", gorselYok: "Görsel yok", tarih: "Tarih",
   };
   const t = k => (typeof DIL !== "undefined" && DIL.T && DIL.T[k]) ? DIL.t(k) : (TR[k] || k);
@@ -44,6 +45,8 @@
 
   const KAMERA = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 15.2a3.2 3.2 0 100-6.4 3.2 3.2 0 000 6.4zM9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>';
 
+  const ARA = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>';
+
   function goreli(ms) {
     try {
       const s = Math.round((ms - Date.now()) / 1000), a = Math.abs(s), rf = new Intl.RelativeTimeFormat(dil(), { numeric: "auto" });
@@ -60,9 +63,10 @@
 
   let kok, dlg, kuruldu = false, ix = -1, gosterilen = 0, seq = 0, tumHata = false;
   let tum = [], liste = [], hatali = [], E = new Map(), onerListe = [], onerIx = -1, bekleyen = false;
-  const UI = {}, DR = {}, veri = {}, oyuncuFoto = {}, tamDurum = {};
+  const UI = {}, DR = {}, veri = {}, oyuncuFoto = {}, tamDurum = {}, eklenen = {};
+  let aramaSeq = 0;
   // oyuncu: seçili oyuncu {ad, otel} ya da null;  mod: "cekti" | "begendi"
-  const S = { otel: "tr", q: "", sirala: "yeni", oyuncu: null, mod: "cekti" };
+  const S = { otel: "tr", q: "", sirala: "yeni", oyuncu: null, mod: "cekti", not: null };   // not: "bulunamadi" | "hata" | null
   const ank = e => e.ad.toLocaleLowerCase("tr") + "|" + e.otel;   // oyuncu anahtarı: ad + otel (aynı ad başka otelde başka kişi olabilir)
 
   /* ---------- veri ---------- */
@@ -95,6 +99,12 @@
       if (f.cekenId) c.id = f.cekenId;
       f.begeniler.forEach(b => { al(b, f.otel).begendi.push(f); });
     });
+    // "Habbo'da ara" ile bulunan oyuncular akışta olmasa da dizinde kalır
+    Object.keys(eklenen).forEach(k => {
+      const x = eklenen[k], e = E.get(k);
+      if (!e) E.set(k, { ad: x.ad, otel: x.otel, id: x.id, cekti: [], begendi: [] });
+      else if (!e.id) e.id = x.id;
+    });
   }
 
   // Oyuncunun çektiği fotoğraflar: akıştakiler + (varsa) oyuncuya özel akıştan gelenler
@@ -117,7 +127,10 @@
       oyuncuFoto[k] = j.fotolar.filter(gecerli).map(f => hazirla(f, e.otel));
       tamDurum[k] = "tamam";
     } catch { tamDurum[k] = "yok"; }
-    if (S.oyuncu && ank(S.oyuncu) === k) ciz();
+    if (S.oyuncu && ank(S.oyuncu) === k) {
+      if (S.mod === "cekti" && !cektiListe(e).length && e.begendi.length) S.mod = "begendi";
+      ciz();
+    }
   }
 
   async function otelCek(otel) {
@@ -203,13 +216,50 @@
 
   /* ---------- oyuncu kartı ve öneriler ---------- */
   function oyuncuSec(e) {
-    S.oyuncu = { ad: e.ad, otel: e.otel };
-    S.mod = cektiListe(e).length ? "cekti" : "begendi";
+    const k = ank(e);
+    S.oyuncu = { ad: e.ad, otel: e.otel }; S.not = null;
+    S.mod = (cektiListe(e).length || (e.id && !tamDurum[k])) ? "cekti" : (e.begendi.length ? "begendi" : "cekti");
     S.q = e.ad; UI.q.value = e.ad; UI.oneri.hidden = true;
     tamFotoCek(e); ciz();
   }
   function oyuncuKapat() {
-    S.oyuncu = null; S.q = ""; UI.q.value = ""; UI.oneri.hidden = true; ciz();
+    S.oyuncu = null; S.not = null; S.q = ""; UI.q.value = ""; UI.oneri.hidden = true; ciz();
+  }
+
+  // Habbo'nun herkese açık kullanıcı sorgusu: adı kimliğe çevirir (oyuncu akışta olmasa da bulunur)
+  async function kullaniciBul(ad, otel) {
+    const ctl = new AbortController(), z = setTimeout(() => ctl.abort(), ZAMAN_ASIMI);
+    try {
+      const r = await fetch("https://www." + AD[otel] + "/api/public/users?name=" + encodeURIComponent(ad), { credentials: "omit", signal: ctl.signal });
+      if (r.status === 404) return null;
+      if (!r.ok) throw new Error("http " + r.status);
+      const j = await r.json();
+      return (j && typeof j.uniqueId === "string" && typeof j.name === "string") ? { id: j.uniqueId, ad: j.name } : null;
+    } finally { clearTimeout(z); }
+  }
+
+  async function habboAra(ad) {
+    ad = ad.trim();
+    if (ad.length < 2 || S.oyuncu) return;
+    const n = ++aramaSeq, hedef = S.otel ? [S.otel] : OTELLER.map(o => o[0]);
+    UI.oneri.hidden = true; UI.panel.hidden = true; UI.more.hidden = true;
+    UI.grid.textContent = ""; UI.stat.textContent = t("yukleniyor"); S.not = null;
+    const sonuc = await Promise.allSettled(hedef.map(o => kullaniciBul(ad, o)));
+    if (n !== aramaSeq) return;   // bu arada yeni bir arama başladı
+    const bulunan = []; let hata = 0;
+    sonuc.forEach((s, i) => {
+      if (s.status !== "fulfilled") { hata++; return; }
+      if (!s.value) return;
+      const o = hedef[i], k = ank({ ad: s.value.ad, otel: o });
+      eklenen[k] = { ad: s.value.ad, otel: o, id: s.value.id };
+      if (!E.has(k)) E.set(k, { ad: s.value.ad, otel: o, id: s.value.id, cekti: [], begendi: [] });
+      else if (!E.get(k).id) E.get(k).id = s.value.id;
+      bulunan.push(E.get(k));
+    });
+    if (bulunan.length === 1) { oyuncuSec(bulunan[0]); return; }
+    S.q = ad; S.not = bulunan.length ? null : (hata === hedef.length ? "hata" : "bulunamadi");
+    ciz();
+    if (bulunan.length > 1) oneriCiz(bulunan, "");   // aynı ad birkaç otelde varsa seçtir
   }
 
   function panelCiz() {
@@ -242,7 +292,8 @@
       seg.append(b);
     });
     P.append(ust, sts, seg);
-    if (S.mod === "begendi" || tamDurum[ank(e)] !== "tamam") P.append(el("p", "fo-not", t("f_kapsam")));
+    if (tamDurum[ank(e)] === "yukleniyor") P.append(el("p", "fo-not", t("yukleniyor")));
+    else if (S.mod === "begendi" || tamDurum[ank(e)] !== "tamam") P.append(el("p", "fo-not", t("f_kapsam")));
   }
 
   // Yazılan ada uyan oyuncular (çekenler ve beğenenler); tam eşleşme ve çok fotoğraflı olanlar önde
@@ -260,12 +311,9 @@
   function vurgula() {
     Array.from(UI.oneri.children).forEach((c, i) => c.setAttribute("aria-selected", i === onerIx ? "true" : "false"));
   }
-  function oneriGoster() {
-    UI.oneri.textContent = ""; onerIx = -1;
-    if (S.oyuncu) { UI.oneri.hidden = true; onerListe = []; return; }
-    onerListe = oneriBul(UI.q.value);
-    if (!onerListe.length) { UI.oneri.hidden = true; return; }
-    onerListe.forEach(e => {
+  function oneriCiz(l, araAd) {
+    UI.oneri.textContent = ""; onerIx = -1; onerListe = l;
+    l.forEach(e => {
       const b = el("button", "fo-or"); b.type = "button"; b.setAttribute("role", "option");
       const m = el("span", "fo-or-m"), alt = el("small"); alt.innerHTML = bayrak(e.otel); alt.append(AD[e.otel]);
       m.append(el("b", "", e.ad), alt);
@@ -278,7 +326,22 @@
       b.onclick = () => oyuncuSec(e);
       UI.oneri.append(b);
     });
-    UI.oneri.hidden = false;
+    if (araAd) {   // listede olmayan oyuncuyu Habbo'dan bulmak için son satır
+      const b = el("button", "fo-or fo-ara"); b.type = "button"; b.setAttribute("role", "option");
+      const ik = el("span", "fo-or-ik"); ik.innerHTML = ARA;
+      const m = el("span", "fo-or-m");
+      m.append(el("b", "", araAd), el("small", "", t("f_habboAra") + " · " + (S.otel ? AD[S.otel] : t("tumOtel"))));
+      b.append(ik, m);
+      b.onmousedown = ev => ev.preventDefault();
+      b.onclick = () => habboAra(araAd);
+      UI.oneri.append(b);
+    }
+    UI.oneri.hidden = !UI.oneri.children.length;
+  }
+  function oneriGoster() {
+    if (S.oyuncu) { UI.oneri.textContent = ""; UI.oneri.hidden = true; onerListe = []; onerIx = -1; return; }
+    const q = UI.q.value.trim(), k = q.toLocaleLowerCase("tr"), l = oneriBul(q);
+    oneriCiz(l, q.length >= 2 && !l.some(e => e.ad.toLocaleLowerCase("tr") === k) ? q : "");
   }
 
   function chip(metin, temizle) {
@@ -299,9 +362,10 @@
     UI.stat.append(el("strong", "", sayi(liste.length) + " " + t("f_say")));
     if (S.otel) UI.stat.append(chip(t("f_otel") + ": " + AD[S.otel], () => { S.otel = ""; UI.otel.value = ""; yukle(); }));
     if (!S.oyuncu && S.q.trim()) UI.stat.append(chip(S.q.trim(), () => { S.q = ""; UI.q.value = ""; ciz(); }));
+    if (S.not) UI.stat.append(el("span", "fo-uyari", t(S.not === "hata" ? "f_aramaHata" : "f_bulunamadi")));
     if (hatali.length) UI.stat.append(el("span", "fo-uyari", t("f_otelYok") + " " + hatali.map(o => AD[o]).join(", ")));
     if (!liste.length) {
-      const k = el("div", "fo-bos"); k.append(el("p", "empty", t(S.oyuncu ? "f_oyBos" : "f_bos")));
+      const k = el("div", "fo-bos"); k.append(el("p", "empty", t(S.oyuncu && tamDurum[ank(S.oyuncu)] === "yukleniyor" ? "yukleniyor" : S.oyuncu ? "f_oyBos" : "f_bos")));
       UI.grid.append(k); UI.more.hidden = true; return;
     }
     daha();
@@ -436,19 +500,27 @@
     s.onchange = () => { S.sirala = s.value; ciz(); };
     let tm;
     q.oninput = () => {
-      S.oyuncu = null; bekleyen = true; clearTimeout(tm);
+      S.oyuncu = null; S.not = null; bekleyen = true; clearTimeout(tm);
       tm = setTimeout(() => { bekleyen = false; S.q = q.value; oneriGoster(); ciz(); }, 150);
     };
     q.onfocus = () => { if (!S.oyuncu && q.value.trim().length >= 2) oneriGoster(); };
     q.onkeydown = ev => {
       if (ev.key === "ArrowDown" || ev.key === "ArrowUp") {
-        if (UI.oneri.hidden || !onerListe.length) return;
+        const say = UI.oneri.children.length;
+        if (UI.oneri.hidden || !say) return;
         ev.preventDefault();
-        onerIx = (onerIx + (ev.key === "ArrowDown" ? 1 : -1) + onerListe.length) % onerListe.length; vurgula();
+        onerIx = (onerIx + (ev.key === "ArrowDown" ? 1 : -1) + say) % say; vurgula();
       } else if (ev.key === "Enter") {
         ev.preventDefault();
+        if (S.oyuncu) return;
         if (bekleyen) { clearTimeout(tm); bekleyen = false; S.q = q.value; oneriGoster(); }
-        if (onerListe.length) oyuncuSec(onerListe[Math.max(onerIx, 0)]); else ciz();
+        const qv = q.value.trim(), kv = qv.toLocaleLowerCase("tr");
+        if (onerIx >= 0 && onerIx < onerListe.length) oyuncuSec(onerListe[onerIx]);
+        else if (onerIx >= 0) habboAra(qv);   // "Habbo'da ara" satırı seçili
+        else {
+          const tam = onerListe.find(e => e.ad.toLocaleLowerCase("tr") === kv);   // adı tam eşleşen oyuncu
+          if (tam) oyuncuSec(tam); else if (qv.length >= 2) habboAra(qv); else ciz();
+        }
       } else if (ev.key === "Escape") { UI.oneri.hidden = true; }
     };
     document.addEventListener("click", ev => { if (!kap.contains(ev.target)) UI.oneri.hidden = true; });
