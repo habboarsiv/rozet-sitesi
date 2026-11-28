@@ -37,7 +37,7 @@ const DIL = (() => {
     tarih: ["Tarih", "Date", "Data", "Datum", "Fecha", "Päivämäärä", "Date", "Data", "Datum"],
     f_baslik: ["Fotoğraflar", "Photos", "Fotos", "Fotos", "Fotos", "Valokuvat", "Photos", "Foto", "Foto's"],
     f_alt: ["Oyuncuların çektiği ve Habbo'da yayınlanan son fotoğraflar.", "The latest photos taken by players and published on Habbo.", "As fotos mais recentes tiradas por jogadores e publicadas no Habbo.", "Die neuesten Fotos, die Spieler aufgenommen und im Habbo veröffentlicht haben.", "Las últimas fotos tomadas por los jugadores y publicadas en Habbo.", "Pelaajien ottamat ja Habbossa julkaistut tuoreimmat valokuvat.", "Les dernières photos prises par les joueurs et publiées sur Habbo.", "Le ultime foto scattate dai giocatori e pubblicate su Habbo.", "De nieuwste foto's die spelers hebben gemaakt en op Habbo zijn gepubliceerd."],
-    f_ara: ["Oyuncu adı ara (çeken ya da beğenen)...", "Search player name (photographer or liker)...", "Pesquise o nome do jogador (autor ou quem curtiu)...", "Spielernamen suchen (Fotograf oder Liker)...", "Busca un jugador (autor o quien dio me gusta)...", "Hae pelaajan nimellä (kuvaaja tai tykkääjä)...", "Rechercher un joueur (auteur ou personne ayant aimé)...", "Cerca un giocatore (autore o chi ha messo mi piace)...", "Zoek een speler (maker of iemand die het leuk vond)..."],
+    f_ara: ["Oyuncu adı ara", "Search player name", "Pesquisar nome do jogador", "Spielernamen suchen", "Buscar nombre de jugador", "Hae pelaajan nimeä", "Rechercher un joueur", "Cerca nome giocatore", "Zoek spelernaam"],
     f_begeni: ["En çok beğenilen", "Most liked", "Mais curtidas", "Meistgeliked", "Más gustadas", "Eniten tykätyt", "Les plus aimées", "Più piaciute", "Meeste likes"],
     f_begenenler: ["Beğenenler", "Liked by", "Curtido por", "Gefällt", "Les gustó a", "Tykänneet", "Aimé par", "Piace a", "Geliket door"],
     f_begeniYok: ["Henüz beğeni yok", "No likes yet", "Ainda sem curtidas", "Noch keine Likes", "Aún sin me gusta", "Ei vielä tykkäyksiä", "Pas encore de j'aime", "Ancora nessun mi piace", "Nog geen likes"],
@@ -54,6 +54,14 @@ const DIL = (() => {
     f_sonraki: ["Sonraki", "Next", "Próxima", "Weiter", "Siguiente", "Seuraava", "Suivante", "Successiva", "Volgende"],
     f_tekrar: ["Tekrar dene", "Try again", "Tentar novamente", "Erneut versuchen", "Reintentar", "Yritä uudelleen", "Réessayer", "Riprova", "Opnieuw proberen"],
     f_otel: ["Otel", "Hotel", "Hotel", "Hotel", "Hotel", "Hotelli", "Hôtel", "Hotel", "Hotel"],
+    f_cekti: ["Çektikleri", "Photos taken", "Fotos tiradas", "Aufgenommen", "Fotos tomadas", "Ottamat", "Photos prises", "Foto scattate", "Gemaakt"],
+    f_begendi: ["Beğendikleri", "Liked", "Curtidas", "Geliked", "Gustadas", "Tykätyt", "Aimées", "Piaciute", "Geliket"],
+    f_stCekti: ["Çektiği fotoğraf", "Photos taken", "Fotos tiradas", "Aufgenommene Fotos", "Fotos tomadas", "Otetut valokuvat", "Photos prises", "Foto scattate", "Gemaakte foto's"],
+    f_stAlinan: ["Aldığı beğeni", "Likes received", "Curtidas recebidas", "Erhaltene Likes", "Me gusta recibidos", "Saadut tykkäykset", "J'aime reçus", "Mi piace ricevuti", "Ontvangen likes"],
+    f_stBegendi: ["Beğendiği fotoğraf", "Photos liked", "Fotos curtidas", "Geliked Fotos", "Fotos que le gustaron", "Tykätyt valokuvat", "Photos aimées", "Foto piaciute", "Geliket foto's"],
+    f_kapsam: ["Yalnızca son paylaşılan fotoğraflar arasında aranır.", "Only the most recently shared photos are searched.", "A busca inclui apenas as fotos compartilhadas mais recentemente.", "Es werden nur die zuletzt geteilten Fotos durchsucht.", "Solo se busca entre las fotos compartidas más recientemente.", "Haku kattaa vain viimeksi jaetut valokuvat.", "La recherche ne porte que sur les photos partagées le plus récemment.", "La ricerca riguarda solo le foto condivise più di recente.", "Er wordt alleen gezocht in de meest recent gedeelde foto's."],
+    f_oyuncuFoto: ["Bu oyuncunun fotoğrafları", "This player's photos", "Fotos deste jogador", "Fotos dieses Spielers", "Fotos de este jugador", "Tämän pelaajan valokuvat", "Photos de ce joueur", "Foto di questo giocatore", "Foto's van deze speler"],
+    f_oyBos: ["Bu oyuncunun burada gösterilecek fotoğrafı yok.", "No photos to show for this player here.", "Não há fotos deste jogador para mostrar aqui.", "Für diesen Spieler gibt es hier keine Fotos.", "No hay fotos de este jugador para mostrar aquí.", "Tällä pelaajalla ei ole täällä näytettäviä valokuvia.", "Aucune photo à afficher pour ce joueur ici.", "Nessuna foto da mostrare per questo giocatore.", "Er zijn hier geen foto's van deze speler om te tonen."],
   };
 
   function sec() {

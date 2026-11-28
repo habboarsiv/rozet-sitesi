@@ -12,9 +12,54 @@ body[data-sec=F]{--c1:#ff5470;--c2:#ff8fa3;--cg:rgba(255,84,112,.4);--on:#fff}
 .fo-bas p{margin:0;color:var(--mute)}
 .fo-tools{flex-wrap:wrap;align-items:center}
 .fo-tools select{width:auto;flex:0 0 auto;max-width:none}
-.fo-tools input[type=search]{width:auto;flex:1 1 240px}
+.fo-tools{scroll-margin-top:84px}
+.fo-aramakap{position:relative;flex:1 1 240px;min-width:0}
+.fo-aramakap input[type=search]{width:100%}
 #fts .chip{border:1px solid color-mix(in srgb,var(--c1) 40%,var(--line));background:color-mix(in srgb,var(--c1) 12%,transparent);color:var(--ink)}
 .fo-uyari{font-size:.82rem;color:var(--mute)}
+
+/* arama önerileri */
+.fo-oneri{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:30;display:flex;flex-direction:column;gap:2px;padding:6px;
+  border:1px solid var(--line2);border-radius:14px;
+  background:linear-gradient(180deg,rgba(255,255,255,.04),transparent 40%),var(--surface);box-shadow:var(--hi),var(--shadow)}
+.fo-oneri[hidden]{display:none}
+.fo-or{all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:10px}
+.fo-or:hover,.fo-or[aria-selected=true]{background:color-mix(in srgb,var(--c1) 14%,transparent)}
+.fo-or .av.kucuk{width:30px;height:30px;flex:none}
+.fo-or-m{flex:1;min-width:0;display:flex;flex-direction:column}
+.fo-or-m b{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fo-or-m small{display:flex;align-items:center;gap:5px;color:var(--mute);font-size:.76rem}
+.fo-or-m small svg{width:16px;height:11px;border-radius:2px}
+.fo-or-s{display:flex;gap:10px;flex:none;color:var(--mute);font-size:.8rem;font-weight:700}
+.fo-or-s span{display:inline-flex;align-items:center;gap:4px}
+.fo-or-s svg{width:14px;height:14px}
+.fo-or-s span:last-child svg{color:#ff6b85}
+
+/* oyuncu kartı: çektikleri / beğendikleri */
+.fo-oy{display:flex;flex-direction:column;gap:14px;margin-bottom:18px;padding:16px 18px;scroll-margin-top:84px;
+  border:1px solid var(--line2);border-left:3px solid var(--c1);border-radius:var(--r);
+  background:linear-gradient(180deg,rgba(255,255,255,.04),transparent 40%),var(--surface);box-shadow:var(--hi),var(--shadow)}
+.fo-oy[hidden]{display:none}
+.fo-oy-ust{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.fo-oy-kim{display:flex;align-items:center;gap:12px;flex:1 1 220px;min-width:0}
+.fo-oy-met{display:flex;flex-direction:column;min-width:0}
+.fo-oy-ad{font:800 1.4rem "Bricolage Grotesque",Manrope,system-ui,sans-serif;letter-spacing:-.02em;overflow-wrap:anywhere}
+.fo-oy-alt{display:flex;align-items:center;gap:6px;color:var(--mute);font-size:.85rem}
+.fo-oy-alt svg{width:20px;height:14px;border-radius:2px}
+.fo-eylem{display:flex;gap:8px}
+.fo-btn{all:unset;box-sizing:border-box;cursor:pointer;padding:8px 14px;border:1px solid var(--line2);border-radius:10px;
+  background:var(--glass);font-weight:700;font-size:.88rem;transition:border-color .15s,box-shadow .15s}
+.fo-btn:hover{border-color:var(--c1);box-shadow:0 0 0 3px var(--cg)}
+.fo-btn:focus-visible{outline:2px solid var(--c1);outline-offset:2px}
+.fo-kp{padding:8px 11px}
+.fo-st-kap{display:flex;flex-wrap:wrap;gap:10px}
+.fo-st{min-width:120px;padding:9px 16px;border:1px solid var(--line);border-radius:12px;background:var(--glass)}
+.fo-st b{display:block;font:800 1.45rem "Bricolage Grotesque",Manrope,system-ui,sans-serif;letter-spacing:-.02em;
+  background:linear-gradient(135deg,var(--c1),var(--c2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.fo-st small{color:var(--mute);font-size:.78rem}
+.fo-oy .seg{align-self:flex-start;max-width:100%}
+.fo-oy .seg .tg{height:40px;padding:0 18px}
+.fo-not{margin:0;color:var(--mute);font-size:.82rem}
 
 /* kart ızgarası */
 .fo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
@@ -91,6 +136,9 @@ body[data-sec=F]{--c1:#ff5470;--c2:#ff8fa3;--cg:rgba(255,84,112,.4);--on:#fff}
 .fd-lk:hover,.fd-daha:hover{border-color:var(--c1);box-shadow:0 0 0 3px var(--cg)}
 .fd-lk:focus-visible,.fd-daha:focus-visible,.fd-ad:focus-visible{outline:2px solid var(--c1);outline-offset:2px}
 .fd-lk .av.kucuk{width:28px;height:28px}
+.fd-sorgu{all:unset;cursor:pointer;margin-top:2px;color:var(--c1);font-size:.82rem;font-weight:700}
+.fd-sorgu:hover{text-decoration:underline}
+.fd-sorgu:focus-visible{outline:2px solid var(--c1);outline-offset:2px}
 
 @media (max-width:760px){
   #fdlg>.fd-in{grid-template-columns:1fr}
